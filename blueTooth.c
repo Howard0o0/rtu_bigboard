@@ -693,6 +693,8 @@ int ble_close();
 int ble_isinit();
 int ble_sppflag();
 void ble_rst();
+void ble_connect();
+void ble_adv();
 
 T_IODev T_CommuteDevBLE = 
 {
@@ -708,6 +710,7 @@ T_IODev T_CommuteDevBLE =
     .restart=ble_rst,
     .isinit = ble_isinit,
     .isspp = ble_sppflag,
+    .adv   = ble_adv,
 };
 
 void ble_rst()
@@ -721,6 +724,10 @@ int ble_sppflag()
 int ble_isinit()
 {
   return BLEINIT;
+}
+void ble_adv()
+{
+  BLE_ADVSTART();
 }
 
 // 0 success, -1 failed

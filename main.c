@@ -75,6 +75,8 @@ void Restart_Init()
     
     TimerA_Init(30720);         // ϵͳ��ʱ����ʼ��
     TimerB_Init(61440);
+    TimerA0_Init();
+    
     Store_Init();               // ��ʼ��ROM
     RTC_Open();
     Sampler_Init();             //�˿ڳ�ʼ��,��Ҫ�ȳ�ʼ��Store

@@ -14,6 +14,7 @@
 #include "uart0.h"
 #include "led.h"
 #include "stdio.h"
+#include "ioDev.h"
 /************A1********/
 #define TXD3 BIT4
 #define RXD3 BIT5
@@ -219,6 +220,22 @@ int  UART3_Send(char * _data ,int _len, int _CR)
         UCA3TXBUF=10;
         
     }
+
+    // && (ptDevBle->isenable())
+    /* ������ӡ */
+    PT_IODev  ptDevBle =  getIODev();
+    if( (ptDevBle->isCanUseFlag == 1) && (ptDevBle->isCanUse()) && (ptDevBle->open() == 0) )
+    {
+        ptDevBle->sendMsg(_data,_len);
+        if(_CR)//����һ������
+        {
+            System_Delayms(1000);    //ptDevBle->sendMsg�ļ������̫�̣�esp32�ᷴӦ������
+            ptDevBle->sendMsg("\r\n",2);
+        }
+        ptDevBle->close();
+    }
+
+
     return 0;
 }
 
@@ -441,10 +458,10 @@ __interrupt void UART3_RX_ISR(void)   //�����յ����ַ���
 }
 
 
-// int putchar(int c)
-// {
-//     while (!(UCA3IFG&UCTXIFG));             // USCI_A0 TX buffer ready?
-//     UCA3TXBUF = (unsigned char)c; 
+int putchar(int c)
+{
+    while (!(UCA3IFG&UCTXIFG));             // USCI_A0 TX buffer ready?
+    UCA3TXBUF = (unsigned char)c; 
   
-//     return c;
-// }
+    return c;
+}

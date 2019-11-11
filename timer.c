@@ -90,7 +90,6 @@ void TimerB_Clear()
 
 
 /******************************bletest*************************/
-#include "blueTooth.h"
 #include "ioDev.h"
 void TimerA0_Init(void) //bluetooth 
 {
@@ -110,13 +109,20 @@ __interrupt void TIMER0A0_ISR(void)
     // printf("intAstart!!!!!!!!!!!!!!!!!!!!!!\r\n");
     BLERet ret;
     PT_IODev  ptDevBle =  getIODev();
-    if(ptDevBle->isinit() && ptDevBle->isspp()==0)
+    if(ptDevBle->isinit())
     {
-      if((ptDevBle->isCanUse()==0) )
+      if(ptDevBle->isspp()==0)
       {
-        BLE_ADVSTART();
         // printf("intAend!!!!!!!!!!!!!!!!!!!!!!\r\n");
-      }  
+        if((ptDevBle->isCanUse()==0) )
+        {
+          ptDevBle->adv();
+        } 
+        else
+        {
+          ptDevBle->open();
+        }
+      }
     }
     
 }

@@ -22,7 +22,7 @@ typedef struct IODev
     void (*restart)(void);
     int (*isinit)(void);
     int (*isspp)(void);
-    // int *(isenable)(void);
+    void (*adv)(void)
 }T_IODev,*PT_IODev;
 
 
