@@ -1,0 +1,720 @@
+
+    char _send[120];//给120够了
+    char _buffer[10];
+    char _addr[10];
+    int _ret=0;
+    char _tempChar1=0x00;
+    char _tempChar2=0x00;
+    char _tempChar3=0x00;
+    char _tempChar4=0x00;
+    int _tempInt=0;
+    int _max=0;
+    int _min=0;
+    int _idx1=0;
+    int _idx2=0;
+    
+    //拼好头部
+    _send[0]='$';
+    if(Store_ReadDeviceNO(&(_send[1]))<0)
+        return -1;
+    _send[12]='<';
+    //先判断下是否是 心跳 OK数据
+    //$OK#
+    if(_data[1]=='O'&& _data[2]=='K' && _dataLen==4)
+        return 0;
+    //先判断密码是否正确
+    if(Store_ReadPassword(_buffer)>=0)
+    {
+        if(Utility_Strncmp(_buffer,&(_data[1]),4)!=0)
+        {
+            _ret=Utility_PackRejectMsg("UN",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+    }
+    //检查*号
+    if(_data[5]!='*' || _data[8]!='*')
+    {
+        _ret=Utility_PackErrorMsg("UN",_send);
+        return DTU_SendData(_addr,_send,_ret);
+    }
+    //BS,DL,CP ,TM,PD,PL,CS,PR,WM
+    switch(_data[6])
+    {
+      case 'B':
+        //          1         2         3 
+        //01234567890123456789012345678901
+        //$1234*BS*00011100011,0000,00,00#
+        if(_data[7]!='S' || _dataLen!=32 || _data[20]!=',' || _data[25]!=',' ||_data[28]!=','
+           ||Utility_CheckDigital(_data,9,19) || Utility_CheckDigital(_data,21,24)
+               ||Utility_CheckDigital(_data,26,27)|| Utility_CheckDigital(_data,29,30))
+        {
+            _ret=Utility_PackErrorMsg("UN",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        if( _data[17] != '0' || _data[18] != '0' || _data[19] != '0' )
+        {
+            _ret += Store_SetDeviceNO(&(_data[9]));
+        }
+        if( _data[21] !='0' || _data[21] !='0' || _data[21] !='0' || _data[21] !='0')
+        {
+            _ret += Store_SetPassword(&(_data[21]));
+        }
+        if( _data[26] !='0' || _data[27] != '0' )
+        {
+            _tempInt= (_data[26]-'0')*10 + _data[27]-'0';
+            if( _tempInt < 1 || _tempInt >16)
+            {
+                _ret = Utility_PackBadMsg("BS",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            _ret +=Store_SetSaveTimeMode(&(_data[26]));
+            //同时修正下一次保存时间 
+            Utility_CalculateNextSaveTimeBytes(_buffer);
+            RTC_SetSaveTimeBytes(_buffer);
+        }
+        if( _data[29] != '0' || _data[30] != '0')
+        {
+            _tempInt = (_data[29]-'0')*10 + _data[30]-'0';
+            if( _tempInt <=0 || _tempInt >16)
+            {
+                _ret = Utility_PackBadMsg("BS",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            _ret += Store_SetReportTimeMode(&(_data[29]));
+            //同时修正下一次报告时间
+            Utility_CalculateNextReportTimeBytes(_buffer);
+            RTC_SetReportTimeBytes(_buffer);
+        }
+        if(_ret<0)
+        {
+            _ret = Utility_PackFailMsg("BS",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        else
+        {
+            _ret = Utility_PackOKMsg("BS",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+      case 'C':
+        //012345678901234567890123456789012345678901
+        //$1234*CP*1,13607193119# //设置电话
+        
+        //$1234*CS*A,00000011#或  //设置通道选择
+        //$1234*CS*P,11000000#
+        if( _data[7]=='S' && _data[10]==',' && (! Utility_CheckBinary(_data,11,18) ) )
+        {
+            _tempChar1=0x00;
+            if( _data[9]!='A' &&_data[9]!='P' &&_data[9]!='I')
+            {
+                _ret = Utility_PackBadMsg("CS",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            if( _data[9]=='A')
+            {//模拟量 ,低位在前
+                for(int i=11;i<19;++i)
+                {//$1234*CS*P,11000000#
+                    _tempChar1 >>=1;
+                    if(_data[i]!='0')
+                        _tempChar1 |= BIT7;
+                    else
+                        _tempChar1 &= ~BIT7;
+                }
+                _ret = Store_SetAnalogSelect(_tempChar1);
+            }
+            if( _data[9]=='P')
+            {//脉冲量,前4位,低位在前
+                
+                for(int i=11; i<15;++i)
+                {
+                    _tempChar1 <<=1;
+                    if(_data[i]!='0')
+                        _tempChar1 |= BIT4;
+                    else
+                        _tempChar1 &= ~BIT4;
+                }
+                _ret =Store_SetPulseSelect(_tempChar1);
+            }
+            if( _data[9]=='I')
+            {//开关量,低位在前
+                for(int i=11; i<19;++i)
+                {
+                    _tempChar1 >>=1;
+                    if(_data[i]!='0')
+                        _tempChar1 |= BIT7;
+                    else
+                        _tempChar1 &= ~BIT7;
+                }
+                _ret =Store_SetIoSelect(_tempChar1);
+            }
+            if(_ret <0)
+            {
+                _ret = Utility_PackFailMsg("CS",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            else
+            {
+                _ret=Utility_PackOKMsg("CS",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+        }
+        //都不符合 那就是错误了
+        _ret =Utility_PackErrorMsg("UN",_send);
+        return DTU_SendData(_addr,_send,_ret);
+      case 'D':
+        //012345678901234567890
+        //$1234*DL*1,0000,4096#
+        if( _data[7]!='L' || _data[10]!=',' || _data[15]!=',' || Utility_CheckDigital(_data,11,14)|| Utility_CheckDigital(_data,16,19))
+        {
+            _ret=Utility_PackErrorMsg("UN",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        if( _data[9] <= '0' || _data[9] > '8'  )
+        {
+            _ret = Utility_PackBadMsg("UN",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        //需要检查max是否大于min
+        _min=0; _max=0; _idx1=_data[9]-'0';
+        if(_data[11]!='9' ||_data[12]!='9' ||_data[13]!='9' ||_data[14]!='9')
+        {
+            _min += (_data[11]-'0')*1000;
+            _min += (_data[12]-'0')*100;
+            _min += (_data[13]-'0')*10;
+            _min += (_data[14]-'0');
+        }
+        else
+        {//如果不对这个值设置,我们就取保存值
+            if(Store_ReadDataMinInt(_idx1,&_min)<0) 
+                _min=0;//读不出来就算了.不检查max>min了
+        }
+        
+        if(_data[16]!='9' ||_data[17]!='9' ||_data[18]!='9' ||_data[19]!='9')
+        {
+            _max += (_data[16]-'0')*1000;
+            _max += (_data[17]-'0')*100;
+            _max += (_data[18]-'0')*10;
+            _max += (_data[19]-'0');
+        }
+        else
+        {//如果不对这个值设置,我们就取保存值
+            if(Store_ReadDataMaxInt(_idx1,&_max)<0) 
+                _max=4096;//读不出来就算了.不检查max>min了
+        }
+        if(_min > _max)
+        {
+            _ret = Utility_PackBadMsg("DL",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        //写回rom
+        _ret += Store_SetDataMaxInt(_idx1,_max);
+        _ret += Store_SetDataMinInt(_idx1,_min);
+        if(_ret<0)
+        {
+            _ret = Utility_PackFailMsg("DL",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        else
+        {
+            _ret= Utility_PackOKMsg("DL",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+      case 'I':
+        //0123456789012345678901234567890123
+        //$1234*IP*1,192.168.001.001:4000#
+        if(_data[7]=='P'&& _data[8]=='*' && _data[10]==',' && _data[14]=='.' && _data[18]=='.' &&
+           _data[22]=='.' && _data[26]==':' && !Utility_CheckDigital(_data,11,13)&&
+                !Utility_CheckDigital(_data,15,17)&& !Utility_CheckDigital(_data,19,21)&&
+                     !Utility_CheckDigital(_data,23,25)&& !Utility_CheckDigital(_data,27,30))
+        {
+            //_send[13] = ;
+            
+            return DTU_SendData(_addr,_send,12); 
+        }
+        _ret=Utility_PackErrorMsg("UN",_send);
+        return DTU_SendData(_addr,_send,_ret);
+      case 'P':
+        //01234567890123456789
+        //$1234*PL*1,0#
+        //$1234*PR*1,100#
+        //$1234*PM*1,6#
+        //$1234*PV*1,FFFFFF#
+        if( (_data[7]!='L'&&_data[7]!='R'&& _data[7]!='M' && _data[7]!='V') || _data[10]!=',')
+        {
+            _ret = Utility_PackErrorMsg("UN",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        if(_data[7]=='L')
+        {
+            if( _data[9]< '1' || _data[9]>'8' || (_data[11]!='1' && _data[11]!='0') )
+            {
+                _ret = Utility_PackBadMsg("PL",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            _idx1 = _data[9]-'0';
+            _tempChar1= _data[11]-'0';
+            _ret = Sampler_IO_Level(_idx1,_tempChar1);
+            if( _ret < 0 )
+            {
+                if(_ret== -2)
+                    _ret = Utility_PackBadMsg("PL",_send);
+                else
+                    _ret = Utility_PackFailMsg("PL",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            else
+            {
+                _ret = Utility_PackOKMsg("PL",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+        }
+        //0123456789012345
+        //$1234*PR*1,100#
+        if(_data[7]=='R')
+        { 
+            if( _data[9] < '1' || _data[9] >'4'|| Utility_CheckDigital(_data,11,13) )
+            {
+                _ret = Utility_PackBadMsg("PR",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            _idx1=_data[9]-'0';
+            //  _tempChar1 为数值
+            _tempChar1 = (_data[11]-'0')*100;
+            _tempChar1 += (_data[12]-'0')*10;
+            _tempChar1 += (_data[13]-'0');
+            
+            _ret += Store_SetPulseRate(_idx1 , _tempChar1);
+            //修改内存值
+            g_pulse_rate[_idx1-1] = _tempChar1;
+            if(_ret<0)
+            {
+                _ret= Utility_PackFailMsg("PR",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            else
+            {
+                _ret= Utility_PackOKMsg("PR",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+        }
+        //01234567890123
+        //$1234*PM*1,6#
+        if(_data[7]=='M') 
+        {
+            if( _data[9] <  '1' || _data[9] >'4'|| _data[11] < '1' ||_data[11] > '7' )
+            {
+                _ret = Utility_PackBadMsg("PR",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            _idx1= _data[9]-'0';
+            _ret += Store_SetPulseRange(_idx1,_data[11]-'0'); 
+            //再修改内存值
+            _ret += Store_ReadPulseRangeBytes(_idx1,g_pulse_range[_idx1-1]);
+            if(_ret<0)
+            {
+                _ret = Utility_PackFailMsg("PM",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            else
+            {
+                _ret =Utility_PackOKMsg("PM",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+        }
+        //01234567890123456789
+        //$1234*PV*1,FFFFFF#
+        //  PV*OK*FFFFFF#
+        if(_data[7]=='V')
+        {
+            if(_data[9] <'1' || _data[9] >'4' ||  Utility_CheckHexadecimal(_data,11,16))
+            {
+                _ret = Utility_PackBadMsg("PV",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            _idx1 = _data[9]-'0'; 
+            //然后开始设置值,也许会被中断打断,产生数据冲突,但我们显然无能为力.
+            //误差也不会太大.
+            Utility_HexToChar(&(_data[11]), &(_buffer[0] ));
+            Utility_HexToChar(&(_data[13]), &(_buffer[1] ));
+            Utility_HexToChar(&(_data[15]), &(_buffer[2] ));
+            //设的值如果超过最大值,将返回BAD短信.
+            if(Utility_BytesCompare3(_buffer,g_pulse_range[_idx1-1])==1)
+            {
+                _ret =Utility_PackBadMsg("PV",_send);
+                return DTU_SendData(_addr,_send,_ret);
+            }
+            RTC_SetPulseBytes(_idx1,_buffer);
+            //这里自己拼回复.
+            _send[13]='P';_send[14]='V';_send[15]='*';_send[16]='O';_send[17]='K';
+            _send[18]='*';
+            RTC_ReadPulseBytes(_idx1,_buffer);
+            Utility_CharToHex(_buffer[0],&(_send[19]));
+            Utility_CharToHex(_buffer[1],&(_send[21]));
+            Utility_CharToHex(_buffer[2],&(_send[23]));
+            _send[25]='#';
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        break;
+        //012345678901234567890
+        //$1234*TM*0908201030#
+      case 'T':
+        if(_data[7]!='M')
+        { 
+            _ret= Utility_PackErrorMsg("UN",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        if(Utility_CheckDigital(_data,9,18) < 0 )
+        {
+            _ret = Utility_PackBadMsg("TM",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        RTC_SetTimeStr5_B(&(_data[9]));
+        _ret=Utility_PackOKMsg("TM",_send);
+        main_time_error=0;
+        return DTU_SendData(_addr,_send,_ret);
+        //01234567890
+        //$1234*WM*0#
+      case 'W':
+        if(_data[7]!='M')
+        {
+            _ret= Utility_PackErrorMsg("UN",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        if(_data[9]!= '0' &&_data[9]!='1')
+        {
+            _ret= Utility_PackBadMsg("WM",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        _ret += Store_SetWorkMode(_data[9]);//WorkMode暂时是字符.以后再仔细修正为数值.
+        if(_ret<0)
+        {
+            _ret =Utility_PackFailMsg("WM",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        else
+        {//成功切换模式 
+            _ret =Utility_PackOKMsg("WM",_send);
+            DTU_SendData(_addr,_send,_ret);
+            
+            if(g_work_mode != (_data[9]-'0') )
+            {//如果模式不一样, 那么就重启了.
+                // 这里如果直接重启 会出现 WM短信导致一直重启的问题.
+                //所以改成模式不一样才重启.
+                DTU_Close();//关闭GSM
+                System_Delayms(1000);
+                System_Reset();
+            }
+        }
+        break;
+        //
+        //  下面是报告模式
+        //BS,DL,CP,TM,PL,CS,PR,PM,WM
+        //$密码*RP*次类型码#
+        //
+        //012345678901
+        //$1234*RP*TM#
+        //
+      case 'R':
+        if(_data[7]=='P' && _data[8] == '*')
+        {
+            if(_data[9]=='B' && _data[10]=='S')
+            {   //012345678901234567890123456789
+                //$00011100011<BS*0000,00,00#
+                _send[13]='B';_send[14]='S';_send[15]='*';
+                _ret += Store_ReadPassword( & (_send[16]) );
+                _send[20]=',';
+                _ret += Store_ReadSaveTimeMode(& (_send[21]));
+                _send[23]=',';
+                _ret += Store_ReadReportTimeMode( & (_send[24]) );
+                _send[26]='#';
+                if(_ret<0)
+                {
+                    _ret=Utility_PackFailMsg("RP",_send);
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                else
+                {
+                    return DTU_SendData(_addr,_send, 27);
+                }
+            }
+            if(_data[9]=='D' && _data[10]=='L')
+            {   //0123456789012345678901234567890123
+                //$00011100011<DL*0000,4096,0000,4096,.....
+                _send[13]='D';_send[14]='L';_send[15]='*';
+                _idx1 = 16;
+                for(int i=1; i<= 8;++i)
+                {
+                    _ret += Store_ReadDataMinStr(i ,& (_send[_idx1]) );
+                    _idx1 +=4;
+                    _send[_idx1++]=',';
+                    _ret += Store_ReadDataMaxStr(i ,& (_send[_idx1]) );
+                    _idx1 +=4;
+                    _send[_idx1++]=',';
+                } 
+                _send[_idx1-1]='#';//最后一个多一个','号
+                if(_ret<0)
+                {
+                    _ret= Utility_PackFailMsg("RP",_send);
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                else
+                {
+                    return DTU_SendData(_addr,_send,_idx1);
+                }
+            }
+            if(_data[9]=='I' && _data[10]=='P')
+            {   //0123456789012345678901234567890123456
+                //$00011100011<IP*000.000.000.000:0000#
+                // 要查询DTU使用的IP,首先要切换到AT模式,
+                // 使用密码登录DTU
+                // 然后调用查询AT指令
+                // 然后调用AT+RESET返回GPRS模式
+                // 中间不稳定因素很多.
+                // 暂时不实现
+                _send[13]='I';_send[14]='P';_send[15]='*';
+                _send[16]='0';_send[17]='0';_send[18]='0';
+                _send[19]='.';_send[20]='0';_send[21]='0';
+                _send[22]='0';_send[23]='.';_send[24]='0';
+                _send[25]='0';_send[26]='0';_send[27]='.';
+                _send[28]='0';_send[29]='0';_send[30]='0';
+                _send[31]=':';_send[32]='0';_send[33]='0';
+                _send[34]='0';_send[35]='0';_send[36]='#';
+                return DTU_SendData(_addr,_send,37);
+            }
+            if(_data[9]=='T' && _data[10]=='M')
+            {   //01234567890123456789012345678
+                //$00011100011<TM*090604120032#
+                _send[13]='T';_send[14]='M';_send[15]='*';
+                _idx1=16;
+                RTC_ReadTimeStr6_B( &(_send[_idx1]) );
+                _idx1 += 12;
+                _send[_idx1++ ]='#';
+                return DTU_SendData(_addr,_send,_idx1);
+            }
+            if(_data[9]=='P' && _data[10]=='L')
+            {   //0123456789012345678901234
+                //$00011100011<PL*00110011#
+                _send[13]='P';_send[14]='L';_send[15]='*';
+                _idx1=16;
+                _ret=Store_ReadIoLevelConfig(&_tempChar1);
+                
+                if(_ret<0)
+                {
+                    _ret=Utility_PackFailMsg("RP",_send);
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                
+                P5OUT = _tempChar1; //再更新一下,避免不一致.
+                
+                if(_tempChar1 & BIT0)
+                    _send[_idx1++]='1';
+                else
+                    _send[_idx1++]='0';
+                if(_tempChar1 & BIT1)
+                    _send[_idx1++]='1';
+                else
+                    _send[_idx1++]='0';
+                if(_tempChar1 & BIT2)
+                    _send[_idx1++]='1';
+                else
+                    _send[_idx1++]='0';
+                if(_tempChar1 & BIT3)
+                    _send[_idx1++]='1';
+                else
+                    _send[_idx1++]='0';
+                if(_tempChar1 & BIT4)
+                    _send[_idx1++]='1';
+                else
+                    _send[_idx1++]='0';
+                if(_tempChar1 & BIT5)
+                    _send[_idx1++]='1';
+                else
+                    _send[_idx1++]='0';
+                if(_tempChar1 & BIT6)
+                    _send[_idx1++]='1';
+                else
+                    _send[_idx1++]='0';
+                if(_tempChar1 & BIT7)
+                    _send[_idx1++]='1';
+                else
+                    _send[_idx1++]='0';
+                //
+                _send[_idx1++]='#';
+                return DTU_SendData(_addr,_send,_idx1); 
+            }
+            if(_data[9]=='C' && _data[10]=='S')
+            {   //          1         2         3         4   
+                //0123456789012345678901234567890123456789012
+                //$00011100011<CS*00110011,01010000,00110011#
+                _send[13]='C';_send[14]='S';_send[15]='*';
+                _idx1=16;
+                _idx2=34;
+                _ret+=Store_ReadAnalogSelect(&_tempChar1);
+                _ret+=Store_ReadPulseSelect(&_tempChar2);
+                _ret+=Store_ReadIoSelect(&_tempChar3);
+                if(_ret<0)
+                {
+                    _ret =Utility_PackFailMsg("RP",_send);
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                _tempChar4=0x01;
+                for(int i=0;i<8;++i)
+                {
+                    if(_tempChar1 & _tempChar4) 
+                        _send[_idx1++]='1';
+                    else
+                        _send[_idx1++]='0';
+                    
+                    if(_tempChar3&_tempChar4)
+                        _send[_idx2++]='1';
+                    else
+                        _send[_idx2++]='0';
+                    _tempChar4 <<=1;
+                }
+                if(_tempChar2 & BIT7)
+                    _send[25]='1';
+                else
+                    _send[25]='0'; 
+                if(_tempChar2 & BIT6)
+                    _send[26]='1';
+                else
+                    _send[26]='0'; 
+                if(_tempChar2 & BIT5)
+                    _send[27]='1';
+                else
+                    _send[27]='0';
+                if(_tempChar2 & BIT4)
+                    _send[28]='1';
+                else
+                    _send[28]='0';
+                _send[29]='0';_send[30]='0';_send[31]='0';_send[32]='0';
+                
+                //填写,和其他字符
+                _send[24]=',';_send[33]=',';  
+                _send[42]='#';
+                return DTU_SendData(_addr,_send,43);
+            }
+            
+            if(_data[9]=='P' && _data[10]=='R')
+            {   //012345678901234567890123456789012
+                //$00011100011<PR*100,010,200,100#
+                _send[13]='P';_send[14]='R';_send[15]='*';
+                _idx1=16;
+                for(int i=1;i<=4;++i)
+                {
+                    _ret += Store_ReadPulseRate(i,& _tempChar1);
+                    _send[_idx1++]=_tempChar1/100+'0';
+                    _tempChar1 %=100;
+                    _send[_idx1++]=_tempChar1/10+'0';
+                    _send[_idx1++]=_tempChar1%10+'0';
+                    _send[_idx1++]=',';
+                }
+                _send[_idx1-1]='#';
+                if(_ret<0)
+                {
+                    _ret=Utility_PackFailMsg("RP",_send);
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                else
+                    return DTU_SendData(_addr,_send,_idx1);
+            }
+            if(_data[9]=='P' && _data[10]=='M')
+            {   //0123456789012345678901234
+                //$00011100011<PM*5,5,6,7#
+                _send[13]='P';_send[14]='M';_send[15]='*';
+                _idx1 = 16;
+                for(int i=1;i<=4;++i)
+                {
+                    _ret +=Store_ReadPulseRange(i,&_tempChar1);
+                    _send[_idx1++] = _tempChar1 + '0';
+                    _send[_idx1++] =',';
+                }
+                _send[_idx1-1]='#';
+                if(_ret<0)
+                {
+                    _ret=Utility_PackFailMsg("RP",_send);
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                else
+                    return DTU_SendData(_addr,_send,_idx1);
+                
+            }
+            if(_data[9]=='W' && _data[10]=='M')
+            {   //012345678901234567890
+                //$00011100011<WM*0#
+                _send[13]='W';_send[14]='M';_send[15]='*';
+                _ret = Store_ReadWorkMode(&_tempChar1);
+                if(_ret < 0 ) 
+                {
+                    _ret=Utility_PackFailMsg("RP",_send); 
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                _send[16]=_tempChar1;
+                _send[17]='#';
+                return DTU_SendData(_addr,_send, 18);
+            }
+            if(_data[9]=='N' && _data[10]=='T')
+            {   //0         1         2         3         4         5         6 
+                //0123456789012345678901234567890123456789012345678901234567890
+                //$00011100011<NT*09/06/04/12:00,09/06/04/12:00,09/06/04/12:00#
+                _send[13]='N';_send[14]='T';_send[15]='*';
+                _ret += RTC_ReadCheckTimeStr5_A(&(_send[16]));
+                _send[30]=',';
+                _ret += RTC_ReadSaveTimeStr5_A(&(_send[31]));
+                _send[45]=',';
+                _ret += RTC_ReadReportTimeStr5_A(&(_send[46]));
+                if(_ret <0)
+                {
+                    _ret = Utility_PackFailMsg("RP",_send);
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                
+                _send[60]='#';
+                return DTU_SendData(_addr,_send,61);
+            }
+            if(_data[9]=='P' &&_data[10]=='V')
+            {   //0         1         2         3         4      
+                //01234567890123456789012345678901234567890123456789
+                //$00011100011<PV*000000,000000,000000,000000#
+                _send[13]='P';_send[14]='V';_send[15]='*';
+                _ret += RTC_ReadPulseBytes(1,_buffer);
+                Utility_CharToHex(_buffer[0],&(_send[16]));
+                Utility_CharToHex(_buffer[1],&(_send[18]));
+                Utility_CharToHex(_buffer[2],&(_send[20]));
+                _send[22]=',';
+                _ret += RTC_ReadPulseBytes(2,_buffer);
+                Utility_CharToHex(_buffer[0],&(_send[23]));
+                Utility_CharToHex(_buffer[1],&(_send[25]));
+                Utility_CharToHex(_buffer[2],&(_send[27]));
+                _ret += RTC_ReadPulseBytes(3,_buffer);
+                _send[29]=',';
+                Utility_CharToHex(_buffer[0],&(_send[30]));
+                Utility_CharToHex(_buffer[1],&(_send[32]));
+                Utility_CharToHex(_buffer[2],&(_send[34]));
+                _ret += RTC_ReadPulseBytes(4,_buffer);
+                _send[36]=',';
+                Utility_CharToHex(_buffer[0],&(_send[37]));
+                Utility_CharToHex(_buffer[1],&(_send[39]));
+                Utility_CharToHex(_buffer[2],&(_send[41]));
+                _send[43]='#';
+                if(_ret<0)
+                {
+                    _ret = Utility_PackFailMsg("PV",_send);
+                    return DTU_SendData(_addr,_send,_ret);
+                }
+                else
+                {
+                    return DTU_SendData(_addr,_send,44);
+                }
+            }
+            //其他的就是未知模式了
+            //返回错误
+            _ret=Utility_PackErrorMsg("RP",_send);
+            return DTU_SendData(_addr,_send,_ret);
+        }
+        //其他的为错误模式
+        _ret=Utility_PackErrorMsg("UN",_send);
+        return DTU_SendData(_addr,_send,_ret);
+      default:
+        _ret=Utility_PackErrorMsg("UN",_send);
+        return DTU_SendData(_addr,_send,_ret);
+    } 
