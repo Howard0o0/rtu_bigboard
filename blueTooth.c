@@ -569,111 +569,74 @@ int BLE_MAIN()  //ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -ï¿½ï¿½ï¿
         
         
         
-        time=0;
-        while(BLE_CONNECT() != BLE_SUCCESS)
-        {
-          time++;
-          printf( "CONNECT...\r\n" );
-          System_Delayms ( 1000 );
-          // if(time>30)
-          if(0)
-          {
-            printf("failed to connect\r\n");
-            return -1;
-          }
-        }
-        printf( "CONNECTED!\r\n\r\n" );
-        
-        
-        
-        
-        time=0;
-        while(BLE_BLESPPCFG() != BLE_SUCCESS)
-        {
-          time++;
-          printf( "CONFIG...\r\n" );
-          System_Delayms ( 100 );
-          if(time>5)
-          {
-            printf("failed,please check system\r\n");
-            return -1;
-          }
-        }
-        printf( "CONFIG!\r\n\r\n" );
-        
-        BLE_buffer_Clear();
-        printf("waiting CCCD\r\n");
-        char result[100]=" ";
-        int num;
-        int flag1=0,flag2=0;
-        for(int i=0;i<2;i++)
-        {
-          time=0;
-          while(1)
-          {
-            BLE_RecAt(result,&num);
-            if(flag1==0 && strstr(result,"6") != 0 && strstr(result,"ITE") != 0)
-            {
-              printf("success6  ...\r\n");
-              flag1=1;
-              break;
-            }
-            else if(flag2==0 && strstr(result,"7") != 0 && strstr(result,"ITE") != 0)
-            {
-              printf("success7  ...\r\n");
-              flag2=1;
-              break;
-            }
-            else if(time>20)
-            {
-              printf("failed to enable CCCD\r\n");
-              return -1;
-            }
-            time++;
-            printf("waiting CCCD\r\n");
-            System_Delayms(100);
-          }
-        }
-        printf("CCCD!\r\n\r\n");
-
-
-        
-
-        // printf("waiting CCCD\r\n");
-        // char result[100];
-        // BLE_RecAt(result);
         // time=0;
-        // while(strstr(result,"+W") == 0)
+        // while(BLE_CONNECT() != BLE_SUCCESS)
         // {
         //   time++;
-        //   //printf("REC:%s\r\n",result);
-        //   printf("waiting CCCD\r\n");
-        //   BLE_RecAt(result);
-        //   if(time>25)
+        //   printf( "CONNECT...\r\n" );
+        //   System_Delayms ( 1000 );
+        //   // if(time>30)
+        //   if(0)
         //   {
-        //     printf("failed to enable CCCD\r\n");
+        //     printf("failed to connect\r\n");
         //     return -1;
         //   }
         // }
-        // //printf("REC:%s\r\n",result);
-        // printf("CCCD!\r\n\r\n");
+        // printf( "CONNECTED!\r\n\r\n" );
+        
+        
         
         
         // time=0;
-        // while(BLE_BLESPP()!=BLE_SUCCESS)
+        // while(BLE_BLESPPCFG() != BLE_SUCCESS)
         // {
         //   time++;
-        //   printf( "SPP...\r\n" );
-        //   System_Delayms ( 1000 );
+        //   printf( "CONFIG...\r\n" );
+        //   System_Delayms ( 100 );
         //   if(time>5)
         //   {
         //     printf("failed,please check system\r\n");
         //     return -1;
         //   }
         // }
-        // printf( "SPP!\r\n" );
+        // printf( "CONFIG!\r\n\r\n" );
         
-        // System_Delayms(2000);
+        // BLE_buffer_Clear();
+        // printf("waiting CCCD\r\n");
+        // char result[100]=" ";
+        // int num;
+        // int flag1=0,flag2=0;
+        // for(int i=0;i<2;i++)
+        // {
+        //   time=0;
+        //   while(1)
+        //   {
+        //     BLE_RecAt(result,&num);
+        //     if(flag1==0 && strstr(result,"6") != 0 && strstr(result,"ITE") != 0)
+        //     {
+        //       printf("success6  ...\r\n");
+        //       flag1=1;
+        //       break;
+        //     }
+        //     else if(flag2==0 && strstr(result,"7") != 0 && strstr(result,"ITE") != 0)
+        //     {
+        //       printf("success7  ...\r\n");
+        //       flag2=1;
+        //       break;
+        //     }
+        //     else if(time>20)
+        //     {
+        //       printf("failed to enable CCCD\r\n");
+        //       return -1;
+        //     }
+        //     time++;
+        //     printf("waiting CCCD\r\n");
+        //     System_Delayms(100);
+        //   }
+        // }
+        // printf("CCCD!\r\n\r\n");
+
+
         return 0;
 	//System_Reset();
 }
