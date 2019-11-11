@@ -1,7 +1,7 @@
 /*
  * wifi_config.c
  *
- *  Created on: 2017Äê6ÔÂ29ÈÕ
+ *  Created on: 2017ï¿½ï¿½6ï¿½ï¿½29ï¿½ï¿½
  *      Author: lmj
  */
 
@@ -16,7 +16,7 @@
 #include "string.h"
 #include <stdio.h>
 #include "debug.h"
-#include "console.h"
+#include "Console.h"
 
 #define WIFI_CONFIGED_FLAG             0xA2
 
@@ -28,19 +28,19 @@
 
 #define WIFI_AP_MODE                   "AT+CWMODE=2"
 
-//WIFIÖØÆôATÖ¸Áî
+//WIFIï¿½ï¿½ï¿½ï¿½ATÖ¸ï¿½ï¿½
 #define WIFI_RST                       "AT+RST"
 
-//ÉèÖÃSSIDºÍÃÜÂë
+//ï¿½ï¿½ï¿½ï¿½SSIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define WIFI_SSID_PASSWORD             "AT+CWSAP=\"%s\",\"%s\",1,3"
 
-//¿ªÆôAP¼àÌý
+//ï¿½ï¿½ï¿½ï¿½APï¿½ï¿½ï¿½ï¿½
 #define WIFI_OPEN_LISTENNING           "AT+CIPMUX=1"
 
-//¿ªÆôTCP¶Ë¿Ú£¬µÈ´ýÁ¬½Ó
+//ï¿½ï¿½ï¿½ï¿½TCPï¿½Ë¿Ú£ï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½
 #define WIFI_OPEN_TCP_PORT             "AT+CIPSERVER=1,8080"
 
-//²éÑ¯µ±Ç°APÁ¬½Ó¸öÊý
+//ï¿½ï¿½Ñ¯ï¿½ï¿½Ç°APï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½
 
 #define WIFI_OPEN_CONNECON_COUNT      "AT+CIPSTATUS"
 #define WIFI_OPEN_CONNECON_COUNT_LEN  12
@@ -161,7 +161,7 @@ int WIFI_InitCmd()
 int WIFI_Server_Start()
 {
 
-    //¹Ø±Õ»ØÏÔ
+    //ï¿½Ø±Õ»ï¿½ï¿½ï¿½
     WIFI_Write("ATE0",Utility_Strlen("ATE0"));
     System_Delayms(WIFI_DELAY_TIMEMS);
     
@@ -183,15 +183,15 @@ int WIFI_ParseData(char* _data,int len,int* startIndex)
 
     if(0 == Utility_Strncmp(_data, "+IPD", 4))
     {
-        //WIFIÄ£¿éÊÕµ½µÄÕý³£Í¨Ñ¶Êý¾ÝÓÐ¹Ì¶¨Ç°×º£º+IPD,0,2:    0±íÊ¾Éè±¸±êÊ¶£¬2±êÊ¶ÊÕµ½Êý¾Ý³¤¶È
-        *startIndex = indexOfColon(_data,len)+1;//È¥³ý°üÍ·²¿·Ö
+        //WIFIÄ£ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨Ñ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹Ì¶ï¿½Ç°×ºï¿½ï¿½+IPD,0,2:    0ï¿½ï¿½Ê¾ï¿½è±¸ï¿½ï¿½Ê¶ï¿½ï¿½2ï¿½ï¿½Ê¶ï¿½Õµï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
+        *startIndex = indexOfColon(_data,len)+1;//È¥ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½
         
         return 0; 
     }
 
     if(NULL != strstr(_data,"CONNECT"))
     {
-        connectIndex = strtok(_data,",");//µÚÒ»´Îµ÷ÓÃstrtok
+        connectIndex = strtok(_data,",");//ï¿½ï¿½Ò»ï¿½Îµï¿½ï¿½ï¿½strtok
         if (connectIndex != NULL)
         {
             g_wifi_connetflag = 1;
@@ -207,13 +207,13 @@ int WIFI_ParseData(char* _data,int len,int* startIndex)
     
     if(NULL != strstr(_data,"CLOSED"))
     {
-        connectIndex = strtok(_data,",");//µÚÒ»´Îµ÷ÓÃstrtok
+        connectIndex = strtok(_data,",");//ï¿½ï¿½Ò»ï¿½Îµï¿½ï¿½ï¿½strtok
         if (connectIndex != NULL)
         {
             wifiindex = atoi(connectIndex);
             if (wifiindex == g_wifi_index)
             {
-               g_wifi_connetflag = 0;//¶Ï¿ªÁËwifiÁ¬½Ó
+               g_wifi_connetflag = 0;//ï¿½Ï¿ï¿½ï¿½ï¿½wifiï¿½ï¿½ï¿½ï¿½
 
             }
             
@@ -223,7 +223,7 @@ int WIFI_ParseData(char* _data,int len,int* startIndex)
 
     if(NULL != strstr(_data,"link is not valid"))
     {
-        g_wifi_connetflag = 0;//¶Ï¿ªÁËwifiÁ¬½Ó
+        g_wifi_connetflag = 0;//ï¿½Ï¿ï¿½ï¿½ï¿½wifiï¿½ï¿½ï¿½ï¿½
     }
 
     return -1;  
@@ -258,17 +258,17 @@ int WIFI_WaitSendResult()
         System_Delayms(WIFI_DELAY_TIMEMS);
     }
     
-    return FALSE; //ÎÞÃüÁîÒ²·µ»Ø0
+    return FALSE; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½0
     
 }
 
 
 void WIFI_Open()
 {
-	//´Ë´¦FlagÊÇ¹©WIFIÄ£¿é×Ô¼ºµ÷ÓÃ£¬ÓÃÓÚÅÐ¶ÏÖ®Ç°ÊÇ·ñÅäÖÃ¹ýWIFI£¬Èç¹ûÅäÖÃ¹ý£¬¾Í²»ÅäÖÃÁË
+	//ï¿½Ë´ï¿½Flagï¿½Ç¹ï¿½WIFIÄ£ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ö®Ç°ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½WIFIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     char wifiFlag;
 
-    //wifi EN½Å¸ßµçÆ½
+    //wifi ENï¿½Å¸ßµï¿½Æ½
     P4DIR |= BIT1;
     P4OUT |= BIT1;
 
@@ -282,7 +282,7 @@ void WIFI_Open()
       WIFI_InitCmd();
       TraceMsg("set wifi config end",1);
 
-      //´æ´¢WiFIÅäÖÃ±êÊ¶
+      //ï¿½æ´¢WiFIï¿½ï¿½ï¿½Ã±ï¿½Ê¶
       wifiFlag = WIFI_CONFIGED_FLAG;
       Store_SetWIFIConfigFlag(&wifiFlag);
     
@@ -294,9 +294,9 @@ void WIFI_Open()
 
     WIFI_ClearBuffer();
     
-    //¸æËßÆäËüÄ£¿éWifiÒÑ¾­³É¹¦Æô¶¯
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½Wifiï¿½Ñ¾ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½
     WIFI_Inited_Flag = 1;
-    trace_open = 0;//wifi²»ÓÃtrace£¬±ÜÃâlog¹ý¶à
+    trace_open = 0;//wifiï¿½ï¿½ï¿½ï¿½traceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½logï¿½ï¿½ï¿½ï¿½
 
 }
 
@@ -308,7 +308,7 @@ int WIFI_SendData(char* _sendData, int dataLength)
     
     sprintf(datacmd,"AT+CIPSEND=%d,%d",g_wifi_index,dataLength);
 
-    WIFI_ClearBuffer();//·¢ËÍÊý¾ÝÖ®Ç°£¬Çå¿Õ»º´æ£¬ÒÔÃâÓ°ÏìºóÃæ½ÓÊÕµ½"OK"
+    WIFI_ClearBuffer();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½"OK"
     
     WIFI_Write(datacmd,Utility_Strlen(datacmd));
 
@@ -318,7 +318,7 @@ int WIFI_SendData(char* _sendData, int dataLength)
         if(TRUE == _ret)
         {
             WIFI_Write(_sendData, dataLength);
-            System_Delayms(WIFI_DELAY_TIMEMS);//ÑÓÊ±100ms£¬µÈ´ý·¢ËÍÍê³É
+            System_Delayms(WIFI_DELAY_TIMEMS);//ï¿½ï¿½Ê±100msï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             WIFI_ClearBuffer();
             return TRUE;
         }
@@ -339,7 +339,7 @@ int WIFI_GetCIPStatus()
 }
 
 
-//×¢Òâ£¬Ô­Ê¼µÄµ×²ãµÄUART_Receiveº¯ÊýÃ¿´Î×î¶àÖ»ÄÜ½ÓÊÕ130¸ö×Ö·û£¬ÐÞ¸Äºó£¬¿ÉÒÔ½ÓÊÕ400×Ö½Ú
+//×¢ï¿½â£¬Ô­Ê¼ï¿½Äµ×²ï¿½ï¿½UART_Receiveï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½Ü½ï¿½ï¿½ï¿½130ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Þ¸Äºó£¬¿ï¿½ï¿½Ô½ï¿½ï¿½ï¿½400ï¿½Ö½ï¿½
 int WIFI_ReceiveDataProcess()
 {
     int  _dataLen=0;
@@ -349,7 +349,7 @@ int WIFI_ReceiveDataProcess()
     char* pdata = _data;
 
     while(WIFI_RecvLineTry(pdata,UART3_MAXBUFFLEN,&_dataLen)==0)
-    {//»º³åÇøÓÐÊý¾Ý
+    {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         TraceMsg("data:",1);
         TraceMsg(pdata,1);
 
@@ -373,7 +373,7 @@ int WIFI_ReceiveDataProcess()
                 Console_WriteStringln("config success!!");
                 return 0;
             }
-            else  //wifi·¢ËÍÅäÖÃÊ§°ÜÏûÏ¢
+            else  //wifiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ï¿½Ï¢
             {
                 Console_WriteStringln("config error!!");
                 return -1;
@@ -388,7 +388,7 @@ void WIFI_Close()
 { 
     //UART3_Close();
     
-    //wifi EN½ÅµÍµçÆ½
+    //wifi ENï¿½ÅµÍµï¿½Æ½
     P4DIR |= BIT1;
     P4OUT &= ~BIT1;
 //    System_Delayms(1000);
@@ -397,21 +397,21 @@ void WIFI_Close()
 
 }
 
-void WIFI_ClearBuffer() //Çå³ýwifi»º´æ
+void WIFI_ClearBuffer() //ï¿½ï¿½ï¿½wifiï¿½ï¿½ï¿½ï¿½
 {
     UART3_ClearBuffer();
 }
 
 int WIFI_ReceiveConfigDataProcess(char * dest, int recvLength)
 {
-    //±¨ÎÄ³¤¶È
+    //ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
     char stepA[A_STEP_LEN] = {0};
     char stepC[C_STEP_LEN] = {0};
-    int _step=0;//µ±Ç°½øÕ¹µÄ²½Êý
+    int _step=0;//ï¿½ï¿½Ç°ï¿½ï¿½Õ¹ï¿½Ä²ï¿½ï¿½ï¿½
     int mallocsize = 0;
     int _ret  = 0;
 
-   /*±ÜÃâÊäÈëÂé·³£¬ÏÈ²»ÅÐ¶Ï³¤¶È*/
+   /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³ï¿½ï¿½ï¿½È²ï¿½ï¿½Ð¶Ï³ï¿½ï¿½ï¿½*/
    // Utility_Strncpy(lenStr,&dest[3],3);
    //int datagramLen = atoi(lenStr);
     
@@ -433,8 +433,8 @@ int WIFI_ReceiveConfigDataProcess(char * dest, int recvLength)
 
     TraceMsg("handle config data",1);
 
-    //Ö´ÐÐAÅäÖÃ  #A#00000000111,1234,D,0,01,01,11110000,11110000,11110000#
-    //        #A#Éè±¸ºÅ,ÃÜÂë,ÏµÍ³Ä£Ê½,¹¤×÷Ä£Ê½,±£´æÄ£Ê½,±¨¸æÄ£Ê½,Ä£ÄâÍ¨µÀÑ¡Ôñ,Âö³åÍ¨µÀÑ¡Ôñ,IO¿ÚÍ¨µÀÑ¡Ôñ#
+    //Ö´ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½  #A#00000000111,1234,D,0,01,01,11110000,11110000,11110000#
+    //        #A#ï¿½è±¸ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½,ÏµÍ³Ä£Ê½,ï¿½ï¿½ï¿½ï¿½Ä£Ê½,ï¿½ï¿½ï¿½ï¿½Ä£Ê½,ï¿½ï¿½ï¿½ï¿½Ä£Ê½,Ä£ï¿½ï¿½Í¨ï¿½ï¿½Ñ¡ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½Ñ¡ï¿½ï¿½,IOï¿½ï¿½Í¨ï¿½ï¿½Ñ¡ï¿½ï¿½#
     Utility_Strncpy(stepA, &dest[3], A_STEP_LEN);
 
     _ret = Main_ProcInitConfig(stepA,A_STEP_LEN,&_step);
@@ -444,14 +444,14 @@ int WIFI_ReceiveConfigDataProcess(char * dest, int recvLength)
         return -1;
     }
     
-    //char hydrologyPara[datagramLen-A_STEP_LEN-C_STEP_LEN]={0};//Õâ¾ä±àÒëÊ±ºò£¬¿ÉÄÜ»áÓÐÎÊÌâ£¬CµÄÊý×é´óÐ¡±ØÐëÊ¹ÓÃ³¨ÁÁ£¬²»ÄÜÊ¹ÓÃ±í´ïÊ½
+    //char hydrologyPara[datagramLen-A_STEP_LEN-C_STEP_LEN]={0};//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ò£¬¿ï¿½ï¿½Ü»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã±ï¿½ï¿½ï¿½Ê½
     // #B#001,32,4B,1141956,303434,3,0060501111,0060502222,0060503333,27,28,29,9,3,9,3,9,3#
-    // ÖÐÐÄÕ¾µØÖ·,¹¦ÄÜÂë,Ò£²âÕ¾·ÖÀàÂë,Ò£²âÕ¾¾­¶È(3Î»¶ÈÊý,2Î»·Ö,2Î»Ãë, BCDÂë),Ò£²âÕ¾Î³¶È(2Î»¶ÈÊý,2Î»·Ö,2Î»Ãë, BCDÂë),Ò£²âÕ¾µØÖ·¸öÊý, Ò£²âÕ¾µØÖ·1(Ç°6Î»BCDÂë,ºó4Î»HexÂë),Ò£²âÕ¾µØÖ·2,Ò£²âÕ¾µØÖ·3,Í¨µÀ1±àÂëÒªËØ, Í¨µÀ2±àÂëÒªËØ,Í¨µÀ3±àÂëÒªËØ,ÒªËØ1Êý¾ÝÎ»Êý,ÒªËØ1Ð¡ÊýÎ»Êý,ÒªËØ2Êý¾ÝÎ»Êý,ÒªËØ2Ð¡ÊýÎ»Êý,ÒªËØ3Êý¾ÝÎ»Êý,ÒªËØ3Ð¡ÊýÎ»Êý
+    // ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ö·,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½(3Î»ï¿½ï¿½ï¿½ï¿½,2Î»ï¿½ï¿½,2Î»ï¿½ï¿½, BCDï¿½ï¿½),Ò£ï¿½ï¿½Õ¾Î³ï¿½ï¿½(2Î»ï¿½ï¿½ï¿½ï¿½,2Î»ï¿½ï¿½,2Î»ï¿½ï¿½, BCDï¿½ï¿½),Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½, Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·1(Ç°6Î»BCDï¿½ï¿½,ï¿½ï¿½4Î»Hexï¿½ï¿½),Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·2,Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·3,Í¨ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½, Í¨ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½,Í¨ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½,Òªï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½,Òªï¿½ï¿½1Ð¡ï¿½ï¿½Î»ï¿½ï¿½,Òªï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½,Òªï¿½ï¿½2Ð¡ï¿½ï¿½Î»ï¿½ï¿½,Òªï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½,Òªï¿½ï¿½3Ð¡ï¿½ï¿½Î»ï¿½ï¿½
     mallocsize = (recvLength - A_STEP_LEN - C_STEP_LEN - 4) * sizeof(char);
     TraceMsg("malloc size:",1);
     TraceInt4(mallocsize,1);
     
-    char *hydrologyPara = (char *) malloc(mallocsize);//6ÊÇ°üÍ·¼ÓÊý¾Ý³¤¶ÈËùÕ¼×Ö½Ú,1¸ö×Ö½Ú½áÊø·û£¬¼õÈ¥7¸ö×Ö½Ú
+    char *hydrologyPara = (char *) malloc(mallocsize);//6ï¿½Ç°ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½Ö½ï¿½,1ï¿½ï¿½ï¿½Ö½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥7ï¿½ï¿½ï¿½Ö½ï¿½
     if(hydrologyPara == 0)
     {
         Console_WriteErrorStringln("0 memory malloced");
@@ -470,9 +470,9 @@ int WIFI_ReceiveConfigDataProcess(char * dest, int recvLength)
         return -1;
     }
 
-    //Ö´ÐÐCÅäÖÃ  #C#00000000,00000000,250,250,250,250,5555,0000000,0000000,0000000,0000000,170509181130#
-    //        #C#IO¿Ú·½ÏòÉèÖÃIO¿Ú¸ßµÍµçÆ½,Âö³å1ÆµÂÊ, Âö³å2ÆµÂÊ, Âö³å3ÆµÂÊ, Âö³å4ÆµÂÊ,Âö³åÁ¿³Ì(9µÄ¸öÊý,1~7),Âö³å1¶ÈÊý(intÖµ) ,Âö³å2¶ÈÊý,Âö³å3¶ÈÊý,Âö³å4¶ÈÊý,Ê±¼ä´®(Ãë)#
-    Utility_Strncpy(stepC, &dest[recvLength - C_STEP_LEN - 1], C_STEP_LEN);//1ÊÇ°üÎ²
+    //Ö´ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½  #C#00000000,00000000,250,250,250,250,5555,0000000,0000000,0000000,0000000,170509181130#
+    //        #C#IOï¿½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IOï¿½Ú¸ßµÍµï¿½Æ½,ï¿½ï¿½ï¿½ï¿½1Æµï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½2Æµï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½3Æµï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½4Æµï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(9ï¿½Ä¸ï¿½ï¿½ï¿½,1~7),ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½(intÖµ) ,ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½ï¿½ï¿½,Ê±ï¿½ä´®(ï¿½ï¿½)#
+    Utility_Strncpy(stepC, &dest[recvLength - C_STEP_LEN - 1], C_STEP_LEN);//1ï¿½Ç°ï¿½Î²
 
     _ret = Main_ProcInitConfig(stepC,C_STEP_LEN,&_step);
     if (_ret != 0)
@@ -501,7 +501,7 @@ int WIFI_GetHydrologyConfigData(char* src,int datalen,hydrologyConfigPara* pconf
     int addrnum = 0;
     int i = 0;
     int memberlen = 0;
-    char* delim = ",";//·Ö¸ô·û
+    char* delim = ",";//ï¿½Ö¸ï¿½ï¿½ï¿½
     char* psrc = NULL;
     char* pdata = NULL;
     char* para = NULL;
@@ -527,10 +527,10 @@ int WIFI_GetHydrologyConfigData(char* src,int datalen,hydrologyConfigPara* pconf
     psrc = src + 3;
     
 
-    pdata = strtok(psrc,delim);//µÚÒ»´Îµ÷ÓÃstrtok
-    while(pdata != NULL)//µ±·µ»ØÖµ²»ÎªNULLÊ±£¬¼ÌÐøÑ­»·
+    pdata = strtok(psrc,delim);//ï¿½ï¿½Ò»ï¿½Îµï¿½ï¿½ï¿½strtok
+    while(pdata != NULL)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ÎªNULLÊ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
     {
-        TraceMsg(pdata,1);//Êä³ö·Ö½âµÄ×Ö·û´®
+        TraceMsg(pdata,1);//ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 
         para = getParaMemberandLen(pconfigPara,i,&memberlen);
 
@@ -540,7 +540,7 @@ int WIFI_GetHydrologyConfigData(char* src,int datalen,hydrologyConfigPara* pconf
             return FALSE;
         }
 
-        if ( i == ADDR_NUM_OFFSETCONFIG ) //Ò£²âÕ¾µØÖ·¸öÊý
+        if ( i == ADDR_NUM_OFFSETCONFIG ) //Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
         {
             addrnum = atoi(pdata);
             TraceMsg("rtu addr num:",1);
@@ -551,7 +551,7 @@ int WIFI_GetHydrologyConfigData(char* src,int datalen,hydrologyConfigPara* pconf
                 return FALSE;
             }
         }
-        i++; //»ñÈ¡ÏÂÒ»¸ö½á¹¹Ìå³ÉÔ±
+        i++; //ï¿½ï¿½È¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½Ô±
         
         if(Utility_Strlen(pdata) > memberlen)
         {
@@ -563,7 +563,7 @@ int WIFI_GetHydrologyConfigData(char* src,int datalen,hydrologyConfigPara* pconf
 
         Utility_Strncpy(para, pdata, Utility_Strlen(pdata));
         
-        pdata =strtok(NULL,delim);//¼ÌÐøµ÷ÓÃstrtok£¬·Ö½âÊ£ÏÂµÄ×Ö·û´®
+        pdata =strtok(NULL,delim);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½strtokï¿½ï¿½ï¿½Ö½ï¿½Ê£ï¿½Âµï¿½ï¿½Ö·ï¿½ï¿½ï¿½
     }
     
     return TRUE;

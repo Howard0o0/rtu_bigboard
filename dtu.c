@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: dtu.c
-//   ÎÄ¼þ°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ30ÈÕ
-//   ¸üÐÂÄÚÈÝ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: DTUÄ¬ÈÏÇé¿öÏÂ´¦ÓÚÍ¸Ã÷Êý¾Ý×´Ì¬
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: dtu.c
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½ 11ï¿½ï¿½30ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:  
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: DTUÄ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
 //         
 //
 //
@@ -21,7 +21,7 @@
 #include "flash.h"
 #include "rtc.h"
 #include "store.h"
-#include "Sampler.h"
+#include "sampler.h"
 
 
 extern int s_alert_flag[8];
@@ -29,7 +29,7 @@ extern int s_alert_flag[8];
 
 
 
-//ÓÃÓÚ×é³ÉÊý¾Ý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int _DTU_PackOKData(char * _type,char * _dest)
 {
     _dest[0]=_type[0];_dest[1]=_type[1];
@@ -81,20 +81,20 @@ extern int main_time_error;
 
 int  DTU_Open(int _wait)
 {
-    //Ä£¿éÉÏµç
-    //ÎÞ·¨¿ØÖÆ
+    //Ä£ï¿½ï¿½ï¿½Ïµï¿½
+    //ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½
     TraceMsg("DTU Open",1);
     
     
-    P4DIR |= BIT2; // P4.2 Îª BATT,¸ø¸ßµçÆ½
+    P4DIR |= BIT2; // P4.2 Îª BATT,ï¿½ï¿½ï¿½ßµï¿½Æ½
     P4OUT &= ~BIT2;
     P4OUT |= BIT2;
     
     
-    //¿ªÆôrs232  µçÆ½×ª»»µçÂ·
+    //ï¿½ï¿½ï¿½ï¿½rs232  ï¿½ï¿½Æ½×ªï¿½ï¿½ï¿½ï¿½Â·
     P4DIR |= BIT0;
     P4OUT |= BIT0;
-    //Ê¹ÄÜUART0
+    //Ê¹ï¿½ï¿½UART0
     UART0_Open(UART0_DTU_TYPE);
     
     if(_wait)
@@ -112,11 +112,11 @@ int  DTU_CheckOK()
     char * _data =NULL;
     int _dataLen=0; 
     while(_repeats<2)
-    {//·¢ËÍÒ»ÌõÐÄÌø°ü¸øÖÐÐÄ.
-        //·þÎñÆ÷¶Ë ²»Ô¸Òâ ¼ÓÕâÑùµÄÒ»ÌõÊý¾ÝÀàÐÍ.
-        //ÎÒÃÇÕâ±ß¾ÍÒÔÊ±¼ä²éÑ¯À´ÊµÏÖÕâÑùµÄÐ§¹û
+    {//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ô¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¾ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ñ¯ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
         DTU_SendData("$timehead$#timeend#",19);
-        //µÈ10Ãë
+        //ï¿½ï¿½10ï¿½ï¿½
         if(UART0_RecvLineLongWait(__data,UART0_MAXBUFFLEN,&_dataLen)<0)
         {
             //return 0;
@@ -128,14 +128,14 @@ int  DTU_CheckOK()
             while( *_data <= 0x20 || * _data >0x7A)
             {     ++_data; --_dataLen;}
             if(_data[0]=='$' && _data[_dataLen-1]=='#')
-            {//ÖÁÉÙÄÜËµÃ÷ÕâÒ»¸ö´ÓÉÏÎ»»úÀ´µÄÊý¾ÝÁË.
-                //ÎÒÃÇ´¦ÀíÒ»ÏÂ
-                //·µ»Ø0
+            {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+                //ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+                //ï¿½ï¿½ï¿½ï¿½0
                 DTU_ProcRecvData(_data,_dataLen);
                 TraceMsg("Check OK!",1);
                 return 0;
             }
-            //DTU×ÔÉíµÄÊý¾Ý,¾Í²»¹ÜËü.
+            //DTUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½.
             TraceMsg("DTU_Check: a bad data  no $#",1);
             TraceMsg(_data,1);
         }
@@ -149,34 +149,34 @@ void DTU_Close()
     TraceMsg("DTU Close ",1);
     DTU_SendData("+++",3);
     DTU_SendData("AT^SMSO",7);
-    P4DIR |= BIT2; // P4.2 Îª BATT,¸ø¸ßµçÆ½
+    P4DIR |= BIT2; // P4.2 Îª BATT,ï¿½ï¿½ï¿½ßµï¿½Æ½
     P4OUT &= ~BIT2;
     System_Delayms(2000);
-    //¹Ø±Õ max3222
+    //ï¿½Ø±ï¿½ max3222
     P4DIR |= BIT0; P4OUT |= BIT0;
     UART0_Close();
     return ;
 }
  
 //
-//  $datahead$[Êý¾ÝÄÚÈÝ]#dataend#
+//  $datahead$[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]#dataend#
 //
  
 //
-//   ÒªÖØÐÂÐÞ¸Ä. ·¢ËÍµÄËùÓÐÊý¾ÝÒªÒ»´ÎÐÔ·¢ËÍ.
+//   Òªï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½. ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÒ»ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½.
 //
 int DTU_Report_Process()
 {
     TraceMsg("DTU Report .",1);
-    //¼ì²éÊý¾Ý´æ´¢ÉÏ±êºÍ ÏÂ±ê 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´æ´¢ï¿½Ï±ï¿½ï¿½ ï¿½Â±ï¿½ 
     char _startIdx=0x00;
     char _endIdx=0x00;
     char _send[120]; 
     int  _ret=0;   
-    int  _seek_num=0;//·ÀÖ¹ËÀÑ­»·
+    int  _seek_num=0;//ï¿½ï¿½Ö¹ï¿½ï¿½Ñ­ï¿½ï¿½
     
     if(RTC_ReadStartIdx(&_startIdx)<0 || RTC_ReadEndIdx(&_endIdx)<0 )
-    {//Èç¹û¶Á³öÊý¾ÝË÷Òý±ê¼ÇÊ§°Ü
+    {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
         TraceMsg("read idx error ,reGenerate .",1);
         
         if(RTC_RetrieveIndex()<0)
@@ -189,10 +189,10 @@ int DTU_Report_Process()
         TraceInt4(_startIdx,1);
         TraceMsg("EndIdx:",0);
         TraceInt4(_endIdx,1);
-        RTC_ReadStartIdx(&_startIdx);//ÖØÐÂ¶Á³ö
-        RTC_ReadEndIdx(&_endIdx);//ÖØÐÂ¶Á³ö
+        RTC_ReadStartIdx(&_startIdx);//ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ï¿½
+        RTC_ReadEndIdx(&_endIdx);//ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ï¿½
     }
-    //ÏÂ±êÕýÈ·ÐÔ
+    //ï¿½Â±ï¿½ï¿½ï¿½È·ï¿½ï¿½
     if( _endIdx<DATA_MIN_IDX || _endIdx >DATA_MAX_IDX ||
        _startIdx<DATA_MIN_IDX || _startIdx >DATA_MAX_IDX  )
     {
@@ -204,7 +204,7 @@ int DTU_Report_Process()
     TraceMsg(" ; endIdx=",0);
     TraceInt4(_endIdx,1);
     
-    //Í·²¿
+    //Í·ï¿½ï¿½
     Utility_Strncpy(_send,"$datahead$$start$$",18);
     
     if(Store_ReadDeviceNO(&(_send[18]))<0)
@@ -216,49 +216,49 @@ int DTU_Report_Process()
     {
         TraceMsg("read data in :",0);
         TraceInt4(_startIdx,1);
-        if(_seek_num>DATA_ITEM_LEN)//Ñ°ÕÒµÄÊý¾ÝÌõÊýÒÑ¾­³¬¹ý×î´óÖµ¾ÍÍË³ö
+        if(_seek_num>DATA_ITEM_LEN)//Ñ°ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Ë³ï¿½
             break;
-        //Êý¾Ý
+        //ï¿½ï¿½ï¿½ï¿½
         _ret = Store_ReadDataItem(_startIdx,&_send[30],0);
         if(_ret<0)
         {
             TraceMsg("can't read data ! very bad .",1);
-            return -1; //ÎÞ·¨¶ÁÈ¡Êý¾Ý ¾ÍÖ±½ÓÍËÁË.
+            return -1; //ï¿½Þ·ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         }
         if(_ret==1)
-        {//Õâ¸öÊÇÒ»¸öÒÑ¾­·¢ËÍ¹ýµÄÊý¾Ý, 
+        {//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, 
             TraceMsg("It's sended data",1);
             if(_startIdx == _endIdx)
-            {//¼ì²éÊÇ·ñµ½ÁË  _endIdx, Èç¹ûÊÇ¾Í²»¼ÌÐøÑ­»·ÁË. 
+            {//ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½  _endIdx, ï¿½ï¿½ï¿½ï¿½Ç¾Í²ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½. 
                 break;
             } 
-            //¼ÌÐøÏÂÒ»¸öÎ»ÖÃ
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½
             if(_startIdx >= DATA_MAX_IDX)  _startIdx=DATA_MIN_IDX;
-            else   ++ _startIdx;//ÏÂÒ»Êý¾Ý
+            else   ++ _startIdx;//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
             
             ++_seek_num;
             continue;
         }
-        //ÊÇÕý³£µÄ·¢ËÍÊý¾Ý,¾ÍÔö¼Ó_idx
-        //Ôö¼ÓÏÂÒ»´ÎµÄ _startIdx    
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_idx
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Îµï¿½ _startIdx    
         
-        //²¢ÉèÖÃ¸ÃÊý¾ÝÒÑ·¢ËÍ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ·ï¿½ï¿½ï¿½
         Store_MarkDataItemSended(_startIdx);
         
         if(_startIdx>=DATA_MAX_IDX) _startIdx=DATA_MIN_IDX;
-        else   ++ _startIdx;//ÏÂÒ»Êý¾Ý
+        else   ++ _startIdx;//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
         
         ++_seek_num;
         
-        _ret+=30;//¿ªÊ¼ÌîÐ´Î²²¿
-        //·¢ËÍÊý¾Ý##end##dataend#
+        _ret+=30;//ï¿½ï¿½Ê¼ï¿½ï¿½Ð´Î²ï¿½ï¿½
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½##end##dataend#
         _send[_ret++]='#';_send[_ret++]='#';_send[_ret++]='e';_send[_ret++]='n';
         _send[_ret++]='d';_send[_ret++]='#';
         _send[_ret++]='#';_send[_ret++]='d';_send[_ret++]='a';_send[_ret++]='t';
         _send[_ret++]='a';_send[_ret++]='e';_send[_ret++]='n';_send[_ret++]='d';
         _send[_ret++]='#';
         DTU_SendData(_send,_ret);
-        //·¢ËÍÍêºó,Òª¸üÐÂ_startIdx. 
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Òªï¿½ï¿½ï¿½ï¿½_startIdx. 
         RTC_SetStartIdx(_startIdx);
     }
     TraceMsg("Report done.Waiting for config data",1);
@@ -284,55 +284,55 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
     TraceMsg("DTU Got Data:",1);
     TraceStr(_data,_dataLen,1);   
     
-    if(_data[0]!='$' || _data[_dataLen-1]!='#')//²»ÒÔ$¿ªÍ·#½áÎ²¾ÍÖ±½ÓºöÂÔ
-    {//·ÇÉÏÎ»»ú·¢À´µÄÊý¾Ý,
+    if(_data[0]!='$' || _data[_dataLen-1]!='#')//ï¿½ï¿½ï¿½ï¿½$ï¿½ï¿½Í·#ï¿½ï¿½Î²ï¿½ï¿½Ö±ï¿½Óºï¿½ï¿½ï¿½
+    {//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,
         //
         TraceMsg("$# bad , discard it.",1);
         return 0;
     }
     
-    //·þÎñÆ÷->µ¥Æ¬»ú£º$sethead$[ÓÃ»§ÃûµÄ³¤¶È][ÓÃ»§Ãû][²âÁ¿µã±àºÅ]...#setend#[»Ø³µ·û][»»ÐÐ·û]
-    //·þÎñÆ÷->µ¥Æ¬»ú£º$gainhead$[ÓÃ»§ÃûµÄ³¤¶È][ÓÃ»§Ãû][²âÁ¿µã±àºÅ]#gainend#[»Ø³µ·û][»»ÐÐ·û]
-    //·þÎñÆ÷->µ¥Æ¬»ú£º$timehead$[Ê±¼ä]#timeend#[»Ø³µ·û][»»ÐÐ·û]
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½->ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½$sethead$[ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½][ï¿½Ã»ï¿½ï¿½ï¿½][ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]...#setend#[ï¿½Ø³ï¿½ï¿½ï¿½][ï¿½ï¿½ï¿½Ð·ï¿½]
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½->ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½$gainhead$[ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½][ï¿½Ã»ï¿½ï¿½ï¿½][ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]#gainend#[ï¿½Ø³ï¿½ï¿½ï¿½][ï¿½ï¿½ï¿½Ð·ï¿½]
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½->ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½$timehead$[Ê±ï¿½ï¿½]#timeend#[ï¿½Ø³ï¿½ï¿½ï¿½][ï¿½ï¿½ï¿½Ð·ï¿½]
     
-    char _send[150];   //·¢ËÍ´®
-    int _send_idx=0;   //·¢ËÍ´®³¤¶È
-    char _buffer[12];  //ÁÙÊ±»º³å
-    char _nameLen;     //ÓÃ»§Ãû³¤¶È 
+    char _send[150];   //ï¿½ï¿½ï¿½Í´ï¿½
+    int _send_idx=0;   //ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½ï¿½
+    char _buffer[12];  //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+    char _nameLen;     //ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
     
-    int _idx=0;        //½ÓÊÕ´®µÄÏÂ±ê   
-    int _ret=0;        //¼ÇÂ¼·µ»ØÖµ
-    int _tempInt=0;    //ÁÙÊ±int
-    char _tempChar1=0x00;   //ÁÙÊ±char1
-    char _tempChar2=0x00;   //ÁÙÊ±char2
-    char _tempChar3=0x00;   //ÁÙÊ±char3
-    int _tempIdx1=0;        //ÁÙÊ±Ë÷Òý1 
-    char * _set=NULL;  //½ÓÊÕ´®µÄÄÚÈÝ²¿·ÖÖ¸Õë
+    int _idx=0;        //ï¿½ï¿½ï¿½Õ´ï¿½ï¿½ï¿½ï¿½Â±ï¿½   
+    int _ret=0;        //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Öµ
+    int _tempInt=0;    //ï¿½ï¿½Ê±int
+    char _tempChar1=0x00;   //ï¿½ï¿½Ê±char1
+    char _tempChar2=0x00;   //ï¿½ï¿½Ê±char2
+    char _tempChar3=0x00;   //ï¿½ï¿½Ê±char3
+    int _tempIdx1=0;        //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½1 
+    char * _set=NULL;  //ï¿½ï¿½ï¿½Õ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
     
     if(_data[1]=='s')
     {
         TraceMsg("Sethead Data:",1);
-        _idx=9;//Ìø¹ý°üÍ·
+        _idx=9;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·
         _nameLen= _data[_idx++] ;
         _idx += _nameLen; 
         
         if(Utility_Strncmp("00000000000",&_data[_idx],11))
-        {//Èç¹û²»ÊÇÈ«0,¾ÍÅÐ¶ÏÉè±¸ºÅÊÇ·ñÒ»ÖÂ
+        {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«0,ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½è±¸ï¿½ï¿½ï¿½Ç·ï¿½Ò»ï¿½ï¿½
             Store_ReadDeviceNO(_buffer);
             if(Utility_Strncmp(_buffer,&_data[_idx],11))
-            {//²âÁ¿µã±àºÅ²»Ò»Ñù.
+            {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½Ò»ï¿½ï¿½.
                 TraceMsg("No this device's data ,discard. ",1);
                 return -2;
             }
         }
-        _idx += 11;//Ìø¹ýÉè±¸±àºÅ 
+        _idx += 11;//ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ 
         
-        //¿ªÊ¼¸´ÖÆ°üÍ·²¿·Ö,Ö±½Ó¸´ÖÆ
+        //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Æ°ï¿½Í·ï¿½ï¿½ï¿½ï¿½,Ö±ï¿½Ó¸ï¿½ï¿½ï¿½
         Utility_Strncpy(_send,_data,21+ _nameLen);
         _send_idx = 21 + _nameLen ;
         
         //
-        // ¿ªÊ¼½âÎöÉèÖÃÃüÁî.
+        // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         //  0         1 
         //  01234567890123456789
         //  BS*00011100011,00,00
@@ -347,18 +347,18 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
         //   
         //  RP*PD CS PR PM PV WM BS DL PL
         // 
-        //  ½ø¶È:   RPÎ´ÊµÏÖ  
+        //  ï¿½ï¿½ï¿½ï¿½:   RPÎ´Êµï¿½ï¿½  
         
-        //a.BS*OK(±íÊ¾¡°²ÎÊýÉèÖÃ³É¹¦¡±)
-        //b.BS*BAD(±íÊ¾¡°²ÎÊý´íÎó¡±)
-        //c.BS*ERROR(±íÊ¾¡°¸ñÊ½´íÎó¡±)
-        //d.BS*FAIL(±íÊ¾¡°²ÎÊýÉèÖÃÊ§°Ü¡±)
-        //e.UN*ERROR(±íÊ¾¡°Êý¾ÝÔÚ´«Êä¹ý³ÌÖÐÊÜµ½¸ÉÈÅ¡±)
+        //a.BS*OK(ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã³É¹ï¿½ï¿½ï¿½)
+        //b.BS*BAD(ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+        //c.BS*ERROR(ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½)
+        //d.BS*FAIL(ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü¡ï¿½)
+        //e.UN*ERROR(ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½ï¿½Å¡ï¿½)
          
         _set=&_data[_idx];
         _ret=0;
-        // _idxÎªÉèÖÃ²ÎÊýµÄÆðÊ¼ÏÂ±ê 
-        // _send_idx ÎªÏÂÒ»¸öÌîÐ´µÄ»Ø¸´µÄÎ»ÖÃ
+        // _idxÎªï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½Â±ï¿½ 
+        // _send_idx Îªï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ä»Ø¸ï¿½ï¿½ï¿½Î»ï¿½ï¿½
          if(_set[0]=='B'&&_set[1]=='S')
         {
             TraceMsg("BS data ",1);
@@ -386,7 +386,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     return 0;
                 }
                 _ret +=Store_SetSaveTimeMode(&(_set[15]));
-                //Í¬Ê±ÐÞÕýÏÂÒ»´Î±£´æÊ±¼ä
+                //Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
                 Utility_CalculateNextSaveTimeBytes(_buffer);
                 RTC_SetSaveTimeBytes(SAVETIME_ADDR,_buffer);
             }
@@ -401,7 +401,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     return 0;
                 }
                 _ret += Store_SetReportTimeMode(&(_set[18]));
-                //Í¬Ê±ÐÞÕýÏÂÒ»´Î±¨¸æÊ±¼ä
+                //Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
                 Utility_CalculateNextReportTimeBytes(_buffer);
                 RTC_SetReportTimeBytes(REPORTTIME_ADDR,_buffer);
             }
@@ -434,7 +434,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             } 
             
             TraceMsg("Data limit Setting .",1); 
-            //ÐèÒª¼ì²émaxÊÇ·ñ´óÓÚmin
+            //ï¿½ï¿½Òªï¿½ï¿½ï¿½maxï¿½Ç·ï¿½ï¿½ï¿½ï¿½min
             int _min=0; int _max=0; int _no=_set[3]-'A'+1;
             int _ret=0;
             if(_set[5]!='9' ||_set[6]!='9' ||_set[7]!='9' ||_set[8]!='9')
@@ -445,9 +445,9 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 _min += (_set[8]-'0');
             }
             else
-            {//Èç¹û²»¶ÔÕâ¸öÖµÉèÖÃ,ÎÒÃÇ¾ÍÈ¡±£´æÖµ
+            {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç¾ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµ
                 if(Store_ReadDataMinInt(_no,&_min)<0) 
-                    _min=0;//¶Á²»³öÀ´¾ÍËãÁË.²»¼ì²émax>minÁË
+                    _min=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.ï¿½ï¿½ï¿½ï¿½ï¿½max>minï¿½ï¿½
             }
         
             if(_set[10]!='9' ||_set[11]!='9' ||_set[12]!='9' ||_set[13]!='9')
@@ -458,27 +458,27 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 _max += (_set[13]-'0');
              }
              else
-             {//Èç¹û²»¶ÔÕâ¸öÖµÉèÖÃ,ÎÒÃÇ¾ÍÈ¡±£´æÖµ
+             {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç¾ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµ
                  if(Store_ReadDataMaxInt(_no,&_max)<0) 
-                     _max=4096;//¶Á²»³öÀ´¾ÍËãÁË.²»¼ì²émax>minÁË
+                     _max=4096;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.ï¿½ï¿½ï¿½ï¿½ï¿½max>minï¿½ï¿½
              }
              if(_min > _max)
              {
-                 //·µ»Ø´íÎóÐÅÏ¢.    
-                 //×é×°Íê³É,·¢ËÍ
+                 //ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢.    
+                 //ï¿½ï¿½×°ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½
                  _ret=_DTU_PackBadData("DL",&_send[_send_idx]);
                  _send_idx +=_ret;
                  DTU_SendData(_send,_send_idx);
                  return 0;
              }
-             s_alert_flag[_no-1]=0;//±¨¾¯±êÊ¶ÒªÈ¥µô
+             s_alert_flag[_no-1]=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¶ÒªÈ¥ï¿½ï¿½
             
-             //Ð´»Ørom
+             //Ð´ï¿½ï¿½rom
              _ret += Store_SetDataMaxInt(_no,_max);
              _ret += Store_SetDataMinInt(_no,_min);
              if(_ret<0)
              {
-                 //·µ»Ø´íÎóÐÅÏ¢.    
+                 //ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢.    
                  _ret=_DTU_PackFailData("DL",&_send[_send_idx]);
                  _send_idx +=_ret;
                  DTU_SendData(_send,_send_idx);
@@ -486,7 +486,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
              }
              else
              {
-                 //·µ»Ø³É¹¦ÐÅÏ¢.    
+                 //ï¿½ï¿½ï¿½Ø³É¹ï¿½ï¿½ï¿½Ï¢.    
                  _ret=_DTU_PackOKData("DL",&_send[_send_idx]);
                  _send_idx +=_ret;
                  DTU_SendData(_send,_send_idx);
@@ -496,7 +496,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
         }
         //012345
         //PL*M,0
-        // PL*M,0     ³É¹¦·µ»Ø PL*OK   ´íÎó·µ»Ø PL*FAIL
+        // PL*M,0     ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ PL*OK   ï¿½ï¿½ï¿½ó·µ»ï¿½ PL*FAIL
         if(_set[0]=='P' && _set[1]=='L' )
         {
             if(_set[2]!='*'||_set[3]<'M' || _set[3]>'T'||_set[4]!=','|| ( _set[5]!='0'&&_set[5]!='1') )
@@ -510,7 +510,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             int _no = _set[3]-'M'+1;
             int _level = _set[5]-'0';
             int _ret = Sampler_IO_Level(_no,_level);
-            //¸´ÖÆ°üÍ·
+            //ï¿½ï¿½ï¿½Æ°ï¿½Í·
             if(_ret<0)
             {
                 _ret=_DTU_PackFailData("PL",&_send[_send_idx]);
@@ -519,11 +519,11 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 return 0;
             }
             else
-            {   //  ÎÒÃÇÒª·¢2Ìõ, Ò»¸öÊÇOK, Ò»¸öÊÇÐ´Êý¾Ý¿âÊý¾Ý.
-                //  ÎªÁËÈÃ¿Í»§¶ËÄÇ±ß ÄÜÔÚ»ñµÃOKÊ±¾ÍÄÜ»ñµÃµ½Êý¾Ý±ä»¯
-                //  ÎÒÃÇ¾ÍÏÈ·¢Êý¾Ý ÔÙ·¢OK.
+            {   //  ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½2ï¿½ï¿½, Ò»ï¿½ï¿½ï¿½ï¿½OK, Ò»ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½.
+                //  Îªï¿½ï¿½ï¿½Ã¿Í»ï¿½ï¿½ï¿½ï¿½Ç±ï¿½ ï¿½ï¿½ï¿½Ú»ï¿½ï¿½OKÊ±ï¿½ï¿½ï¿½Ü»ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ý±ä»¯
+                //  ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½OK.
                 //
-                // È»ºóÔÙ·¢ÌõÖ»ÓÐÕâ¸ö¶Ë¿ÚÊý¾Ý ÈÃÉÏÎ»»ú¸üÐÂÊý¾Ý¿â
+                // È»ï¿½ï¿½ï¿½Ù·ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½
                 //
                 Utility_Strncpy(_send,"$datahead$$start$$",18);
     
@@ -539,8 +539,8 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 Utility_Strncpy(&_send[43],"##end##dataend#",15);
                 DTU_SendData(_send,58);
                 
-                //·¢ËÍOK
-                //¿ªÊ¼¸´ÖÆ°üÍ·²¿·Ö,Ö±½Ó¸´ÖÆ
+                //ï¿½ï¿½ï¿½ï¿½OK
+                //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Æ°ï¿½Í·ï¿½ï¿½ï¿½ï¿½,Ö±ï¿½Ó¸ï¿½ï¿½ï¿½
                 Utility_Strncpy(_send,_data,21+ _nameLen);
                 _send_idx = 21 + _nameLen ;
                 
@@ -569,11 +569,11 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 _tempChar1>>=1;
                 if(_set[i]=='0')
                 {
-                    _tempChar1 &= ~BIT7;//×î¸ßÎ»Çå0
+                    _tempChar1 &= ~BIT7;//ï¿½ï¿½ï¿½Î»ï¿½ï¿½0
                 }
                 else
                 {
-                    _tempChar1 |= BIT7;//×î¸ßÎ»ÖÃ1
+                    _tempChar1 |= BIT7;//ï¿½ï¿½ï¿½Î»ï¿½ï¿½1
                 }
             }
             _ret = Store_SetIoDirConfig(_tempChar1);
@@ -707,8 +707,8 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             }
             TraceMsg("Pulse rate Setting .",1); 
             _idx=_set[3]-'I'+1;
-            //  _tempChar1 ÎªÊýÖµ
-            //  ÒòÎª¹ý255µÄ»áÒç³ö, ËùÒÔÎÒÃÇÏÈÄÃint À´×°, Ã»³¬¹ýµÄ»°.¾ÍOK.
+            //  _tempChar1 Îªï¿½ï¿½Öµ
+            //  ï¿½ï¿½Îªï¿½ï¿½255ï¿½Ä»ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½int ï¿½ï¿½×°, Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½.ï¿½ï¿½OK.
             _tempInt = (_set[5]-'0')*100;
             _tempInt += (_set[6]-'0')*10;
             _tempInt += (_set[7]-'0');
@@ -729,7 +729,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             }
             else
             {
-                //ÐÞ¸ÄÄÚ´æÖµ
+                //ï¿½Þ¸ï¿½ï¿½Ú´ï¿½Öµ
                 g_pulse_rate[_idx-1] = _tempInt;
                 
                 _ret=_DTU_PackOKData("PR",&_send[_send_idx]);
@@ -768,7 +768,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             }
             else
             {
-                //ÔÙÐÞ¸ÄÄÚ´æÖµ
+                //ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½Ú´ï¿½Öµ
                 Store_ReadPulseRangeBytes(_idx,g_pulse_range[_idx-1]);
                 
                 _ret = _DTU_PackOKData("PM",&_send[_send_idx]);
@@ -834,8 +834,8 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 _send_idx += _ret;
                 DTU_SendData(_send,_send_idx);
                 if( g_work_mode != (_data[9]-'0') )
-                {//Èç¹ûÄ£Ê½²»Ò»Ñù, ÄÇÃ´¾ÍÖØÆô. 
-                    DTU_Close();//¹Ø±ÕDTU
+                {//ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½Ò»ï¿½ï¿½, ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. 
+                    DTU_Close();//ï¿½Ø±ï¿½DTU
                     System_Delayms(1000);
                     System_Reset();
                 }
@@ -853,9 +853,9 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
         if(_set[0]=='R' && _set[1]=='P'&& _set[2]=='*')
         {// RP*PD CS PR PM PV WM BS DL PL
             
-            //ÎÒÃÇÊ¹ÓÃ_send_idx¼ÇÂ¼³¤¶È, ÓÃ_tempIdx1ÓÃÓÚ·¢Éú´íÎóÊ±Éú³É´íÎó´®
+            //ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½_send_idxï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½_tempIdx1ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½É´ï¿½ï¿½ï¿½
             if(_set[3]=='B'&&_set[4]=='S')
-            {//·µ»ØRP*BS*01,01
+            {//ï¿½ï¿½ï¿½ï¿½RP*BS*01,01
                 _ret=0;
                 _tempIdx1=_send_idx;
                 Utility_Strncpy(&_send[_send_idx],"RP*BS*",6);
@@ -876,7 +876,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     return 0;
                 }
                 else
-                {//¼ÌÐøÌîÐ´#setend#
+                {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´#setend#
                     Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                     _send_idx+=8;
                     DTU_SendData(_send,_send_idx);
@@ -886,7 +886,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             if(_set[3]=='D'&&_set[4]=='L')   
             {   //    0         1         2         3         4         5         6         7         8 
                 //    012345678901234567890123456789012345678901234567890123456789012345678901234567890123
-                //·µ»ØRP*DL*0000,4096,0000,4096,0000,4096,0000,4096,0000,4096,0000,4096,0000,4096,0000,4096
+                //ï¿½ï¿½ï¿½ï¿½RP*DL*0000,4096,0000,4096,0000,4096,0000,4096,0000,4096,0000,4096,0000,4096,0000,4096
                 _ret = 0;
                 _tempIdx1 = _send_idx;
                 Utility_Strncpy(&_send[_send_idx],"RP*DL*",6);
@@ -908,8 +908,8 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     return 0;
                 }
                 else
-                {//È¥µô×îºóÒ»¸ö¶àÓàµÄ,ºÅ,¼ÌÐøÌîÐ´#setend#
-                    --_send_idx;//È¥µô,ºÅ
+                {//È¥ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´#setend#
+                    --_send_idx;//È¥ï¿½ï¿½,ï¿½ï¿½
                     Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                     _send_idx+=8;
                     DTU_SendData(_send,_send_idx);
@@ -917,7 +917,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 }
             }
             if(_set[3]=='P'&&_set[4]=='L')
-            {//·µ»ØRP*PL*00000000
+            {//ï¿½ï¿½ï¿½ï¿½RP*PL*00000000
                 _ret = 0;
                 _tempIdx1 = _send_idx;
                 _ret=Store_ReadIoLevelConfig(&_tempChar1);
@@ -928,8 +928,8 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     DTU_SendData(_send,_tempIdx1);
                     return 0;
                 }
-                //¼ÈÈ»¶Á³öÀ´ÁË,¾ÍÔÙÅäÖÃÒ»´Î,¸üÈ·±£ÔËÐÐÕý³£.
-                P5OUT = _tempChar1; //P5ÎªIO¿Ú
+                //ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½,ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+                P5OUT = _tempChar1; //P5ÎªIOï¿½ï¿½
                 Utility_Strncpy(&_send[_send_idx],"RP*PL*",6);
                 _send_idx+=6;
                 for(int i=0;i<8;++i)
@@ -940,14 +940,14 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                         _send[_send_idx ++] = '0';
                     _tempChar1>>=1;
                 }
-                //¼ÌÐøÌîÐ´#setend#
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´#setend#
                 Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                 _send_idx+=8;
                 DTU_SendData(_send,_send_idx);
                 return 0;
             }
             if(_set[3]=='P'&&_set[4]=='D')
-            {//·µ»ØRP*PD*00000000
+            {//ï¿½ï¿½ï¿½ï¿½RP*PD*00000000
                 _ret = 0;
                 _tempIdx1 = _send_idx;
                 _ret=Store_ReadIoDirConfig(&_tempChar1);
@@ -958,8 +958,8 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     DTU_SendData(_send,_tempIdx1);
                     return 0;
                 }
-                //¼ÈÈ»¶Á³öÀ´ÁË,¾ÍÔÙÅäÖÃÒ»´Î,¸üÈ·±£ÔËÐÐÕý³£.
-                P5DIR = _tempChar1; //P5ÎªIO¿Ú
+                //ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½,ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+                P5DIR = _tempChar1; //P5ÎªIOï¿½ï¿½
                 Utility_Strncpy(&_send[_send_idx],"RP*PD*",6);
                 _send_idx+=6;
                 for(int i=0;i<8;++i)
@@ -970,14 +970,14 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                         _send[_send_idx ++]='0';
                     _tempChar1>>=1;
                 }
-                //¼ÌÐøÌîÐ´#setend#
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´#setend#
                 Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                 _send_idx+=8;
                 DTU_SendData(_send,_send_idx);
                 return 0;
             }
             if(_set[3]=='P'&&_set[4]=='V')
-            {//·µ»ØRP*PV*1234567,1234567,1234567,1234567
+            {//ï¿½ï¿½ï¿½ï¿½RP*PV*1234567,1234567,1234567,1234567
                 _ret = 0;
                 _tempIdx1 = _send_idx;
                 Utility_Strncpy(&_send[_send_idx],"RP*PV*",6);
@@ -1004,7 +1004,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     DTU_SendData(_send,_tempIdx1);
                     return 0;
                 }
-                //¼ÌÐøÌîÐ´#sethead#
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´#sethead#
                 Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                 _send_idx+=8;
                 DTU_SendData(_send,_send_idx);
@@ -1012,7 +1012,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             }
             
             if(_set[3]=='C'&&_set[4]=='S')
-            {//·µ»ØRP*CS*00000000,11110000,00000000
+            {//ï¿½ï¿½ï¿½ï¿½RP*CS*00000000,11110000,00000000
                 _ret = 0;
                 _tempIdx1 = _send_idx;
                 _ret+=Store_ReadAnalogSelect(&_tempChar1);
@@ -1040,7 +1040,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                         _send[_send_idx++]='0'; 
                     _tempChar1 >>=1;
                 }
-                _send[_send_idx++]=',';//AÖ®ºóµÄ,ºÅ
+                _send[_send_idx++]=',';//AÖ®ï¿½ï¿½ï¿½,ï¿½ï¿½
                 //P
                 if(_tempChar2 & BIT7)
                     _send[_send_idx++]='1';
@@ -1072,14 +1072,14 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                         _send[_send_idx++]='0';
                     _tempChar3 >>=1;
                 }
-                //¼ÌÐøÌîÐ´#setend
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´#setend
                 Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                 _send_idx+=8;
                 DTU_SendData(_send,_send_idx);
                 return 0; 
             }
             if(_set[3]=='P'&&_set[4]=='R')
-            {//·µ»ØRP*PR*000,100,010,001
+            {//ï¿½ï¿½ï¿½ï¿½RP*PR*000,100,010,001
                 _ret = 0;
                 _tempIdx1 = _send_idx;
                 Utility_Strncpy(&_send[_send_idx],"RP*PR*",6);
@@ -1087,7 +1087,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 for(int i=1;i<=4;++i)
                 {
                     _ret += Store_ReadPulseRate(i,& _tempChar1);
-                    //ÔÙ¶ÁÒ»ÄÚ´æ.
+                    //ï¿½Ù¶ï¿½Ò»ï¿½Ú´ï¿½.
                     Store_ReadPulseRate(i,&(g_pulse_rate[i-1]));
                     
                     _send[_send_idx++]=_tempChar1/100+'0';
@@ -1103,7 +1103,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     DTU_SendData(_send,_tempIdx1);
                     return 0;
                 }
-                //È¥µô¶àÓàµÄ,ºÅ ÌîÐ´#setend#
+                //È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ ï¿½ï¿½Ð´#setend#
                 --_send_idx;
                 Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                 _send_idx+=8;
@@ -1111,7 +1111,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 return 0;
             }
             if(_set[3]=='P'&&_set[4]=='M')
-            {//·µ»ØPM*5,5,5,5
+            {//ï¿½ï¿½ï¿½ï¿½PM*5,5,5,5
                 _ret = 0;
                 _tempIdx1 = _send_idx;
                 Utility_Strncpy(&_send[_send_idx],"RP*PM*",6);
@@ -1129,7 +1129,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     DTU_SendData(_send,_tempIdx1);
                     return 0;
                 }
-                //È¥µô¶àÓàµÄ,ºÅ ÌîÐ´#setend#
+                //È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ ï¿½ï¿½Ð´#setend#
                 --_send_idx;
                 Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                 _send_idx+=8;
@@ -1137,7 +1137,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 return 0;
             } 
             if(_set[3]=='W'&&_set[4]=='M')
-            {//·µ»ØWM*0
+            {//ï¿½ï¿½ï¿½ï¿½WM*0
                 _ret = 0;
                 _tempIdx1 = _send_idx;
                 Utility_Strncpy(&_send[_send_idx],"RP*WM*",6);
@@ -1151,7 +1151,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                     return 0;
                 }
                 _send[_send_idx++]=_tempChar1;
-                //ÌîÐ´#setend#
+                //ï¿½ï¿½Ð´#setend#
                 Utility_Strncpy(&_send[_send_idx],"#setend#",8);
                 _send_idx+=8;
                 DTU_SendData(_send,_send_idx);
@@ -1164,31 +1164,31 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             return 0;
         }
         TraceMsg("Bad Setting Data .",1);
-        //ÆäËûÎÞ¹ØÊý¾Ý ²»¹ÜËü.
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         _ret=_DTU_PackErrorData("UN",&_send[_send_idx]);
         _send_idx +=_ret;
         DTU_SendData(_send,_send_idx); 
         return 0;
     }     
-    //$gainhead$[ÓÃ»§ÃûµÄ³¤¶È][ÓÃ»§Ãû][²âÁ¿µã±àºÅ]#gainend#
+    //$gainhead$[ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½][ï¿½Ã»ï¿½ï¿½ï¿½][ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]#gainend#
     //$gainhead$112300000000111
     if(_data[1]=='g')
     {
         TraceMsg("GainHead Data .",1);
-        _idx=10;//Ìø¹ý°üÍ·
+        _idx=10;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·
         _nameLen= _data[_idx++] ;
         TraceMsg("nameLen :",0);
         TraceInt4(_nameLen,1);
         _idx += _nameLen;
-        //±È½Ïdevice_no
+        //ï¿½È½ï¿½device_no
         Store_ReadDeviceNO(_buffer);
         if(Utility_Strncmp(_buffer,&_data[_idx],11))
-        {//²âÁ¿µã±àºÅ²»Ò»Ñù.
+        {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½Ò»ï¿½ï¿½.
             TraceMsg("No this device's data ,discard. ",1);
             return -2;
         }
-        //Ïò·þÎñÆ÷·¢ËÍ40ÌõÊý¾Ý
-        //Í·²¿
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½40ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //Í·ï¿½ï¿½
         Utility_Strncpy(_send,"$datahead$$start$$",18);
         if(Store_ReadDeviceNO(&(_send[18]))<0)
         {
@@ -1203,43 +1203,43 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             TraceInt4(_startIdx,1);
             _ret = Store_ReadDataItem(_startIdx,&_send[30],1);
             if(_ret<0)
-            {//¶Á²»³öÀ´ ¾Í²»¶ÁÀ².½áÊø.
+            {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½.ï¿½ï¿½ï¿½ï¿½.
                 break;
             }
             /*
             if(_ret==1)
             {
-                //¼ÌÐøÏÂÒ»¸öÎ»ÖÃ
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½
                 if(_startIdx >= DATA_MAX_IDX)  
-                    break; //µ½×îºóÒ»¸öÏÂ±ê¾Í½áÊøÁË.
+                    break; //ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Â±ï¿½Í½ï¿½ï¿½ï¿½ï¿½ï¿½.
                 else   
-                    ++ _startIdx;//ÏÂÒ»Êý¾Ý
+                    ++ _startIdx;//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
                 continue;
             }
             */  
-            //Èç¹ûÊÇÕý³£Êý¾Ý
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             _ret +=30;
             Utility_Strncpy(&_send[_ret],"##end##dataend#",15);
             _ret+=15;
             DTU_SendData(_send,_ret);
             
-            //¼ÌÐøÏÂÒ»¸öÎ»ÖÃ
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½
             if(_startIdx >= DATA_MAX_IDX)  
-                break; //µ½×îºóÒ»¸öÏÂ±ê¾Í½áÊøÁË.
+                break; //ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Â±ï¿½Í½ï¿½ï¿½ï¿½ï¿½ï¿½.
             else   
-                ++ _startIdx;//ÏÂÒ»Êý¾Ý 
+                ++ _startIdx;//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ 
         }
-        // ÒòÎªÊµÊ±Êý¾Ý¿â»áÒòÎªÎÒÃÇ ·¢²¹µ÷Êý¾Ý¶ø ±ä¾É, ÎÒÃÇÔÙ²¹·¢Ò»Ìõ×îÐÂµÄÊý¾Ý,ÈÃÊµÊ±¿âÊý¾Ý×îÐÂ.
+        // ï¿½ï¿½ÎªÊµÊ±ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¶ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ù²ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ÊµÊ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         char _endIdx=0;
         if(RTC_ReadEndIdx(&_endIdx)>=0)
-        {//ÎÞ·¨ÕÒµ½×îÐÂµÄÊý¾Ý? ÄÇ¾Í²»¹ÜÁË
+        {//ï¿½Þ·ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½? ï¿½Ç¾Í²ï¿½ï¿½ï¿½ï¿½ï¿½
             
-            //ÒªÍËÒ»Ë÷Òý²ÅÊÇ
+            //Òªï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if(_endIdx==DATA_MIN_IDX)
                 _endIdx=DATA_MAX_IDX;
             else
                 --_endIdx;
-               //¶ÁÈ¡·¢ËÍ
+               //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
             _ret = Store_ReadDataItem(_endIdx,&_send[30],1);
             if(_ret>=0)
             {
@@ -1249,10 +1249,10 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
                 DTU_SendData(_send,_ret);
             }   
         }
-        //È»ºó·¢ËÍgainhead  OK  gainend 
+        //È»ï¿½ï¿½ï¿½ï¿½gainhead  OK  gainend 
         
         TraceMsg("GainHead Proc Over .",1);
-        //¸´ÖÆ°üÍ·Êý¾Ý//·¢ËÍOKÊý¾Ý
+        //ï¿½ï¿½ï¿½Æ°ï¿½Í·ï¿½ï¿½ï¿½ï¿½//ï¿½ï¿½ï¿½ï¿½OKï¿½ï¿½ï¿½ï¿½
         Utility_Strncpy(_send,_data,22 + _nameLen);      
         _idx=22+_nameLen;
         Utility_Strncpy(&_send[_idx],"OK#gainend#",11);
@@ -1260,10 +1260,10 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
         return 0;
         
     }
-    //·þÎñÆ÷->µ¥Æ¬»ú£º$timehead$[Ê±¼ä]#timeend#[»Ø³µ·û][»»ÐÐ·û]
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½->ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½$timehead$[Ê±ï¿½ï¿½]#timeend#[ï¿½Ø³ï¿½ï¿½ï¿½][ï¿½ï¿½ï¿½Ð·ï¿½]
     //012345678901234567890
     //2009/10/14/10:00:00
-    //¸ÃÖ¸Áî²»»Ø¸´ÈÎºÎ¶«Î÷.
+    //ï¿½ï¿½Ö¸ï¿½î²»ï¿½Ø¸ï¿½ï¿½ÎºÎ¶ï¿½ï¿½ï¿½.
     if(_data[1]=='t'&& !Utility_CheckDigital(_data,10,13)&&_data[14]=='/'&&_data[17]=='/'&&
        _data[20]=='/'&&_data[23]==':'&&_data[26]==':')
     {
@@ -1272,7 +1272,7 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
         {
             TraceMsg("setting time .",1);
             _dtu_request_time=0; 
-            //¼ì²éÊ±¼äÓÐÐ§ÐÔ
+            //ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
             int _temp = (_data[15]-'0')*10+_data[16]-'0';
             if(_temp==0 || _temp>12)
             { TraceMsg("month is bad  .",1);   return 0;}
@@ -1288,16 +1288,16 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
             _temp = (_data[27]-'0')*10+_data[28]-'0';
             if(_temp>59)
             { TraceMsg("second is bad  .",1);   return 0;}
-            //Ê±¼äÓÐÐ§,ÄÇÃ´¾ÍÉèÖÃ
+            //Ê±ï¿½ï¿½ï¿½ï¿½Ð§,ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             RTC_SetTimeStr6_A(&_data[12]);
-            RTC_ReadTimeBytes5(g_rtc_nowTime); //ÖØÐÂ¶Á³öÊ±¼ä
-            //ÖØÐÂÉèÖÃ¼ì²éÊ±¼ä
+            RTC_ReadTimeBytes5(g_rtc_nowTime); //ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½Ê±ï¿½ï¿½
             Utility_CalculateNextCheckTimeBytes(_buffer);
             RTC_SetCheckTimeBytes(CHECKTIME_ADDR,_buffer);
-            //ÖØÐÂÉèÖÃ±£´æÊ±¼ä
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
             Utility_CalculateNextSaveTimeBytes(_buffer);
             RTC_SetSaveTimeBytes(SAVETIME_ADDR,_buffer);
-            //ÖØÐÂÉèÖÃ±¨¸æÊ±¼ä
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
             Utility_CalculateNextReportTimeBytes(_buffer);
             RTC_SetReportTimeBytes(REPORTTIME_ADDR,_buffer);   
             main_time_error =0;
@@ -1306,18 +1306,18 @@ int  DTU_ProcRecvData(char * _data, int _dataLen)
         return 0; 
     }
     TraceMsg("ERROR data .",1);
-    //Ê²Ã´¶¼²»ÊÇ ¾Í²»¹Ü
+    //Ê²Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Í²ï¿½ï¿½ï¿½
     return 0;
 }
 
 //
-//  ½ÓÊÜµ½Êý¾Ý¾Í´«µÝ¸ø´¦Àíº¯Êý.
-//  µÈ´ýÒ»¶¨Ê±¼ä  
+//  ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½ï¿½Ý¾Í´ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+//  ï¿½È´ï¿½Ò»ï¿½ï¿½Ê±ï¿½ï¿½  
 //  1 30s  2 60s 3 90s 4 120s 
 //
 int  DTU_Waiting_Process(int _type)
 {
-    int _waits=100;//30Ãë
+    int _waits=100;//30ï¿½ï¿½
     int _repeats;
     int _dataLen=0;
     char _data[UART0_MAXBUFFLEN];
@@ -1327,21 +1327,21 @@ int  DTU_Waiting_Process(int _type)
         _waits=10;
         break;
       case 2:
-        _waits=20;//1·ÖÖÓ
+        _waits=20;//1ï¿½ï¿½ï¿½ï¿½
         break;
       case 3:
-        _waits=30;//1.5·ÖÖÓ
+        _waits=30;//1.5ï¿½ï¿½ï¿½ï¿½
         break;
       case 4:
-        _waits=40;//2·ÖÖÓ
+        _waits=40;//2ï¿½ï¿½ï¿½ï¿½
         break;
       default:
         _waits=10;//30s
         break;
     }
     while(1)
-    {//Ö»ÒªÒ»Ö±ÓÐÏûÏ¢ ¾Í»áÒ»Ö±´¦Àí,
-        //Ã»ÓÐÏûÏ¢³¬Ê±  ¾Í»áÍË³ö
+    {//Ö»ÒªÒ»Ö±ï¿½ï¿½ï¿½ï¿½Ï¢ ï¿½Í»ï¿½Ò»Ö±ï¿½ï¿½ï¿½ï¿½,
+        //Ã»ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½Ê±  ï¿½Í»ï¿½ï¿½Ë³ï¿½
         _repeats=0;
         while(UART0_RecvLineWait(_data,UART0_MAXBUFFLEN,&_dataLen)<0)
         {
@@ -1364,11 +1364,11 @@ int  DTU_Alert_Process()
     char _send[UART0_MAXBUFFLEN];
     int _ret=0;
     Utility_Strncpy(_send,"$alerthead$",11);
-    //¸´ÖÆÉè±¸ºÅ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½
     Store_ReadDeviceNO(&_send[11]);
     _ret = Sampler_DTU_ReadAlertString(&_send[22]);
     _ret +=22;
-    //ÌîÐ´Î²²¿
+    //ï¿½ï¿½Ð´Î²ï¿½ï¿½
     Utility_Strncpy(&_send[_ret],"#alertend#",10);
     _ret +=10;
     DTU_SendData(_send,_ret);
@@ -1380,6 +1380,6 @@ int  DTU_SendData( char * _data, char _len)
     UART0_Send(_data,_len,0);//
     TraceStr("DTU_Send:",9,0);
     TraceStr(_data,_len,1);
-    System_Delayms(2000);//µÈ´ýÒ»¶¨µÄÑÓÊ±.±ÜÃâÕ³°ü.
+    System_Delayms(2000);//ï¿½È´ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±.ï¿½ï¿½ï¿½ï¿½Õ³ï¿½ï¿½.
     return 0;
 }

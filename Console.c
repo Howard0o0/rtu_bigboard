@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: Console.c
-//   ÎÄ¼þ°æ±¾: 1.0.0  
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ3ÈÕ
-//   ¸üÐÂÄÚÈÝ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: 
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: Console.c
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0  
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½ 11ï¿½ï¿½3ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:  
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: 
 // 
 //
 //////////////////////////////////////////////////////
 #include "msp430common.h"
 #include "Console.h"
-#include "Common.h"
+#include "common.h"
 #include "uart3.h"
 #include "uart0.h"
 #include "main.h"
 #include "wifi_config.h"
 #include <string.h>
 
-static int Opened=0;//ÊÇ·ñ´ò¿ª
+static int Opened=0;//ï¿½Ç·ï¿½ï¿½
 
 extern int g_wifi_connetflag;
 extern int WIFI_Inited_Flag;
 
-//´ò¿ªÉè±¸
+//ï¿½ï¿½ï¿½è±¸
 int Console_Open() 
 {    
     UART3_Open(UART3_CONSOLE_TYPE);

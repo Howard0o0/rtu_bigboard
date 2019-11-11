@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/howard/app/ti/msp430-gcc/include",
+                "/home/howard/app/ti/msp430-gcc/msp430-elf/include",
+                "/home/howard/app/ti/msp430-gcc/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

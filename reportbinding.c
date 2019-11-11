@@ -3,7 +3,7 @@
 #include "common.h"
 #include "store.h"
 #include "wifi_config.h"
-#include "console.h"
+#include "Console.h"
 #include "stdlib.h"
 
 int g_bindnum = 0;
@@ -36,7 +36,7 @@ int  Report_CheckPortType(char port, SampleDataPortType* porttype)
     
 }
 
-int Report_FindBindingInfo(char port,ReportBindinfo* pbindinfo,int eleindex)//¸ù¾Ý¶Ë¿ÚÑ°ÕÒ°ó¶¨¹ØÏµ
+int Report_FindBindingInfo(char port,ReportBindinfo* pbindinfo,int eleindex)//ï¿½ï¿½ï¿½Ý¶Ë¿ï¿½Ñ°ï¿½Ò°ó¶¨¹ï¿½Ïµ
 {
     int _ret = 0;
 
@@ -102,7 +102,7 @@ int Report_AddBindingInfo()
 //    Console_WriteHexCharln(&g_importparainfo.funcode, 1);
 //    
 //    g_importparainfo.centeraddr = ConvertHexChar(configpara.controladdr[0]) * CONVERT_HEX * CONVERT_HEX
-//        + ConvertHexChar(configpara.controladdr[1]) * CONVERT_HEX + ConvertHexChar(configpara.controladdr[2]);//±ØÐëÐ¡ÓÚ255 
+//        + ConvertHexChar(configpara.controladdr[1]) * CONVERT_HEX + ConvertHexChar(configpara.controladdr[2]);//ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½255 
 //    Console_WriteStringln("g_centeraddr:");
 //    Console_WriteHexCharln(&(g_importparainfo.centeraddr),1);
 //    

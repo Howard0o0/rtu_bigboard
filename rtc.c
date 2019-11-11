@@ -1,15 +1,15 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: rtc.c
-//   ÎÄ¼þ°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ30ÈÕ
-//   ¸üÐÂÄÚÈÝ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: ÎÞ
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: rtc.c
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½ 11ï¿½ï¿½30ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:  
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: ï¿½ï¿½
 //
 //////////////////////////////////////////////////////
 
 /*
- * author:  ÖìºñÍû
+ * author:  ï¿½ï¿½ï¿½ï¿½ï¿½
  * time:    2019-08-28
  * changes:  
  *          int  RTC_Open(); 
@@ -32,50 +32,50 @@
 #include "rtc.h"
 #include "common.h"
 #include "led.h" 
-#include "Store.h"
-#include "Sampler.h"
+#include "store.h"
+#include "sampler.h"
 #include "rom.h"
 
 
 
-//¸ß¼¶º¯Êý
+//ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½
 
 extern char g_pulse1_range[3];
 extern char g_pulse2_range[3];
 extern char g_pulse3_range[3];
 extern char g_pulse4_range[3];
 
-//È«¾Ö±äÁ¿  ¿ª»úµÄÊ±¼ä
+//È«ï¿½Ö±ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 char g_rtc_nowTime[5]={0,0,0,0,0};
 
 
 
 
-//  ¹Ø¼üÊý¾ÝµÄ±£´æ²ßÂÔ.ÄÚ´æÒ»·Ý,RTCÒ»·Ý
-//  ÄÚ´æ³õÊ¼»¯ÖµÈ«ÎªÒ»¸öÏÔÈ»´íÎóµÄÖµ.
-//  1.Ð´Êý¾ÝÊ±,¸üÐÂÄÚ´æºÍRTC
-//  2.¶ÁÊý¾ÝÊ±,¶ÁÄÚ´æ X,  ¶ÁRTCÖµ Y
-//    ÈôX,Y½ÔÕýÈ·, X!=Y,ÔòÒÔXÎª×¼,²¢ÐÞ¸ÄY.
-//    ÈôX,Y½Ô´íÎó,±¨´í»òÉèÎªÄ¬ÈÏÖµ
-//    ÈôXÎª´íÎóÖµ.YÕýÈ·.ÔòÒÔYÎª×¼,²¢ÐÞ¸ÄX.
-//  3.RTC³õÊ¼»¯µÄÊ±ºò,¸ù¾ÝXY¹ØÏµ ¸üÕýXY.
+//  ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ÝµÄ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.ï¿½Ú´ï¿½Ò»ï¿½ï¿½,RTCÒ»ï¿½ï¿½
+//  ï¿½Ú´ï¿½ï¿½Ê¼ï¿½ï¿½ÖµÈ«ÎªÒ»ï¿½ï¿½ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½Öµ.
+//  1.Ð´ï¿½ï¿½ï¿½ï¿½Ê±,ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½RTC
+//  2.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±,ï¿½ï¿½ï¿½Ú´ï¿½ X,  ï¿½ï¿½RTCÖµ Y
+//    ï¿½ï¿½X,Yï¿½ï¿½ï¿½ï¿½È·, X!=Y,ï¿½ï¿½ï¿½ï¿½XÎª×¼,ï¿½ï¿½ï¿½Þ¸ï¿½Y.
+//    ï¿½ï¿½X,Yï¿½Ô´ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÄ¬ï¿½ï¿½Öµ
+//    ï¿½ï¿½XÎªï¿½ï¿½ï¿½ï¿½Öµ.Yï¿½ï¿½È·.ï¿½ï¿½ï¿½ï¿½YÎª×¼,ï¿½ï¿½ï¿½Þ¸ï¿½X.
+//  3.RTCï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½XYï¿½ï¿½Ïµ ï¿½ï¿½ï¿½ï¿½XY.
 //
 
 char s_RTC_lastTime[5]={0x00,0x00,0x00,0x00,0x00};
-char s_RTC_CheckTime[5]={0x00,0x00,0x00,0x00,0x00};//³õÊ¼»¯Îª´íÎóÖµ
-char s_RTC_SaveTime[5]={0x00,0x00,0x00,0x00,0x00};//³õÊ¼»¯Îª´íÎóÖµ
-char s_RTC_ReportTime[5]={0x00,0x00,0x00,0x00,0x00};//³õÊ¼»¯Îª´íÎóÖµ
-char s_RTC_StartIdx=240;//³õÊ¼»¯Îª´íÎóÖµ  ·¶Î§Îª1~200
-char s_RTC_EndIdx=240;//³õÊ¼»¯Îª´íÎóÖµ    ·¶Î§Îª1~200
+char s_RTC_CheckTime[5]={0x00,0x00,0x00,0x00,0x00};//ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Öµ
+char s_RTC_SaveTime[5]={0x00,0x00,0x00,0x00,0x00};//ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Öµ
+char s_RTC_ReportTime[5]={0x00,0x00,0x00,0x00,0x00};//ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Öµ
+char s_RTC_StartIdx=240;//ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Öµ  ï¿½ï¿½Î§Îª1~200
+char s_RTC_EndIdx=240;//ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Öµ    ï¿½ï¿½Î§Îª1~200
 
-//´¢´æÂö³åÉè±¸¶ÈÊý(¶ÔÓ¦ Âö³å¼ÆÊýÉè±¸ ÉÏÃæµÄÖµ)
-char s_RTC_PulseBytes[4][3]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}; //µÚÒ»×Ö½ÚÎªFF±»ÈÏÎªÊÇ´íÎó
-//ÒòÎª²»¿ÉÄÜÓÐÄÇÃ´´ó, ³ÌÐò×î¸ßÖ§³Ö7¸ö'9'µÄ¶ÈÊý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Ó¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ ï¿½ï¿½ï¿½ï¿½ï¿½Öµ)
+char s_RTC_PulseBytes[4][3]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}; //ï¿½ï¿½Ò»ï¿½Ö½ï¿½ÎªFFï¿½ï¿½ï¿½ï¿½Îªï¿½Ç´ï¿½ï¿½ï¿½
+//ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½7ï¿½ï¿½'9'ï¿½Ä¶ï¿½ï¿½ï¿½
 
 //
-//  RTC_RetrieveIndex   :    0±íÊ¾Î´·¢ËÍ   1±íÊ¾ÒÑ·¢ËÍ  
+//  RTC_RetrieveIndex   :    0ï¿½ï¿½Ê¾Î´ï¿½ï¿½ï¿½ï¿½   1ï¿½ï¿½Ê¾ï¿½Ñ·ï¿½ï¿½ï¿½  
 //
-//   Ë÷Òý         µÚÒ»ÖÖÇé¿ö               µÚ¶þÖÖÇé¿ö                µÚÈýÖÖÇé¿ö      µÚËÄÖÖÇé¿ö
+//   ï¿½ï¿½ï¿½ï¿½         ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½               ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½                ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½      ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //    1              0                         1                          0               1  
 //    2              0                         1                          0               1
 //    3              0                         1                          0               1
@@ -86,56 +86,56 @@ char s_RTC_PulseBytes[4][3]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0
 //   MAX-1           0                         1                          0               1
 //   MAX             0                         1                          0               1
 //
-//  ¶ÔÓÚÂúºÍ¿ÕµÄÅÐ¶Ï,ÎÒÃÇ 1±È½Ï _startIdx ºÍ _endIdx , 2 ÏàµÈÊ±ÅÐ¶Ï_startIdxÎªÒÑ·¢ËÍ»¹ÊÇÎ´·¢ËÍ
+//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¿Õµï¿½ï¿½Ð¶ï¿½,ï¿½ï¿½ï¿½ï¿½ 1ï¿½È½ï¿½ _startIdx ï¿½ï¿½ _endIdx , 2 ï¿½ï¿½ï¿½Ê±ï¿½Ð¶ï¿½_startIdxÎªï¿½Ñ·ï¿½ï¿½Í»ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½
 //  
 
 
 //
-//   RTCº¯Êý»áÔÚÖÐ¶Ï·þÎñÖÐ±»µ÷ÓÃ, Òò´ËÒª½øÐÐ ÖÐ¶Ï¹Ø±Õ ½øÐÐ±£»¤
+//   RTCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï·ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ ï¿½Ð¶Ï¹Ø±ï¿½ ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½
 // 
 
 //
-//   ¸Ãº¯Êý²»ÄÜºÜºÃÓ¦¶Ô·¢ËÍÊý¾ÝÖÐÒþ²Ø×ÅÎ´·¢ËÍµÄÊý¾Ý. ´ý¸üºÃµÄÊµÏÖ.
+//   ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÜºÜºï¿½Ó¦ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½Êµï¿½ï¿½.
 //  
 int RTC_RetrieveIndex()
 {
     DownInt();
     char _idx=DATA_MIN_IDX; 
     int _ret=0;
-    _ret=Store_CheckDataItemSended(_idx);//È¡µÚÒ»¸ö
+    _ret=Store_CheckDataItemSended(_idx);//È¡ï¿½ï¿½Ò»ï¿½ï¿½
     if(_ret==-2)
     {
         UpInt();
         return -1;
     }
     if(_ret==1)
-    {//1ÆðÍ·µÄµÚ2ÖÖÇé¿ö
+    {//1ï¿½ï¿½Í·ï¿½Äµï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½
         while(1)
         {
             _ret=Store_CheckDataItemSended(++ _idx); 
             if(_ret==1)
                 continue;
-            if( _ret==-2)//³ö±ß½çÁË
-            {//È«1,ÔòÉè _startIdx = DATA_MIN_IDX   _endIdx = DATA_MIN_IDX
+            if( _ret==-2)//ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
+            {//È«1,ï¿½ï¿½ï¿½ï¿½ _startIdx = DATA_MIN_IDX   _endIdx = DATA_MIN_IDX
                 RTC_SetStartIdx(DATA_MIN_IDX);
                 RTC_SetEndIdx(DATA_MIN_IDX);
                 UpInt();
                 return 0;
             }
             if(_ret==0)
-            {//ÕÒµ½_StartIdxÁË
+            {//ï¿½Òµï¿½_StartIdxï¿½ï¿½
                 RTC_SetStartIdx(_idx);
                 break;
             }
         }
-        //´ÓÇ°Ò»¸öÑ­»·Ìø³öÀ´ÁË.ÎÒÃÇÏÖÔÚ¿ªÊ¼Ñ°ÕÒ_endIdx ÕÒ1³öÀ´
+        //ï¿½ï¿½Ç°Ò»ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½Ê¼Ñ°ï¿½ï¿½_endIdx ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
         while(1)
-        {//Óöµ½1ÁË ¾ÍÊÇ _endIdx, 
+        {//ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ _endIdx, 
             _ret=Store_CheckDataItemSended(++ _idx);
             if(_ret == 0)
                 continue;
-            if(_ret==-2)//³ö±ß½çÁË
-            {//Ôò_EndIdx ¾ÍÊÇ DATA_MIN_IDX
+            if(_ret==-2)//ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
+            {//ï¿½ï¿½_EndIdx ï¿½ï¿½ï¿½ï¿½ DATA_MIN_IDX
                 RTC_SetEndIdx(DATA_MIN_IDX);
                 UpInt();
                 return 0;
@@ -149,31 +149,31 @@ int RTC_RetrieveIndex()
         }
     }
     else //_ret==0
-    {//µÀÀíÍ¬ÉÏ
+    {//ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½
         while(1)
         {
             _ret=Store_CheckDataItemSended(++ _idx); 
             if(_ret==0)
                 continue;
-            if( _ret==-2)//³ö±ß½çÁË
-            {//È« 0 ,ÔòÉè _startIdx = DATA_MIN_IDX   _endIdx = DATA_MIN_IDX
+            if( _ret==-2)//ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
+            {//È« 0 ,ï¿½ï¿½ï¿½ï¿½ _startIdx = DATA_MIN_IDX   _endIdx = DATA_MIN_IDX
                 RTC_SetStartIdx(DATA_MIN_IDX);
                 RTC_SetEndIdx(DATA_MIN_IDX);
                 UpInt();
                 return 0;
             }
             if(_ret==1)
-            {//ÕÒµ½_endIdxÁË
+            {//ï¿½Òµï¿½_endIdxï¿½ï¿½
                 RTC_SetEndIdx(_idx);
                 break;
             }
         }
         while(1)
-        {//Óöµ½0ÔòÎª  _startIdx
+        {//ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Îª  _startIdx
             _ret=Store_CheckDataItemSended(++ _idx); 
             if(_ret==1)
                 continue; 
-            if(_ret==-2)//³ö±ß½çÁË
+            if(_ret==-2)//ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
             {
                 RTC_SetStartIdx(DATA_MIN_IDX);
                 UpInt();
@@ -193,19 +193,19 @@ int RTC_ReadStartIdx(char *dest)
 {
     DownInt();
     if(s_RTC_StartIdx<=DATA_MAX_IDX && s_RTC_StartIdx >= DATA_MIN_IDX)
-    {//ÄÚ´æÖµÕýÈ·
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½È·
         *dest=s_RTC_StartIdx;
-        //Ð´ÈëRTC,±£Ö¤RTCÀïµÄÖµµÄÕýÈ·
+        //Ð´ï¿½ï¿½RTC,ï¿½ï¿½Ö¤RTCï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½È·
         _RTC_WriteRAM(STARTIDX_ADDR,s_RTC_StartIdx);
         UpInt();
         return 0;
     }
     else
-    {//ÄÚ´æÖµ´íÎó
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½ï¿½ï¿½
         *dest= _RTC_ReadRAM(STARTIDX_ADDR);
         if((*dest) <= DATA_MAX_IDX && (*dest) >= DATA_MIN_IDX )
-        {//RTCÖµ¿ÉÄÜÕýÈ· 
-            s_RTC_StartIdx=(*dest); //¸üÐÂÄÚ´æÖµ
+        {//RTCÖµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È· 
+            s_RTC_StartIdx=(*dest); //ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Öµ
             UpInt();
             return 0;
         }
@@ -220,8 +220,8 @@ int RTC_ReadStartIdx(char *dest)
 int RTC_SetStartIdx(char src)
 {
     DownInt();
-    s_RTC_StartIdx=src;//¸üÐÂÄÚ´æ
-    _RTC_WriteRAM(STARTIDX_ADDR,src);//¸üÐÂRTC
+    s_RTC_StartIdx=src;//ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
+    _RTC_WriteRAM(STARTIDX_ADDR,src);//ï¿½ï¿½ï¿½ï¿½RTC
     UpInt();
     return 0;
 }
@@ -230,19 +230,19 @@ int RTC_ReadEndIdx(char *dest)
 {
     DownInt();
     if(s_RTC_EndIdx <= DATA_MAX_IDX && s_RTC_EndIdx >= DATA_MIN_IDX )
-    {//ÄÚ´æÖµÕýÈ·
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½È·
         *dest=s_RTC_EndIdx;
-        //Ð´ÈëRTC,±£Ö¤RTCÀïµÄÖµµÄÕýÈ·
+        //Ð´ï¿½ï¿½RTC,ï¿½ï¿½Ö¤RTCï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½È·
         _RTC_WriteRAM(ENDIDX_ADDR,s_RTC_EndIdx);
         UpInt();
         return 0;
     }
     else
-    {//ÄÚ´æÖµ´íÎó
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½ï¿½ï¿½
         *dest= _RTC_ReadRAM(ENDIDX_ADDR);
         if((*dest) <= DATA_MAX_IDX && (*dest) >= DATA_MIN_IDX )
-        {//RTCÖµ¿ÉÄÜÕýÈ· 
-            s_RTC_EndIdx=(*dest); //¸üÐÂÄÚ´æÖµ
+        {//RTCÖµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È· 
+            s_RTC_EndIdx=(*dest); //ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Öµ
             UpInt();
             return 0;
         }
@@ -266,13 +266,13 @@ int RTC_ReadCheckTimeBytes(unsigned char index, char *dest, char *lastchecktime)
 {
     DownInt();
     if(RTC_IsBadTime(lastchecktime,0)==0)
-    {//ÄÚ´æÖµÊÇÕýÈ·µÄ.
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½.
         dest[0]=lastchecktime[0];
         dest[1]=lastchecktime[1];
         dest[2]=lastchecktime[2];
         dest[3]=lastchecktime[3];
         dest[4]=lastchecktime[4];
-        //½«Õâ¸öÖµÐ´Èëµ½RTCÖÐ.±£Ö¤RTCÀïÒ²ÊÇÕýÈ·µÄ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÐ´ï¿½ëµ½RTCï¿½ï¿½.ï¿½ï¿½Ö¤RTCï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
         _RTC_WriteRAM(index,lastchecktime[0]);
         _RTC_WriteRAM(index+1,lastchecktime[1]);
         _RTC_WriteRAM(index+2,lastchecktime[2]);
@@ -282,14 +282,14 @@ int RTC_ReadCheckTimeBytes(unsigned char index, char *dest, char *lastchecktime)
         return 0;
     }
     else
-    {//ÄÚ´æÖµÊÇ´íÎóµÄ.
+    {//ï¿½Ú´ï¿½Öµï¿½Ç´ï¿½ï¿½ï¿½ï¿½.
         dest[0]= _RTC_ReadRAM(index);
         dest[1]=_RTC_ReadRAM(index+1);
         dest[2]=_RTC_ReadRAM(index+2);
         dest[3]=_RTC_ReadRAM(index+3);
         dest[4]=_RTC_ReadRAM(index+4);
         if(RTC_IsBadTime(dest,0)==0)
-        {//RTCÊÇÕýÈ·µÄ. 
+        {//RTCï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½. 
             lastchecktime[0]=dest[0];
             lastchecktime[1]=dest[1];
             lastchecktime[2]=dest[2];
@@ -299,7 +299,7 @@ int RTC_ReadCheckTimeBytes(unsigned char index, char *dest, char *lastchecktime)
             return 0;
         }
         else
-        {//¶¼ÊÇ´íÎóµÄ,¾Í·µ»Ø-1  
+        {//ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ï¿½,ï¿½Í·ï¿½ï¿½ï¿½-1  
             UpInt();
             return -1;          
         }
@@ -356,14 +356,14 @@ int RTC_ReadSaveTimeBytes(unsigned char index, char *dest, char *lastsavetime)
 {
     DownInt();
     if(RTC_IsBadTime(lastsavetime,0)==0)
-    {//ÄÚ´æÖµÊÇÕýÈ·µÄ. 
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½. 
         dest[0]=lastsavetime[0];
         dest[1]=lastsavetime[1];
         dest[2]=lastsavetime[2];
         dest[3]=lastsavetime[3];
         dest[4]=lastsavetime[4];
         
-        //½«Õâ¸öÖµÐ´Èëµ½RTCÖÐ.±£Ö¤RTCÀïÒ²ÊÇÕýÈ·µÄ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÐ´ï¿½ëµ½RTCï¿½ï¿½.ï¿½ï¿½Ö¤RTCï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
         _RTC_WriteRAM(index,lastsavetime[0]);
         _RTC_WriteRAM(index+1,lastsavetime[1]);
         _RTC_WriteRAM(index+2,lastsavetime[2]);
@@ -373,14 +373,14 @@ int RTC_ReadSaveTimeBytes(unsigned char index, char *dest, char *lastsavetime)
         return 0;
     }
     else
-    {//ÄÚ´æÖµÊÇ´íÎóµÄ.
+    {//ï¿½Ú´ï¿½Öµï¿½Ç´ï¿½ï¿½ï¿½ï¿½.
         dest[0]= _RTC_ReadRAM(index);
         dest[1]=_RTC_ReadRAM(index+1);
         dest[2]=_RTC_ReadRAM(index+2);
         dest[3]=_RTC_ReadRAM(index+3);
         dest[4]=_RTC_ReadRAM(index+4);
         if(RTC_IsBadTime(dest,0)==0)
-        {//RTCÊÇÕýÈ·µÄ. 
+        {//RTCï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½. 
             lastsavetime[0]=dest[0];
             lastsavetime[1]=dest[1];
             lastsavetime[2]=dest[2];
@@ -390,7 +390,7 @@ int RTC_ReadSaveTimeBytes(unsigned char index, char *dest, char *lastsavetime)
             return 0;
         }
         else
-        {//¶¼ÊÇ´íÎóµÄ,¾Í·µ»Ø-1  
+        {//ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ï¿½,ï¿½Í·ï¿½ï¿½ï¿½-1  
             UpInt();
             return -1;          
         }
@@ -445,14 +445,14 @@ int RTC_ReadReportTimeBytes(unsigned char index, char *dest, char *lastreporttim
 {
     DownInt();
     if(RTC_IsBadTime(lastreporttime,0)==0)
-    {//ÄÚ´æÖµÊÇÕýÈ·µÄ. 
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½. 
         dest[0]=lastreporttime[0];
         dest[1]=lastreporttime[1];
         dest[2]=lastreporttime[2];
         dest[3]=lastreporttime[3];
         dest[4]=lastreporttime[4];
         
-        //½«Õâ¸öÖµÐ´Èëµ½RTCÖÐ.±£Ö¤RTCÀïÒ²ÊÇÕýÈ·µÄ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÐ´ï¿½ëµ½RTCï¿½ï¿½.ï¿½ï¿½Ö¤RTCï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
         _RTC_WriteRAM(index,   lastreporttime[0]);
         _RTC_WriteRAM(index+1, lastreporttime[1]);
         _RTC_WriteRAM(index+2, lastreporttime[2]);
@@ -462,14 +462,14 @@ int RTC_ReadReportTimeBytes(unsigned char index, char *dest, char *lastreporttim
         return 0;
     }
     else
-    {//ÄÚ´æÖµÊÇ´íÎóµÄ.
+    {//ï¿½Ú´ï¿½Öµï¿½Ç´ï¿½ï¿½ï¿½ï¿½.
         dest[0]=_RTC_ReadRAM(index);
         dest[1]=_RTC_ReadRAM(index+1);
         dest[2]=_RTC_ReadRAM(index+2);
         dest[3]=_RTC_ReadRAM(index+3);
         dest[4]=_RTC_ReadRAM(index+4);
         if(RTC_IsBadTime(dest,0)==0)
-        {//RTCÊÇÕýÈ·µÄ. 
+        {//RTCï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½. 
             lastreporttime[0]=dest[0];
             lastreporttime[1]=dest[1];
             lastreporttime[2]=dest[2];
@@ -479,7 +479,7 @@ int RTC_ReadReportTimeBytes(unsigned char index, char *dest, char *lastreporttim
             return 0;
         }
         else
-        {//¶¼ÊÇ´íÎóµÄ,¾Í·µ»Ø-1  
+        {//ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ï¿½,ï¿½Í·ï¿½ï¿½ï¿½-1  
             UpInt();
             return -1;          
         }
@@ -552,7 +552,7 @@ int RTC_RetrievePulseBytes()
      
     return 0;
 }
-//Âö³å1
+//ï¿½ï¿½ï¿½ï¿½1
 int RTC_ReadPulseBytes(int _index, char * _dest)
 {
     
@@ -562,7 +562,7 @@ int RTC_ReadPulseBytes(int _index, char * _dest)
     }
     DownInt();
     if(s_RTC_PulseBytes[_index-1][0]==0xFF && s_RTC_PulseBytes[_index-1][1]==0xFF && s_RTC_PulseBytes[_index-1][2]==0xFF)
-    {//ÄÚ´æÖµ´íÎó
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½ï¿½ï¿½
         s_RTC_PulseBytes[_index-1][0]=_RTC_ReadRAM(PULSE1_BYTE1 + (_index-1)*3 );
         s_RTC_PulseBytes[_index-1][1]=_RTC_ReadRAM(PULSE1_BYTE2 + (_index-1)*3 );
         s_RTC_PulseBytes[_index-1][2]=_RTC_ReadRAM(PULSE1_BYTE3 + (_index-1)*3 );
@@ -586,7 +586,7 @@ int RTC_SetPulseBytes(int _index, char * _src)
     s_RTC_PulseBytes[_index-1][2] = _src[2];
     
     DownInt();
-    //ÔÙÐ´RTC RAM
+    //ï¿½ï¿½Ð´RTC RAM
     _RTC_WriteRAM(PULSE1_BYTE1 + (_index-1)*3 ,_src[0]);
     _RTC_WriteRAM(PULSE1_BYTE2 + (_index-1)*3 ,_src[1]);
     _RTC_WriteRAM(PULSE1_BYTE3 + (_index-1)*3 ,_src[2]);
@@ -595,17 +595,17 @@ int RTC_SetPulseBytes(int _index, char * _src)
 }
 
 //
-//  ´Ëº¯ÊýÖ»ÔÚÖÐ¶ÏÖÐÔËÐÐ, ¶øÖÐ¶Ï·þÎñÖÐ ÊÇ¹Ø±ÕÖÐ¶ÏµÄ,Òò´Ë²»µ÷ÓÃDownInt();
+//  ï¿½Ëºï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ð¶Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¹Ø±ï¿½ï¿½Ð¶Ïµï¿½,ï¿½ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½DownInt();
 //
 int RTC_IncPulseBytes(int _index)
-{// ´Ëº¯Êý ÔÚÖÐ¶ÏÖÐµ÷ÓÃ,
-   // ( ËùÒÔÖ´ÐÐÒªÑ¸ËÙ  , ÓÐ¿ÕÔÙÓÅ»¯)
+{// ï¿½Ëºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ðµï¿½ï¿½ï¿½,
+   // ( ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ÒªÑ¸ï¿½ï¿½  , ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½Å»ï¿½)
     
     if( _index <=0 || _index > 4 )
     {
         return -2;
     } 
-    //Ò»ÇÐÎªÁËËÙ¶È.
+    //Ò»ï¿½ï¿½Îªï¿½ï¿½ï¿½Ù¶ï¿½.
     char  _byte1 = s_RTC_PulseBytes[_index-1][0];
     char  _old_byte1 = _byte1;
     char  _byte2 = s_RTC_PulseBytes[_index-1][1];
@@ -617,13 +617,13 @@ int RTC_IncPulseBytes(int _index)
     char  _max_byte3 = g_pulse_range[_index-1][2];
    
     if(_byte3==255)
-    {//µÚ3×Ö½ÚÒç³öµÄ»°
+    {//ï¿½ï¿½3ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½
         _byte3=0;
         if( _byte2==255)
-        {//µÚ2×Ö½ÚÒç³öµÄ»°
+        {//ï¿½ï¿½2ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½
             _byte2=0; 
-            if(_byte1==255)//µÚ1×Ö½ÚÒç³öµÄ»° 
-                 _byte1=0; //Êµ¼ÊÉÏÕâ¸ö²»¿ÉÄÜ·¢Éú,µ«¾Í¶ªÕâ°É.·´Õý²»Ó°ÏìËÙ¶È. 
+            if(_byte1==255)//ï¿½ï¿½1ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ 
+                 _byte1=0; //Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü·ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½Ù¶ï¿½. 
             else 
                 ++ _byte1;  
         }
@@ -633,12 +633,12 @@ int RTC_IncPulseBytes(int _index)
     else
         ++ _byte3; 
     //
-    //  ÒªÅÐ¶ÏÊÇ·ñ³¬¹ýMAXÁË
+    //  Òªï¿½Ð¶ï¿½ï¿½Ç·ñ³¬¹ï¿½MAXï¿½ï¿½
     // 
     if( _byte1 < _max_byte1)
         goto Update_And_Return;
     if(_byte1 > _max_byte1)
-    {//¹é0
+    {//ï¿½ï¿½0
         _byte1=0;_byte2=0;_byte3=0;
         goto Update_And_Return;
     }
@@ -658,12 +658,12 @@ int RTC_IncPulseBytes(int _index)
                 _byte1=0;_byte2=0;_byte3=0;
                 goto Update_And_Return;
             }
-            //¶ÔÓÚÐ¡ÓÚµÈÓÚ ¾ÍÊÇ ²»³¬¹ýMAXÁË
+            //ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½Úµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½MAXï¿½ï¿½
         }
     }
 Update_And_Return: 
-    // È»ºó¸üÐÂ RTCÀïµÄÖµ.
-    // ×¢Òâ: ¸ù¾ÝÇ°ÃæµÄÂß¼­,Ö»ÓÐÐÞ¸ÄÁË µÍÎ»µÄ×Ö½Ú,¸ßÎ»µÄ×Ö½Ú²ÅÓÐÐÞ¸ÄµÄ¿ÉÄÜ
+    // È»ï¿½ï¿½ï¿½ï¿½ï¿½ RTCï¿½ï¿½ï¿½Öµ.
+    // ×¢ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ß¼ï¿½,Ö»ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ö½ï¿½,ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ö½Ú²ï¿½ï¿½ï¿½ï¿½Þ¸ÄµÄ¿ï¿½ï¿½ï¿½
     if(_byte3 != _old_byte3)
     {
         s_RTC_PulseBytes[_index-1][2] = _byte3;
@@ -684,20 +684,20 @@ Update_And_Return:
 
  
 int  RTC_IsBadTime(char * time, int isTime)
-{//ÎÞ´í·µ»Ø0,·ñÔò·µ»Ø-1.
-  //ÅÐ¶ÏÔ­Ôò
-  //  Ê×ÏÈÄê·Ý±ØÐëÒª´óÓÚµÈÓÚ09Äê
-  //  Äê·Ý±ØÐëÐ¡ÓÚ20Äê, 
+{//ï¿½Þ´ï¿½ï¿½ï¿½ï¿½ï¿½0,ï¿½ï¿½ï¿½ò·µ»ï¿½-1.
+  //ï¿½Ð¶ï¿½Ô­ï¿½ï¿½
+  //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý±ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½09ï¿½ï¿½
+  //  ï¿½ï¿½Ý±ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½20ï¿½ï¿½, 
   //  
-  //  ÔÂ·Ý±ØÐëÎªÊÇ1~12ÔÂÖ®¼ä 
-  //  ÈÕÆÚ±ØÐëÎªÊÇ1~31Ö®¼ä
-  //  Ê±±ØÐëÊÇ0~23Ö®¼ä
-  //  ·Ö±ØÐëÊÇ0~59Ö®¼ä
+  //  ï¿½Â·Ý±ï¿½ï¿½ï¿½Îªï¿½ï¿½1~12ï¿½ï¿½Ö®ï¿½ï¿½ 
+  //  ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Îªï¿½ï¿½1~31Ö®ï¿½ï¿½
+  //  Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0~23Ö®ï¿½ï¿½
+  //  ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½0~59Ö®ï¿½ï¿½
   //
   //
    if(time[0]<9)
        return -1;
-   if(time[0]>30)//30Äê
+   if(time[0]>30)//30ï¿½ï¿½
        return -1;
    if(time[1]<1)
        return -1;
@@ -720,28 +720,28 @@ int  RTC_IsBadTime(char * time, int isTime)
      return 0;
    }
    
-   //ÓëÇ°Ò»¸öÊ±¼ä½øÐÐ¶Ô±È
-   //ÌìÊýÌ«¸´ÔÓÔÝÊ±¾Í²»±È½ÏÁË.
-   //Ê×ÏÈÕâ¸ölastTime×Ô¼ºÒªÊÇÕýÈ·µÄ
-   //Ö÷ÒªÊÇÅÂÕâ¸ö±äÁ¿±»´íÎóÐÞ¸Ä.¸ÅÂÊ·Ç³£µÄÐ¡,µ«»¹ÊÇ·À·¶ÏÂ
-   //ÎÒÃÇÖ÷ÒªÔÚºõ Äê  ÔÂ ºÍ Ê±
+   //ï¿½ï¿½Ç°Ò»ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð¶Ô±ï¿½
+   //ï¿½ï¿½ï¿½ï¿½Ì«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Í²ï¿½ï¿½È½ï¿½ï¿½ï¿½.
+   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½lastTimeï¿½Ô¼ï¿½Òªï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
+   //ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½.ï¿½ï¿½ï¿½Ê·Ç³ï¿½ï¿½ï¿½Ð¡,ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
+   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Úºï¿½ ï¿½ï¿½  ï¿½ï¿½ ï¿½ï¿½ Ê±
    if(s_RTC_lastTime[0] >= 9  && s_RTC_lastTime[1] <= 12 && s_RTC_lastTime[1] >= 1
       && s_RTC_lastTime[3]<=23)
    {
-     //¿ªÊ¼±È½Ï
+     //ï¿½ï¿½Ê¼ï¿½È½ï¿½
      
-     //Äê
+     //ï¿½ï¿½
      if( time[0]!=s_RTC_lastTime[0] && time[0]!=s_RTC_lastTime[0]+1)
-     {//¼´²»Îª½ñÄê Ò²²»ÎªÈ¥Äê.ÄÇÃ´¾ÍÊÇ¸ö´íÎó
+     {//ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ Ò²ï¿½ï¿½ÎªÈ¥ï¿½ï¿½.ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½
        return -1;
      }
      
-     //ÔÂ
-     //¿¼ÂÇ1ÔÂµÄÇé¿ö
+     //ï¿½ï¿½
+     //ï¿½ï¿½ï¿½ï¿½1ï¿½Âµï¿½ï¿½ï¿½ï¿½
      if( time[1]!=s_RTC_lastTime[1] && time[1]!=s_RTC_lastTime[1]+1)
-     {//¼´²»Îªµ±ÔÂ,Ò²²»ÎªÇ°Ò»¸öÔÂ,
-       //¿¼ÂÇÎª1ÔÂµÄÇé¿ö,ËüµÄÇ°Ò»¸öÔÂÎª12ÔÂ
-       //¶øÇÒÔÂ²»Îª1ÔÂ, Îª1ÔÂÊ±,last²»Îª12.
+     {//ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½,Ò²ï¿½ï¿½ÎªÇ°Ò»ï¿½ï¿½ï¿½ï¿½,
+       //ï¿½ï¿½ï¿½ï¿½Îª1ï¿½Âµï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ç°Ò»ï¿½ï¿½ï¿½ï¿½Îª12ï¿½ï¿½
+       //ï¿½ï¿½ï¿½ï¿½ï¿½Â²ï¿½Îª1ï¿½ï¿½, Îª1ï¿½ï¿½Ê±,lastï¿½ï¿½Îª12.
        if(time[1]!=1)
        {
          return -1;
@@ -756,7 +756,7 @@ int  RTC_IsBadTime(char * time, int isTime)
      }
      
      //Ê±
-     //¿¼ÂÇ00Ê±µÄÇé¿ö
+     //ï¿½ï¿½ï¿½ï¿½00Ê±ï¿½ï¿½ï¿½ï¿½ï¿½
      if( time[3]!=s_RTC_lastTime[3] && time[3]!=s_RTC_lastTime[3]+1)
      {
        if(time[3]!=0)
@@ -772,8 +772,8 @@ int  RTC_IsBadTime(char * time, int isTime)
        }
      }
    }
-   //´ËÊ±ÎÒÃÇÈÏÎªµ±Ç°Ê±¼äÊÇÕýÈ·µÄ
-   //±£´æÆðÀ´
+   //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ç°Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
+   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
    for(int i=0;i<5;++i)
      s_RTC_lastTime[i]=time[i];
    return 0;
@@ -781,11 +781,11 @@ int  RTC_IsBadTime(char * time, int isTime)
 
 
 
-//ÅÐ¶ÏÊ±¼äÊÇ·ñÊÇ¹ýÈ¥ ,¸ñÊ½Îª ÄêÔÂÈÕÊ±·Ö µÄchar[5]ÀàÐÍ 
+//ï¿½Ð¶ï¿½Ê±ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ç¹ï¿½È¥ ,ï¿½ï¿½Ê½Îª ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ ï¿½ï¿½char[5]ï¿½ï¿½ï¿½ï¿½ 
 
-// 1   Îª¹ýÈ¥Ê±¼ä
-// 0   ÎªÏÖÔÚÊ±¼ä
-// -1  ÎªÎ´À´Ê±¼ä  
+// 1   Îªï¿½ï¿½È¥Ê±ï¿½ï¿½
+// 0   Îªï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+// -1  ÎªÎ´ï¿½ï¿½Ê±ï¿½ï¿½  
 
 int  RTC_IsPassed(char * time)
 {   
@@ -825,10 +825,10 @@ int  RTC_IsPassed(char * time)
           return -1;
     }
     else
-       return 0; //·ÖÖÓÊýÒ»Ñù 
+       return 0; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ 
 }   
 
-//¶Á³ö  09/03/05/23:00:00 ¸ñÊ½µÄ×Ö·û´®
+//ï¿½ï¿½ï¿½ï¿½  09/03/05/23:00:00 ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 void RTC_ReadTimeStr6_A(char * dest)
 { 
     char year;
@@ -862,7 +862,7 @@ void RTC_ReadTimeStr6_A(char * dest)
     
 } 
 //      01234567 8 9 10  11 12 13  
-//¶Á³ö  09/03/05   2  3  :  0  0 ¸ñÊ½µÄ×Ö·û´®
+//ï¿½ï¿½ï¿½ï¿½  09/03/05   2  3  :  0  0 ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 void RTC_ReadTimeStr5_A(char * dest)
 { 
     
@@ -895,7 +895,7 @@ void RTC_ReadTimeStr5_A(char * dest)
 }
 
 
-//12¸ö×Ö·û.
+//12ï¿½ï¿½ï¿½Ö·ï¿½.
 void RTC_ReadTimeStr6_B(char * dest)
 {   
     char year;
@@ -968,10 +968,10 @@ void RTC_SetTimeStr6_B(const char *src)
               (src[2]-'0')*10+src[3]-'0' ,1,(src[0]-'0')*10+src[1]-'0',0);
     UpInt();
 }
-//ÒÔ ÄêÄêÔÂÔÂÈÕÈÕÊ±Ê±·Ö·Ö µÄ¸ñÊ½À´ÉèÖÃÊ±¼ä
+//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½Ö·ï¿½ ï¿½Ä¸ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 //   0 1 2 3 4 5 6 7 8 9
 //  090509101123
-// ÐÇÆÚ È«²¿ÉèÖÃÎª1,ÐÇÆÚ1
+// ï¿½ï¿½ï¿½ï¿½ È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª1,ï¿½ï¿½ï¿½ï¿½1
 void RTC_SetTimeStr5_B(const char *src)
 { 
     DownInt();
@@ -1051,10 +1051,10 @@ int RTC_SetTimeBytes6(const char * src)
  
 
 
-//¶¨Òå´ýÉèÖÃµÄÊ±¼ä£ºÃë¡¢·Ö¡¢Ê±¡¢ÈÕ¡¢ÔÂ¡¢ÐÇÆÚ¡¢Äê¡¢¿ØÖÆ×Ö
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½Ê±ï¿½ä£ºï¿½ë¡¢ï¿½Ö¡ï¿½Ê±ï¿½ï¿½ï¿½Õ¡ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½Ú¡ï¿½ï¿½ê¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int _RTC_SetTime(const char second,const char minute,
                  const char hour,const char date,const char month,
-                 const char day,const char year,const char control)   //ÉèÖÃ99Äê12ÔÂ31ÈÕ ÐÇÆÚ7 23µã59·Ö00Ãë
+                 const char day,const char year,const char control)   //ï¿½ï¿½ï¿½ï¿½99ï¿½ï¿½12ï¿½ï¿½31ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½7 23ï¿½ï¿½59ï¿½ï¿½00ï¿½ï¿½
 {
   if(second >59 || minute >59 || hour >23|| day>7 || day ==0 || date>31 
      || date==0 || month >12 || month ==0 || year >99)
@@ -1082,7 +1082,7 @@ int _RTC_SetTime(const char second,const char minute,
   
   
   
-  //Ê±¼äÊý¾ÝÔÚ·Åµ½s_RTC_lastTimeÀï±£´æÒ»ÏÂ
+  //Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·Åµï¿½s_RTC_lastTimeï¿½ï±£ï¿½ï¿½Ò»ï¿½ï¿½
   
   s_RTC_lastTime[0]=year;
   s_RTC_lastTime[1]=month;
@@ -1146,11 +1146,11 @@ void RTC_ReadRTCTimeBytes(char * dest)
 */
 int _RTC_SendByte(char data)
 {
-    _RTC_Set_IO_OUT(); //ioÏßÉèÖÃÎªÊä³ö¡£
+    _RTC_Set_IO_OUT(); //ioï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½
       
     for(int i=0;i<8;i++)
     {  
-       //´ÓµÍµ½¸ß ·¢ËÍµ½ IOÉÏ
+       //ï¿½ÓµÍµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Íµï¿½ IOï¿½ï¿½
         if(data & 0x01)
         {  
           _RTC_Set_IO_high(); 
@@ -1159,19 +1159,19 @@ int _RTC_SendByte(char data)
         {
           _RTC_Set_IO_low();
         }
-        // IOÏßÉÏµÄµçÆ½È·¶¨ºÃºó£¬
-        //¸øÊ±ÖÓÏßÉÏÒ»¸öÉÏÉýµÄÂö³å£¬DS1302¾Í»áÈ¥½ÓÊÕ¸ÃÊý¾Ý,
-        //Ê±ÖÓÏÂ½µÑØ£¬·¢ËÍÊý¾ÝÓÐÐ§
+        // IOï¿½ï¿½ï¿½ÏµÄµï¿½Æ½È·ï¿½ï¿½ï¿½Ãºï¿½
+        //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬DS1302ï¿½Í»ï¿½È¥ï¿½ï¿½ï¿½Õ¸ï¿½ï¿½ï¿½ï¿½ï¿½,
+        //Ê±ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§
         
         _RTC_Set_SCLK_low();
         _RTC_Set_SCLK_low();
         _RTC_Set_SCLK_high();
         _RTC_Set_SCLK_high();
         
-        //µÈ´ýDS1302 ½ÓÊÕÕâ¸öÊý¾Ý
+        //ï¿½È´ï¿½DS1302 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          _RTC_delay(40); 
          
-        //ÒÆÎ»
+        //ï¿½ï¿½Î»
         data>>=1;
     } 
     return 0;
@@ -1180,34 +1180,34 @@ int _RTC_SendByte(char data)
 char _RTC_RecvByte(void)
 { 
     char temp=0;
-    //°ÑIOÏßµÄÊä³öÉèÖÃÎª¸ß£¬
-    //  ¿ÉÒÔ°ïÖúÇý¶¯DS1302À­¸ßIOÏßµÄµçÆ½
+    //ï¿½ï¿½IOï¿½ßµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ß£ï¿½
+    //  ï¿½ï¿½ï¿½Ô°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½DS1302ï¿½ï¿½ï¿½ï¿½IOï¿½ßµÄµï¿½Æ½
     _RTC_Set_IO_high();
-    //ioÏßÉèÖÃÎªÊäÈë£¬½ÓÊÕÊý¾Ý
+    //ioï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     _RTC_Set_IO_IN();
    
     for(int i=0; i<8;++i)
     { 
-        //   ¸øÊ±ÖÓÏßÉÏÒ»¸öÏÂ½µµÄÂö³å£¬±íÃ÷Êý¾ÝÒÑ¾­½ÓÊÕ,
+        //   ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½,
        
-        //      DS1302»á¼ÌÐø·¢ÏÂÒ»Î»Êý¾Ýµ½ IOÉÏ ¡£
+        //      DS1302ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»ï¿½ï¿½ï¿½Ýµï¿½ IOï¿½ï¿½ ï¿½ï¿½
         
-        //¸ø¸öÏÂ½µÑØÑÓÊ±Ò»ÏÂ  ¾Í¿ªÊ¼½ÓÊÕ Êý¾ÝÁË
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ò»ï¿½ï¿½  ï¿½Í¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         _RTC_delay(40);
         _RTC_Set_SCLK_high();   
         _RTC_Set_SCLK_high();
         _RTC_Set_SCLK_low();
         _RTC_Set_SCLK_low();
      
-        //×Ü¹²Ö»ÐèÒÆ7Î»£¬¶ø²»ÊÇ8£¬ËùÒÔ·ÅÔÚ¶ÁÈ¡Ö®Ç°
+        //ï¿½Ü¹ï¿½Ö»ï¿½ï¿½ï¿½ï¿½7Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ú¶ï¿½È¡Ö®Ç°
         temp >>=1;
-        // ·¢ËÍ¶Á¿ØÖÆ×Ö½Úºó£¬IOÏßÉÏ¾Í»á»ñµÃÊý¾Ý
-        // ´ÓIOÉÏÒ»¸ö¸ö¶ÁÈ¡£¬´ÓµÍµ½¸ß£¬×îºóÒ»¸öÐ´ÔÚ×î¸ßÎ»¡£
+        // ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½Úºï¿½IOï¿½ï¿½ï¿½Ï¾Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½IOï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ÓµÍµï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
         if((P1IN & RTC_IO)==RTC_IO)
         {
             temp |=0x80;
         }
-        // IOÏßÉÏµÄµçÆ½¶ÁÈ¡Íê±ÏÖ®ºó£¬
+        // IOï¿½ï¿½ï¿½ÏµÄµï¿½Æ½ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ö®ï¿½ï¿½
     }
     return temp;
 }
@@ -1254,11 +1254,11 @@ void _RTC_Write_OneByte(char regAddr,char data)
      //start 
     IIC_Start(); 
     //send write cmd
-    IIC_Send_Byte(WRITE_CMD);   //·¢ËÍÆ÷¼þµØÖ·0XA0,Ð´Êý¾Ý 
+    IIC_Send_Byte(WRITE_CMD);   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·0XA0,Ð´ï¿½ï¿½ï¿½ï¿½ 
     //wait ack
     IIC_Wait_Ack();
     //send reg addr
-    IIC_Send_Byte(regAddr);   //·¢ËÍµÍµØÖ·
+    IIC_Send_Byte(regAddr);   //ï¿½ï¿½ï¿½ÍµÍµï¿½Ö·
     //wait ack
     IIC_Wait_Ack();	
     //send write_data
@@ -1273,40 +1273,40 @@ void _RTC_Write_OneByte(char regAddr,char data)
 
 int _RTC_MultiRead(char cmd, char * dest, int length)
 {
-    //´ò¿ªDS1302,Ö®Ç°½« Ê±ÖÓÏßÉèÖÃÎªµÍ
+    //ï¿½ï¿½DS1302,Ö®Ç°ï¿½ï¿½ Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
     //_RTC_Set_RST_low(); 
     _RTC_Set_SCLK_low();
     _RTC_Set_SCLK_low();
     //////////_RTC_Set_RST_high();
-    //·¢ËÍÃüÁî
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     _RTC_SendByte(cmd);
-   //¿ªÊ¼½ÓÊÕÊý¾Ý
+   //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     for(int i=0;i<length;++i)
     {
        dest[i]=_RTC_RecvByte();
      }
-    //¶ÁÍêÖ®ºó¹Ø±ÕDS1302 
+    //ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ø±ï¿½DS1302 
     //_RTC_Set_RST_low();
     return 0;
 }
 
 int _RTC_MultiWrite(char cmd ,const char * src, int length)
 {
-    //´ò¿ªDS1302,Ö®Ç°½« Ê±ÖÓÏßÉèÖÃÎªµÍ
+    //ï¿½ï¿½DS1302,Ö®Ç°ï¿½ï¿½ Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
     
     
     //_RTC_Set_RST_low(); 
     _RTC_Set_SCLK_low();
     _RTC_Set_SCLK_low();
     //////////_RTC_Set_RST_high();
-    //·¢ËÍcmd
+    //ï¿½ï¿½ï¿½ï¿½cmd
     _RTC_SendByte(cmd);
-    //Á¬Ðø·¢ËÍÊý¾Ý
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     for(int i=0;i<length;++i)
     {
        _RTC_SendByte(src[i]);
     }
-    //Ð´ÍêÖ®ºó¹Ø±ÕDS1302
+    //Ð´ï¿½ï¿½Ö®ï¿½ï¿½Ø±ï¿½DS1302
     //RTC_Set_RST_low(); 
     
     //_RTC_Set_RST_low();
@@ -1330,7 +1330,7 @@ void _RTC_EnableWrite()
 }
 void _RTC_Go()
 {  
-    //Ó¦¸ÃÏÈ¶Á³öÃëÖÓ£¬ÔÙÇå¸ßÎ»£¬ÔÙÐ´½øÈ¥£¬ÕâÑùÃëÖÓ²»»á´í
+    //Ó¦ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½
     char temp;
     //_RTC_MultiRead(CMD_READ_SECOND,&temp,1);
     temp = _RTC_Read_OneByte(RegAddr_Sec);
@@ -1342,7 +1342,7 @@ void _RTC_Go()
 }
 void _RTC_Pause()
 {
-    //Ó¦¸ÃÏÈ¶Á³öÃëÖÓ£¬ÔÙÖÃ¸ßÎ»£¬ÔÙÐ´½øÈ¥£¬ÕâÑùÃëÖÓ²»»á´í
+    //Ó¦ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½
     char temp;
     //_RTC_MultiRead(CMD_READ_SECOND,&temp,1);
     temp = _RTC_Read_OneByte(RegAddr_Sec);
@@ -1363,9 +1363,9 @@ int _RTC_Check()
     //RegAddr_CtlStat,// Control/Status
     char temp;
     
-    if(_RTC_Read_OneByte(RegAddr_Control) & 0x80) //¾§ÕñÍ£Ö¹¹¤×÷ÁË
+    if(_RTC_Read_OneByte(RegAddr_Control) & 0x80) //ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         return 1;
-    else if(_RTC_Read_OneByte(RegAddr_CtlStat) & 0x80) //»òÕß EOSC±»½ûÖ¹ÁË
+    else if(_RTC_Read_OneByte(RegAddr_CtlStat) & 0x80) //ï¿½ï¿½ï¿½ï¿½ EOSCï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½
         return 2;
     else                //normal
         return 0;
@@ -1386,10 +1386,10 @@ int _RTC_Check()
 // }
 
 /*
- * ´æµ½RTC_RAMÖÐµÄÖµ:
- * StartIdx,EndIdx   ==>  ·¢ËÍ×´Ì¬¶ÓÁÐµÄ¶ÓÊ×¶ÓÎ²
- * LastCheckTime  ==>   È«¾Ö±äÁ¿£¬ÄÚ´æÖÐÓÐÒ»·Ý£¬RTCµÄRAMÖÐÒ²´æÒ»·Ý
- * NextCheckTime   ==>  ÏÂÒ»´Î¼ì²éÊ±¼ä
+ * ï¿½æµ½RTC_RAMï¿½Ðµï¿½Öµ:
+ * StartIdx,EndIdx   ==>  ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ÐµÄ¶ï¿½ï¿½×¶ï¿½Î²
+ * LastCheckTime  ==>   È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Ý£ï¿½RTCï¿½ï¿½RAMï¿½ï¿½Ò²ï¿½ï¿½Ò»ï¿½ï¿½
+ * NextCheckTime   ==>  ï¿½ï¿½Ò»ï¿½Î¼ï¿½ï¿½Ê±ï¿½ï¿½
  * 
 */
 
@@ -1423,19 +1423,19 @@ char _RTC_ReadRAM(unsigned char index)
   return temp;
 }
   
-// µÍ¼¶º¯Êý ºÍ  ¸¨Öúº¯Êý
+// ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 char _BCDtoDEC(char val)
 {
-    val = (val >> 4) *10+(val &0x0f); ///½«BCDÂë×ª»»Îª10½øÖÆÊý
-    return val; ///·µ»Ø10½øÖÆÊý
+    val = (val >> 4) *10+(val &0x0f); ///ï¿½ï¿½BCDï¿½ï¿½×ªï¿½ï¿½Îª10ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    return val; ///ï¿½ï¿½ï¿½ï¿½10ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 char _DECtoBCD(char val)
 {
   return ((val / 10) *16+val % 10);
 }
 void _RTC_delay(int j)
-{ //Ê±Ðò³¤¶ÌºÜÖØÒª
-  for(int i=0 ;i <j;i++);//ÒÔÇ°Îª20
+{ //Ê±ï¿½ò³¤¶Ìºï¿½ï¿½ï¿½Òª
+  for(int i=0 ;i <j;i++);//ï¿½ï¿½Ç°Îª20
 }
 
 /*
@@ -1516,7 +1516,7 @@ void _RTC_Set_IO_OUT()
     _RTC_delay(10);
 }
 
-/* IIC ²Ù×÷ */
+/* IIC ï¿½ï¿½ï¿½ï¿½ */
 
 void IIC_SCL_HIGH(void)
 {
@@ -1547,43 +1547,43 @@ int READ_SDA(void)
         return 0;
 }
 
-//³õÊ¼»¯IIC
+//ï¿½ï¿½Ê¼ï¿½ï¿½IIC
 void IIC_Init(void)
 {					     
-//	RCC->AHB1ENR|=1<<7;    //Ê¹ÄÜPORTHÊ±ÖÓ	   	  
-//	GPIO_Set(GPIOH,PIN4|PIN5,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_PU);//PH4/PH5ÉèÖÃ 
+//	RCC->AHB1ENR|=1<<7;    //Ê¹ï¿½ï¿½PORTHÊ±ï¿½ï¿½	   	  
+//	GPIO_Set(GPIOH,PIN4|PIN5,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_PU);//PH4/PH5ï¿½ï¿½ï¿½ï¿½ 
 //	IIC_SCL_HIGH();
 //	IIC_SDA_HIGH();
 }
-//²úÉúIICÆðÊ¼ÐÅºÅ
+//ï¿½ï¿½ï¿½ï¿½IICï¿½ï¿½Ê¼ï¿½Åºï¿½
 void IIC_Start(void)
 {
-	SDA_OUT();     //sdaÏßÊä³ö
+	SDA_OUT();     //sdaï¿½ï¿½ï¿½ï¿½ï¿½
 	IIC_SDA_HIGH();	  	  
 	IIC_SCL_HIGH();
 	Delay_us(4);
  	IIC_SDA_LOW();//START:when CLK is high,DATA change form high to low 
 	Delay_us(4);
-	IIC_SCL_LOW();//Ç¯×¡I2C×ÜÏß£¬×¼±¸·¢ËÍ»ò½ÓÊÕÊý¾Ý 
+	IIC_SCL_LOW();//Ç¯×¡I2Cï¿½ï¿½ï¿½ß£ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 }	  
-//²úÉúIICÍ£Ö¹ÐÅºÅ
+//ï¿½ï¿½ï¿½ï¿½IICÍ£Ö¹ï¿½Åºï¿½
 void IIC_Stop(void)
 {
-	SDA_OUT();//sdaÏßÊä³ö
+	SDA_OUT();//sdaï¿½ï¿½ï¿½ï¿½ï¿½
 	IIC_SCL_LOW();
 	IIC_SDA_LOW();//STOP:when CLK is high DATA change form low to high
  	Delay_us(4);
 	IIC_SCL_HIGH(); 
-	IIC_SDA_HIGH();//·¢ËÍI2C×ÜÏß½áÊøÐÅºÅ
+	IIC_SDA_HIGH();//ï¿½ï¿½ï¿½ï¿½I2Cï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½ï¿½Åºï¿½
 	Delay_us(4);							   	
 }
-//µÈ´ýÓ¦´ðÐÅºÅµ½À´
-//·µ»ØÖµ£º1£¬½ÓÊÕÓ¦´ðÊ§°Ü
-//        0£¬½ÓÊÕÓ¦´ð³É¹¦
+//ï¿½È´ï¿½Ó¦ï¿½ï¿½ï¿½ÅºÅµï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ê§ï¿½ï¿½
+//        0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½É¹ï¿½
 u8 IIC_Wait_Ack(void)
 {
 	u8 ucErrTime=0;
-	SDA_IN();      //SDAÉèÖÃÎªÊäÈë  
+	SDA_IN();      //SDAï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½  
 	IIC_SDA_HIGH();Delay_us(1);	   
 	IIC_SCL_HIGH();Delay_us(1);	 
 	while(READ_SDA())
@@ -1595,10 +1595,10 @@ u8 IIC_Wait_Ack(void)
 			return 1;
 		}
 	}
-	IIC_SCL_LOW();//Ê±ÖÓÊä³ö0 	   
+	IIC_SCL_LOW();//Ê±ï¿½ï¿½ï¿½ï¿½ï¿½0 	   
 	return 0;  
 } 
-//²úÉúACKÓ¦´ð
+//ï¿½ï¿½ï¿½ï¿½ACKÓ¦ï¿½ï¿½
 void IIC_Ack(void)
 {
 	IIC_SCL_LOW();
@@ -1609,7 +1609,7 @@ void IIC_Ack(void)
 	Delay_us(2);
 	IIC_SCL_LOW();
 }
-//²»²úÉúACKÓ¦´ð		    
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ACKÓ¦ï¿½ï¿½		    
 void IIC_NAck(void)
 {
 	IIC_SCL_LOW();
@@ -1620,15 +1620,15 @@ void IIC_NAck(void)
 	Delay_us(2);
 	IIC_SCL_LOW();
 }					 				     
-//IIC·¢ËÍÒ»¸ö×Ö½Ú
-//·µ»Ø´Ó»úÓÐÎÞÓ¦´ð
-//1£¬ÓÐÓ¦´ð
-//0£¬ÎÞÓ¦´ð			  
+//IICï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+//ï¿½ï¿½ï¿½Ø´Ó»ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½
+//1ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½
+//0ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½			  
 void IIC_Send_Byte(u8 txd)
 {                        
     u8 t;   
     SDA_OUT(); 	    
-    IIC_SCL_LOW();//À­µÍÊ±ÖÓ¿ªÊ¼Êý¾Ý´«Êä
+    IIC_SCL_LOW();//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ó¿ï¿½Ê¼ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
     for(t=0;t<8;t++)
     {   
         if((txd&0x80)>>7)
@@ -1636,18 +1636,18 @@ void IIC_Send_Byte(u8 txd)
         else
             IIC_SDA_LOW();
         txd<<=1; 	  
-        Delay_us(2);   //¶ÔTEA5767ÕâÈý¸öÑÓÊ±¶¼ÊÇ±ØÐëµÄ
+        Delay_us(2);   //ï¿½ï¿½TEA5767ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½
         IIC_SCL_HIGH();
         Delay_us(2); 
         IIC_SCL_LOW();	
         Delay_us(2);
     }	 
 } 	    
-//¶Á1¸ö×Ö½Ú£¬ack=1Ê±£¬·¢ËÍACK£¬ack=0£¬·¢ËÍnACK   
+//ï¿½ï¿½1ï¿½ï¿½ï¿½Ö½Ú£ï¿½ack=1Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ACKï¿½ï¿½ack=0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½nACK   
 u8 IIC_Read_Byte(unsigned char ack)
 {
 	unsigned char i,receive=0;
-	SDA_IN();//SDAÉèÖÃÎªÊäÈë
+	SDA_IN();//SDAï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
     for(i=0;i<8;i++ )
 	{
         IIC_SCL_LOW(); 
@@ -1658,8 +1658,8 @@ u8 IIC_Read_Byte(unsigned char ack)
         Delay_us(1); 
     }					 
     if (!ack)
-        IIC_NAck();//·¢ËÍnACK
+        IIC_NAck();//ï¿½ï¿½ï¿½ï¿½nACK
     else
-        IIC_Ack(); //·¢ËÍACK   
+        IIC_Ack(); //ï¿½ï¿½ï¿½ï¿½ACK   
     return receive;
 }

@@ -1,19 +1,19 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: Sampler.c
-//   ÎÄ¼þ°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ30ÈÕ
-//   ¸üÐÂÄÚÈÝ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: ÎÞ
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: Sampler.c
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½ 11ï¿½ï¿½30ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:  
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: ï¿½ï¿½
 //
 //////////////////////////////////////////////////////
 
 #include "msp430common.h"
 
-#include "Sampler.h"
+#include "sampler.h"
 #include "adc.h" 
 #include "rtc.h"
-#include "Store.h"
+#include "store.h"
 #include "common.h" 
 #include "stdint.h" 
 #include "hydrologycommand.h"
@@ -27,84 +27,84 @@ static int s_pulse2_flag=0;
 static int s_pulse3_flag=0;
 static int s_pulse4_flag=0;
 
-//static unsigned int  s_pulse1_num=0; //¼ÆÊý 
+//static unsigned int  s_pulse1_num=0; //ï¿½ï¿½ï¿½ï¿½ 
 static unsigned int  s_pulse2_num=0; 
 static unsigned int  s_pulse3_num=0; 
 static unsigned int  s_pulse4_num=0;
 
 
-char g_pulse_rate[4]={0,0,0,0}; //  Âú¼ÆÊý
+char g_pulse_rate[4]={0,0,0,0}; //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 char g_pulse_range[4][3];
 
-//¸´¾¯¸æ±ê¼Ç ,  ²»»áÖØ¸´¾¯¸æ.ÒÔ¼°¶¶¶¯¾¯¸æµÄ³öÏÖ 
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ,  ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½.ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ 
 int s_alert_flag[8];
                   
 char alert_str[60];//A,0000,B,0000,C,0000,D,0000,E,0000,F,0000,G,0000,H,0000
 int alert_str_idx=0;
 
 int  Sampler_Init()
-{//¶ÔÂö³åºÍ¿ª¹ØÁ¿µÄ¶Ë¿Ú½øÐÐ³õÊ¼»¯.
+{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶Ë¿Ú½ï¿½ï¿½Ð³ï¿½Ê¼ï¿½ï¿½.
     
-//Âö³åÎªP2 -->P1    ly 
-//¿ª¹ØÎªP5 -->P4        
+//ï¿½ï¿½ï¿½ï¿½ÎªP2 -->P1    ly 
+//ï¿½ï¿½ï¿½ï¿½ÎªP5 -->P4        
     P1SEL = 0x00;   
     P1DIR = 0x00;
     P4SEL = 0x00;
     
     char _temp = 0x00; 
     
-//  ¶ÁÈ¡IO·½ÏòÉèÖÃ
+//  ï¿½ï¿½È¡IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if(Store_ReadIoDirConfig(&_temp)>=0 ) 
         P4DIR = _temp; 
     printf("");
-//  ¶ÁÈ¡IOµçÆ½ÉèÖÃ
+//  ï¿½ï¿½È¡IOï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½
     if(Store_ReadIoLevelConfig(&_temp)>=0) 
         P4OUT = _temp; 
 
-    //ÖØÆô»áÊ¹Öµ¶ªÊ§,ÎÒÃÇÕâÀï¸´ÖÆ³öÀ´. 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹Öµï¿½ï¿½Ê§,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¸´ï¿½Æ³ï¿½ï¿½ï¿½. 
     
-//  Âö³åÆµÂÊ
+//  ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½
     Store_ReadPulseRate(1,&(g_pulse_rate[0]));
     Store_ReadPulseRate(2,&(g_pulse_rate[1]));
     Store_ReadPulseRate(3,&(g_pulse_rate[2]));
     Store_ReadPulseRate(4,&(g_pulse_rate[3]));
     
-//  Âö³å×î´óÖµ
+//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
     Store_ReadPulseRangeBytes(1,g_pulse_range[0]);
     Store_ReadPulseRangeBytes(2,g_pulse_range[1]);
     Store_ReadPulseRangeBytes(3,g_pulse_range[2]);
     Store_ReadPulseRangeBytes(4,g_pulse_range[3]);
-    RTC_RetrievePulseBytes();//ÌáÈ¡Âö³åÖµ
+    RTC_RetrievePulseBytes();//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµ
     
     
-// 2418 P2ÉèÖÃ,P2.3 ¿ªÆôÖÐ¶Ï ·ÅÔÚRTC×¼±¸ºÃÁËÖ®ºó . P2.0-2.4ÖÐ¶Ïflag high-to-low transition
-//5438 P1ÉèÖÃ  P1.3                                P1.0-1.4
+// 2418 P2ï¿½ï¿½ï¿½ï¿½,P2.3 ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ ï¿½ï¿½ï¿½ï¿½RTC×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ . P2.0-2.4ï¿½Ð¶ï¿½flag high-to-low transition
+//5438 P1ï¿½ï¿½ï¿½ï¿½  P1.3                                P1.0-1.4
     P1IE = 0xff;
     P1IES = 0xff;
     
     return 0;
 }
 
-//¿ØÖÆ8¸öIO¿ÚµÄµçÆ½,±ØÐëÉèÖÃÎªÊä³ö. ÆðÊ¼Îª1
+//ï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½IOï¿½ÚµÄµï¿½Æ½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½. ï¿½ï¿½Ê¼Îª1
 int Sampler_IO_Level(int _ioIdx, int _level)
 {
     if( _ioIdx < 1 || _ioIdx>8)
         return -3;
-    //¶ÁÈ¡IOÅäÖÃ
+    //ï¿½ï¿½È¡IOï¿½ï¿½ï¿½ï¿½
     char _temp1=0x00; char _temp2=0x00;char _temp3=0x00;
     if(Store_ReadIoDirConfig(&_temp1)<0)
-    {//Èç¹ûÎÞ·¨¶Á³ö¾Í¶¼Ä¬ÈÏÎªÊä³öºÃÁË.
-        //ÈÃËû³É¹¦.
+    {//ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¶ï¿½Ä¬ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+        //ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½.
         _temp1=0xFF;
     }
     -- _ioIdx;
     _temp2 = ( 0x01 << _ioIdx );
     if(_temp2 & _temp1==0x00)
-    {//¸ÃÎ»²»ÎªÊä³ö
+    {//ï¿½ï¿½Î»ï¿½ï¿½Îªï¿½ï¿½ï¿½
         return -2;
     }
     
-    //¸ÃÉèÖÃÒª±£´æÆðÀ´
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if(Store_ReadIoLevelConfig(&_temp3)<0) 
         return -1; 
     if(_level) 
@@ -114,9 +114,9 @@ int Sampler_IO_Level(int _ioIdx, int _level)
     if(Store_SetIoLevelConfig(_temp3)<0)
         return -1;
     
-    P4DIR |= _temp2;   //ÊäÈë»¹ÊÇÊä³ö
-    //Çý¶¯IO¿Ú
-    if(_level)         //¶Ô¸ÃÎ»½øÐÐÉèÖÃ
+    P4DIR |= _temp2;   //ï¿½ï¿½ï¿½ë»¹ï¿½ï¿½ï¿½ï¿½ï¿½
+    //ï¿½ï¿½ï¿½ï¿½IOï¿½ï¿½
+    if(_level)         //ï¿½Ô¸ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         P4OUT |= _temp2;
     else
         P4OUT &= ~ _temp2;
@@ -125,12 +125,12 @@ int Sampler_IO_Level(int _ioIdx, int _level)
 
 int Sampler_Open()
 { 
-    //´ò¿ª´«¸ÐÆ÷µçÔ´ 
+    //ï¿½ò¿ª´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ 
     P9DIR |= BIT3;
     P9OUT |= BIT3; 
     
     
-    //µçÑ¹²úÉú
+    //ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½
     System_Delayms(500);
     ADC_Open(); //
     return 0;
@@ -151,33 +151,33 @@ int Sampler_Sample()
 }
  
 int Sampler_GSM_ReadAlertString(char * _dest)
-{//³ö´í¾Í·µ»Ø-1
+{//ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½-1
     int  _idx=0; 
     char _tempChar1 = 0x00;
     char _tempChar2 = 0x00;
     char _buffer[3];
     if(Store_ReadAnalogSelect(&_tempChar1)<0)
             return -1;
-    //Ìí¼ÓÄ£ÄâÁ¿
+    //ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½
     for(int i=0;i<8;++i)
     {
         if(_tempChar1 & 0x01)
-        {//Èç¹û¸ÃÎ»ÓÐ
-            //ÔòÌíÉÏÀàÐÍÂëºÍÊý¾Ý
+        {//ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             _dest[_idx] = 'A' + i ;
             ADC_ReadAnalogStr(i+1, &(_dest[++ _idx]));
             _idx += 4;
         }
-        //È»ºóÊÇÏÂÒ»¸ö
-        _tempChar1 >>= 1 ;//×óÒÆÒ»Î»
+        //È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+        _tempChar1 >>= 1 ;//ï¿½ï¿½ï¿½ï¿½Ò»Î»
     } 
-    //Ìí¼ÓÂö³åÁ¿
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if(Store_ReadPulseSelect(&_tempChar1)<0)
             return -1;
     for(int i=0;i<4;++i)
     {
         if( _tempChar1 & 0x80)
-        {//Èç¹û¸ÃÎ»ÓÐ²ÅÌí¼Ó¸ÃÎ»
+        {//ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ð²ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½Î»
             _dest[_idx++] = 'I' + i ; 
             RTC_ReadPulseBytes(i+1,_buffer);
             Utility_CharToHex( _buffer[0],&(_dest[_idx]));
@@ -189,15 +189,15 @@ int Sampler_GSM_ReadAlertString(char * _dest)
          }
          _tempChar1 <<=1;
     } 
-    //¿ª¹ØÁ¿ 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
     _tempChar1=0x01;
-    //_tempChar2×°¿ª¹ØÁ¿µÄÅäÖÃ
+    //_tempChar2×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if(Store_ReadIoSelect(&_tempChar2)<0)
         return -1;
     for(int i=0;i<8;++i)
-    {//¶ÔÓÚ8¸öÎ»
+    {//ï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½Î»
         if(_tempChar2&0x01)
-        {//Îª1µÄÎ»Òª¼ÇÂ¼0»ò1
+        {//Îª1ï¿½ï¿½Î»Òªï¿½ï¿½Â¼0ï¿½ï¿½1
             _dest[_idx++] = 'M' + i;
             if(P4IN & _tempChar1)
             {
@@ -208,11 +208,11 @@ int Sampler_GSM_ReadAlertString(char * _dest)
                 _dest[_idx++]='0';
             }
          }
-         //ÅÐ¶ÏÏÂÒ»¸ö
+         //ï¿½Ð¶ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
          _tempChar1 >>=1;
          _tempChar2 >>=1;
     }
-    //½áÊø  ¶ÔÓÚ#ºÅ,·¢ËÍ³ÌÐò×Ô¼º¼Ó
+    //ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½#ï¿½ï¿½,ï¿½ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½
     return _idx;
 }
 
@@ -224,32 +224,32 @@ int Sampler_DTU_ReadAlertString( char * _dest)
 
 //0123456798901234567890123456789012345678901234567890123456789
 //3:A=1024;C=1022;H=3333;
-//·µ»Ø1±íÊ¾ Òª¾¯¸æ
-//¶ÔÓÚÎ´Ñ¡ÔñµÄÍ¨µÀ Ôò²»¹ÜËü
+//ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¾ Òªï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½Î´Ñ¡ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ ï¿½ò²»¹ï¿½ï¿½ï¿½
 int Sampler_CheckNormal()
 {
-    int _max=4096; //ÉÏÏÞ±äÁ¿
-    int _min=0;    //ÏÂÏÞ±äÁ¿
-    char _tempChar1=0x00; //ÁÙÊ±±äÁ¿
-    int  _tempInt = 0;    //ÁÙÊ±±äÁ¿
+    int _max=4096; //ï¿½ï¿½ï¿½Þ±ï¿½ï¿½ï¿½
+    int _min=0;    //ï¿½ï¿½ï¿½Þ±ï¿½ï¿½ï¿½
+    char _tempChar1=0x00; //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+    int  _tempInt = 0;    //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
     
-    int _need_alert=0; //ÊÇ·ñÐèÒª±¨¾¯.
+    int _need_alert=0; //ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½.
     
-    alert_str_idx=1;   //ÖØÐÂÌîÐ´alert_str;
+    alert_str_idx=1;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´alert_str;
     alert_str[alert_str_idx++]=':';
-    char _alert_num=0;//ÓÃÀ´Ö¸Ê¾±¨¾¯ÊýÁ¿.
+    char _alert_num=0;//ï¿½ï¿½ï¿½ï¿½Ö¸Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     
     
     if(Store_ReadAnalogSelect(&_tempChar1)<0)
-    {//ÎÞ·¨¶Á³öÑ¡Ôñ´®,¾Íµ±¶¼Ñ¡ÔñÁË.
+    {//ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½,ï¿½Íµï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½.
         _tempChar1 = 0xFF;
     }
-    //ÏÂÃæÒÀ´Î¼ì²é¸÷¸öÍ¨µÀ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
     for(int i=0; i< 8; ++i)
     {
         _tempInt= _tempChar1 & (0x01<<i);
         if(_tempInt==0)
-        {//Õâ¸öÍ¨µÀÎ´±»Ê¹ÓÃ
+        {//ï¿½ï¿½ï¿½Í¨ï¿½ï¿½Î´ï¿½ï¿½Ê¹ï¿½ï¿½
             continue;
         }
         if(Store_ReadDataMinInt( i+1 , &_min)<0 )
@@ -258,24 +258,24 @@ int Sampler_CheckNormal()
             _max=4096;
         
         if( A[i] < _min || A[i] > _max)
-        {//Ö»Òª³¬¹ý·¶Î§¶¼»áÔÚ±¨¾¯ÐÅÏ¢ÀïÁôÏÂ¼ÇÂ¼
-            //Éú³É¸ÃÍ¨µÀÉÏµÄ±¨¾¯ÌõÄ¿,
+        {//Ö»Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Â¼
+            //ï¿½ï¿½ï¿½É¸ï¿½Í¨ï¿½ï¿½ï¿½ÏµÄ±ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿,
             ++_alert_num;
             alert_str[alert_str_idx++]='A'+i;
             alert_str[alert_str_idx++]='=';
             _tempInt=A[i];
             Utility_UintToStr4(_tempInt,&alert_str[alert_str_idx]);
             alert_str_idx+=4;
-            alert_str[alert_str_idx++]= ';';//ÒÔÒ»¸ö,ºÅ½øÐÐ·Ö¸ô
-            //Íê³ÉÕâ²¿·ÖµÄÌîÐ´
+            alert_str[alert_str_idx++]= ';';//ï¿½ï¿½Ò»ï¿½ï¿½,ï¿½Å½ï¿½ï¿½Ð·Ö¸ï¿½
+            //ï¿½ï¿½ï¿½ï¿½â²¿ï¿½Öµï¿½ï¿½ï¿½Ð´
         }
-        //ÏÂÃæ¹ØÓÚ¼ÇºÅºÍ¾¯±¨
-        //Èç¹ûÕâÒ»Â· ¾¯¸æ¹ýÁË.
-        //ÅÐ¶ÏÊÇ·ñÐèÒª½â³ý ÖØ¸´¾¯¸æ±ê¼Ç
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ÇºÅºÍ¾ï¿½ï¿½ï¿½
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Â· ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+        //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if(s_alert_flag[i]>0)
         {
-            //ÏÂÃæÓöµ½ÁË ÒþÊ½ÀàÐÍ×ª»»µÄÂé·³. , ×öÎªÒ»¸ö¾­Ñé!
-            //( A[i] < _max-100)  µ± _max-100<0µÄÊ±ºò ,ÎÞ·ûºÅµÄA[i]½«²úÉúÂé·³
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½é·³. , ï¿½ï¿½ÎªÒ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!
+            //( A[i] < _max-100)  ï¿½ï¿½ _max-100<0ï¿½ï¿½Ê±ï¿½ï¿½ ,ï¿½Þ·ï¿½ï¿½Åµï¿½A[i]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
             if(   (    _max-100>0   &&   A[i]< _max-100 )   ||   (  _max-100<=0 && A[i]<_max ) )
             {
                 TraceMsg("A[i] = ",0);TraceInt4(A[i],1);
@@ -300,16 +300,16 @@ int Sampler_CheckNormal()
         
         if( A[i] < _min)
         {
-            s_alert_flag[i]=-1;//ÉèÖÃ±ê¼Ç,1±íÊ¾Ôø¾­ÒòÎªÌ«Ð¡¶ø±»±¨¾¯
+            s_alert_flag[i]=-1;//ï¿½ï¿½ï¿½Ã±ï¿½ï¿½,1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÌ«Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             _need_alert=1;
         }
         if( A[i] > _max)
         {
-            s_alert_flag[i]=1;//ÉèÖÃ±ê¼Ç
+            s_alert_flag[i]=1;//ï¿½ï¿½ï¿½Ã±ï¿½ï¿½
             _need_alert=1;
         }
     }
-    //È»ºó¸üÐÂ±¨¾¯ÊýÄ¿×Ö·û.
+    //È»ï¿½ï¿½ï¿½ï¿½Â±ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½Ö·ï¿½.
     alert_str[0] = '0' + _alert_num;
     if(_need_alert)
         return 1;
@@ -317,17 +317,17 @@ int Sampler_CheckNormal()
         return 0;
 }
 
-//  ±£´æÄÚÈÝÎª
-//  Ð£Ñé×Ö½Ú 0909011230×Ö½ÚA1×Ö½ÚA2×Ö½ÚB1×Ö½ÚB2×Ö½Ú..×Ö½ÚI1×Ö½ÚI2...¿ª¹Ø×Ö½Ú
-//  ÈçÏÂ:
+//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª
+//  Ð£ï¿½ï¿½ï¿½Ö½ï¿½ 0909011230ï¿½Ö½ï¿½A1ï¿½Ö½ï¿½A2ï¿½Ö½ï¿½B1ï¿½Ö½ï¿½B2ï¿½Ö½ï¿½..ï¿½Ö½ï¿½I1ï¿½Ö½ï¿½I2...ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
+//  ï¿½ï¿½ï¿½ï¿½:
 //  0           1          2          3     
 //  0  1234567890 1234567890123456 789012345678  9
-//  Ð£ 0909011230 AABBCCDDEEFFGGHH IIIJJJKKKLLL ¿ª¹Ø
+//  Ð£ 0909011230 AABBCCDDEEFFGGHH IIIJJJKKKLLL ï¿½ï¿½ï¿½ï¿½
 // 
 int Sampler_SaveData(char * _saveTime)
 {
-    char _data[40];  //Êý¾ÝÌõÎª40
-    _data[0] = 0x00; // ÒÑ·¢ËÍ±ê¼Ç ¼ÇÎª0x00 ,
+    char _data[40];  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª40
+    _data[0] = 0x00; // ï¿½Ñ·ï¿½ï¿½Í±ï¿½ï¿½ ï¿½ï¿½Îª0x00 ,
     _data[1] = _saveTime[0]/10 + '0';
     _data[2] = _saveTime[0]%10 + '0';
     _data[3] = _saveTime[1]/10 + '0';
@@ -362,31 +362,31 @@ int Sampler_SaveData(char * _saveTime)
     RTC_ReadPulseBytes(4,&(_data[36]));
     char _tempIO=0x00;
     //
-    //  ÅÐ¶Ï¿ª¹Ø¿Ú
+    //  ï¿½Ð¶Ï¿ï¿½ï¿½Ø¿ï¿½
     //
-    //  ¶ÔÓÚ¿ª¹ØµÄ±£´æÊý¾Ý,
-    //  ÎÒÃÇÊ×ÏÈ¶ÁÈ¡ ·½Ïò,
-    //  ¶ÔÓÚÊäÈëµÄ,ÎÒÃÇ±£´æ  P5INµÄµçÆ½Öµ
-    //  ¶ÔÓÚÊä³öµÄ,ÎÒÃÇ±£´æ ¶ÔP5OUTµÄÅäÖÃ
+    //  ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ØµÄ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¶ï¿½È¡ ï¿½ï¿½ï¿½ï¿½,
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½  P5INï¿½Äµï¿½Æ½Öµ
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ ï¿½ï¿½P5OUTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     char _dir;
     Store_ReadIoDirConfig(&_dir);
-    P4DIR = _dir;//ÔÙ¸üÐÂÒ»´Î,±£³ÖÓëROMÖÐÏàÍ¬
+    P4DIR = _dir;//ï¿½Ù¸ï¿½ï¿½ï¿½Ò»ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ROMï¿½ï¿½ï¿½ï¿½Í¬
     char _level;
     Store_ReadIoLevelConfig(&_level);
-    P4OUT = _level;//ÔÙ¸üÐÂÒ»´Î,±£³ÖÓëROMÖÐÏàÍ¬
+    P4OUT = _level;//ï¿½Ù¸ï¿½ï¿½ï¿½Ò»ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ROMï¿½ï¿½ï¿½ï¿½Í¬
     
     char _bit = BIT0;
     for(int i=0;i<8;++i)
     {
         if(_dir & _bit)
-        {//±íÊ¾¸ÃÎ»ÎªÊä³ö
-            if(_level & _bit) //ÅäÖÃÎª¸ßµçÆ½
+        {//ï¿½ï¿½Ê¾ï¿½ï¿½Î»Îªï¿½ï¿½ï¿½
+            if(_level & _bit) //ï¿½ï¿½ï¿½ï¿½Îªï¿½ßµï¿½Æ½
                 _tempIO |=_bit; 
             else
                 _tempIO &= ~_bit;
         }
         else
-        {//±íÊ¾¸ÃÎ»ÎªÊäÈë
+        {//ï¿½ï¿½Ê¾ï¿½ï¿½Î»Îªï¿½ï¿½ï¿½ï¿½
             if(P4IN & _bit)
                 _tempIO |= _bit;
             else
@@ -394,9 +394,9 @@ int Sampler_SaveData(char * _saveTime)
         }
         _bit<<=1;
     }
-    //È»ºóÌîÐ´
+    //È»ï¿½ï¿½ï¿½ï¿½Ð´
     _data[39] = _tempIO; 
-    //Ð´ºÃ_dataÁË
+    //Ð´ï¿½ï¿½_dataï¿½ï¿½
     if(Store_WriteDataItemAuto(_data)<0)
     {
         return -1;
@@ -449,18 +449,18 @@ void ISR_Count_Cal(char* ISR_Count_Arr)
   ISR_Count_Arr[0] = (ISR_Count & 0x00000000FF) >> 0;
 }
 
-/*Âö³å¼ÆÊýÖÐ¶Ï*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½*/
 #pragma vector = PORT1_VECTOR
 __interrupt void PORT1_ISR(void) 
 {       
   static int a[8] = {0};
     //TraceInt4(i++,1);
     _DINT();
-    //Âö³å1
+    //ï¿½ï¿½ï¿½ï¿½1
     if(P1IFG & BIT0)
     { 
         P1IFG &= ~(BIT0); 
-        //ÉèÖÃ±ê¼Ç
+        //ï¿½ï¿½ï¿½Ã±ï¿½ï¿½
         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
         Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
@@ -468,18 +468,18 @@ __interrupt void PORT1_ISR(void)
         TraceInt4(a[0]++,1);
     
     }
-    //Âö³å2 
+    //ï¿½ï¿½ï¿½ï¿½2 
     if(P1IFG & BIT1)
     {
         P1IFG &= ~(BIT1);
-        //¼ì²é±ê¼Ç
+        //ï¿½ï¿½ï¿½ï¿½ï¿½
         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT2 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
         Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT2 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         TraceMsg("PULS2:",1);  
         TraceInt4(a[1]++,1);
     }
-    //Âö³å3
+    //ï¿½ï¿½ï¿½ï¿½3
   if(P1IFG & BIT2)
   {
       P1IFG &= ~(BIT2);
@@ -489,7 +489,7 @@ __interrupt void PORT1_ISR(void)
         TraceMsg("PULS3:",1); 
         TraceInt4(a[2]++,1);
    }
-    //Âö³å4 
+    //ï¿½ï¿½ï¿½ï¿½4 
    if(P1IFG & BIT3)
     {   P1IFG &= ~(BIT3);
         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT4 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
@@ -498,7 +498,7 @@ __interrupt void PORT1_ISR(void)
         TraceMsg("PULS4:",1); 
         TraceInt4(a[3]++,1);
    }
-    //Âö³å5
+    //ï¿½ï¿½ï¿½ï¿½5
  if(P1IFG & BIT4)
    {
       P1IFG &= ~(BIT4);
@@ -508,7 +508,7 @@ __interrupt void PORT1_ISR(void)
         TraceMsg("PULS5:",1);
         TraceInt4(a[4]++,1);
    }
-     //Âö³å6
+     //ï¿½ï¿½ï¿½ï¿½6
     if(P1IFG & BIT5)
    {
        P1IFG &= ~(BIT5);
@@ -518,7 +518,7 @@ __interrupt void PORT1_ISR(void)
         TraceMsg("PULS6:",1);
         TraceInt4(a[5]++,1);
    }
-    //Âö³å7
+    //ï¿½ï¿½ï¿½ï¿½7
    if(P1IFG & BIT6)
    {    P1IFG &= ~(BIT6);
          Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT7 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
@@ -527,7 +527,7 @@ __interrupt void PORT1_ISR(void)
         TraceMsg("PULS7:",1);
         TraceInt4(a[6]++,1);
    }
-     //Âö³å8
+     //ï¿½ï¿½ï¿½ï¿½8
     if(P1IFG & BIT7)
    {    P1IFG &= ~(BIT7);
          Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT8 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);

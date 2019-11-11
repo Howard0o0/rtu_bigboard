@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "led.h": "c",
+        "msp430common.h": "c",
+        "gsm.h": "c",
+        "stdio.h": "c",
+        "msp430.h": "c",
+        "wifi_config.h": "c",
+        "common.h": "c",
+        "timer.h": "c",
+        "random": "c",
+        "sampler.h": "c",
+        "uart3.h": "c"
+    }
+}

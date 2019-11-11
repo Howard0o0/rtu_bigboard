@@ -1,0 +1,50 @@
+# OBJECTS=main.o
+
+SRC=main.o
+SRC += adc.o  
+SRC += common.o   
+SRC += debug.o  
+SRC += flash.o  
+SRC += GTM900C.o 
+SRC += hydrologytask.o  
+SRC += main.o  
+SRC += packet.o
+SRC += rom.o  
+SRC += Sampler.o  
+SRC += timer.o  
+SRC += uart1.o  
+SRC += uart_config.o  
+SRC += blueTooth.o  
+SRC += Console.o  
+SRC += dtu.o 
+SRC += GSM.o 
+SRC += hydrologycommand.o  
+SRC += led.o   
+SRC += message.o  
+SRC += reportbinding.o  
+SRC += rtc.o
+SRC += store.o 
+SRC += uart0.o  
+SRC += uart3.o  
+SRC += wifi_config.o
+
+GCC_DIR =  /home/howard/app/ti/msp430-gcc/bin
+SUPPORT_FILE_DIRECTORY = /home/howard/app/ti/msp430-gcc/include 
+SUPPORT_FILE_DIRECTORY_2 = /home/howard/app/ti/msp430-gcc/msp430-elf/include
+
+# Please set your device here
+DEVICE  = MSP430F5438A
+CC   = $(GCC_DIR)/msp430-elf-gcc
+GDB  = $(GCC_DIR)/msp430-elf-gdb
+
+CFLAGS = -I $(SUPPORT_FILE_DIRECTORY_2) -mmcu=$(DEVICE) -Og -Wall -g
+CFLAGS += -I $(SUPPORT_FILE_DIRECTORY)
+LFLAGS = -L $(SUPPORT_FILE_DIRECTORY) -Wl,-Map,"blink.map" -Wl,--gc-sections 
+
+OBJECTS = $(SRC:%.c=%.o)
+
+all: ${OBJECTS}
+	$(CC) $(CFLAGS) $(LFLAGS) $? -o $(DEVICE).out
+
+debug: all
+	$(GDB) $(DEVICE).out

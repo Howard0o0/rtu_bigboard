@@ -5,9 +5,8 @@
 #include "store.h"
 #include "rtc.h"
 #include "led.h" 
-#include "console.h"
-#include "Sampler.h"
-#include "DTU.h"
+#include "Console.h"
+#include "sampler.h"
 #include "GSM.h"
 #include "uart0.h"
 #include "uart1.h"
@@ -61,35 +60,35 @@ int main(void)
 
 void Restart_Init()
 {
-    P1SEL = 0x00;                //¹Ø±ÕÂö³å¶Ë¿ÚÖÐ¶Ï
+    P1SEL = 0x00;                //ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½ï¿½Ð¶ï¿?
     P1DIR = 0x00;
-    Clock_Init();               // CPUÊ±ÖÓ³õÊ¼»¯
+    Clock_Init();               // CPUÊ±ï¿½Ó³ï¿½Ê¼ï¿½ï¿½
         
-    _EINT();                    //´ò¿ªÖÐ¶Ï
-    //IE1|=OFIE+NMIIE+ACCVIE;     //Õñµ´Æ÷¹ÊÕÏÖÐ¶ÏÔÊÐí¡¢NMIÖÐ¶ÏÔÊÐí¡¢FLASH´æ´¢Æ÷·Ç·¨·ÃÎÊÖÐ¶ÏÔÊÐí 
+    _EINT();                    //ï¿½ï¿½ï¿½Ð¶ï¿½
+    //IE1|=OFIE+NMIIE+ACCVIE;     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½NMIï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½FLASHï¿½æ´¢ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ 
     SFRIE1|=OFIE+NMIIE+ACCVIE;
     WatchDog_Init();
-    Led_Init();                 // Ö¸Ê¾µÆ ³õÊ¼»¯
+    Led_Init();                 // Ö¸Ê¾ï¿½ï¿½ ï¿½ï¿½Ê¼ï¿½ï¿½
 //    Led1_WARN(); 
     
 
     
-    TimerA_Init(30720);         // ÏµÍ³¶¨Ê±Æ÷³õÊ¼»¯
+    TimerA_Init(30720);         // ÏµÍ³ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
     TimerB_Init(61440);
-    Store_Init();               // ³õÊ¼»¯ROM
+    Store_Init();               // ï¿½ï¿½Ê¼ï¿½ï¿½ROM
     RTC_Open();
-    Sampler_Init();             //¶Ë¿Ú³õÊ¼»¯,ÐèÒªÏÈ³õÊ¼»¯Store
+    Sampler_Init();             //ï¿½Ë¿Ú³ï¿½Ê¼ï¿½ï¿½,ï¿½ï¿½Òªï¿½È³ï¿½Ê¼ï¿½ï¿½Store
     
     
-//    P9DIR |= BIT7;              //ly À­¸ß232Ð¾Æ¬¿ØÖÆÒý½Å
+//    P9DIR |= BIT7;              //ly ï¿½ï¿½ï¿½ï¿½232Ð¾Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //    P9OUT |= BIT7;  
-      P10DIR |= BIT0;             //ly debug /P100À­¸ß£¬uart3ÓÃÓÚµ÷ÊÔ£¬µÍµÄ»°P104£¬,105¾ÍÊÇ485¿Ú
+      P10DIR |= BIT0;             //ly debug /P100ï¿½ï¿½ï¿½ß£ï¿½uart3ï¿½ï¿½ï¿½Úµï¿½ï¿½Ô£ï¿½ï¿½ÍµÄ»ï¿½P104ï¿½ï¿½,105ï¿½ï¿½ï¿½ï¿½485ï¿½ï¿½
       P10OUT |= BIT0;
     
-      P10DIR |= BIT1;             //ly 485 /P101À­¸ß£¬uart1 P56£¬57£¬µÍµÄ»°¾ÍÊÇ485¿Ú,¸ßµÄ»°¾ÍÊÇÀ¶ÑÀ
+      P10DIR |= BIT1;             //ly 485 /P101ï¿½ï¿½ï¿½ß£ï¿½uart1 P56ï¿½ï¿½57ï¿½ï¿½ï¿½ÍµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½485ï¿½ï¿½,ï¿½ßµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       P10OUT &=~ BIT1;
     
-/*wyq  µ÷ÊÔ485È¥µôÁªÍøµÄ²½Öè*/
+/*wyq  ï¿½ï¿½ï¿½ï¿½485È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½*/
 //     P3DIR &= ~BIT2;
 //    if(P3IN & BIT2)
 //    {
@@ -116,7 +115,7 @@ int Restart_GSMInit()
             System_Delayms(1000);
             GSM_Open();
             if(GSM_CheckOK()<0)
-            {//ÎÞ·¨¹¤×÷¾Í·ÅÆúÁË.
+            {//ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½.
                 GSM_Close(1);
                 return -1;
             }
@@ -124,7 +123,7 @@ int Restart_GSMInit()
     }
     
     char _phone[12];
-    char _data[30];//30×ã¹»ÁË
+    char _data[30];//30ï¿½ã¹»ï¿½ï¿½
     
     _data[0]='$';
     if(Store_ReadDeviceNO(&_data[1])<0)
@@ -141,9 +140,9 @@ int Restart_GSMInit()
             GSM_SendMsgTxt(_phone,_data,21);
         }
     }
-    GSM_Process(1,0);        // GSM Ö÷Á÷³Ì 
-    GSM_Close(0);//¹Ø±Õ GSM
-    System_Delayms(2000);//±ÜÃâ¹Ø»úºó¹ý¿ì¿ª»úµ¼ÖÂÊ§°Ü.
+    GSM_Process(1,0);        // GSM ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+    GSM_Close(0);//ï¿½Ø±ï¿½ GSM
+    System_Delayms(2000);//ï¿½ï¿½ï¿½ï¿½Ø»ï¿½ï¿½ï¿½ï¿½ï¿½ì¿ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½.
     return 0;
 
 }
@@ -155,11 +154,11 @@ int Restart_DTUInit()
     int _repeats=0;
     int _out=0;
     //
-    //ÕâÀïÔö¼ÓÒ»¸öDTUµÈ´ý´®¿ÚÅäÖÃµÄ¹ý³Ì.
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½DTUï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÄ¹ï¿½ï¿½ï¿½.
     //
     if(trace_open==0) 
     {
-        //Èç¹ûÃ»´ò¿ªµ÷ÊÔµÄ»°,´®¿ÚÊÇÒª¶îÍâ´ò¿ªµÄ
+        //ï¿½ï¿½ï¿½Ã»ï¿½ò¿?µï¿½ï¿½ÔµÄ»ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ò¿?µï¿½
         //Console_Open(); 
     }
     UART3_ClearBuffer();
@@ -167,10 +166,10 @@ int Restart_DTUInit()
 
     if(UART3_RecvLineLongWait(_data,UART3_MAXBUFFLEN,&_dataLen)==0)
     {
-        //Èç¹ûµÈµ½´®¿ÚÊý¾Ý, ¾Í½øÈëÅäÖÃ×´Ì¬.µÈ´ý15ÃëÖÓ
+        
         //Console_WriteStringln("waiting for 15 seconds .");
         if(Main_ProcCommand(_data,_dataLen,NULL)==3)
-        {//·µ»ØÁËÒ»¸öSYN,¾Í½øÈëÅäÖÃ×´Ì¬
+        {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½SYN,ï¿½Í½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
             while(1)
             {
                 _repeats=0;
@@ -186,15 +185,15 @@ int Restart_DTUInit()
                 if(_out!=0)
                     break; 
                 if(Main_ProcCommand(_data,_dataLen,NULL)==2)
-                {//±íÊ¾ÍË³öÅäÖÃ×´Ì¬
+                {//ï¿½ï¿½Ê¾ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
                     break;
                 }
             }
         }
     }
-    //µ±²»ÔÚµ÷ÊÔ×´Ì¬µÄÊ±ºòÒª¹Ø±ÕµÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½Ê±ï¿½ï¿½Òªï¿½Ø±Õµï¿½
     if(trace_open==0)
-    {//Èç¹ûµ÷ÊÔÊÇ¹Ø±ÕµÄ,´®¿Úµ½´ËÒª¹Ø±Õ
+    {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹Ø±Õµï¿?,ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Òªï¿½Ø±ï¿½
     //Console_Close(); 
     } 
     
@@ -208,11 +207,11 @@ int WorkMode_Init(char* ptype)
     int _ret;
 
 #if 0
-    //»ñÈ¡Ñ¡Ôñ¹¤×÷×´Ì¬    DTU/GSM   232 
-    P3DIR &= ~BIT3;   //P33ÎªÊäÈë
-    P3DIR &= ~BIT2;   //P32ÎªÊäÈë
+    //ï¿½ï¿½È¡Ñ¡ï¿½ï¿½ï¿½ï¿½×´Ì¬    DTU/GSM   232 
+    P3DIR &= ~BIT3;   //P33Îªï¿½ï¿½ï¿½ï¿½
+    P3DIR &= ~BIT2;   //P32Îªï¿½ï¿½ï¿½ï¿½
     if(P3IN & BIT2)
-    {//P32Îª¸ß
+    {//P32Îªï¿½ï¿½
         _selType='D';
     }
     else
@@ -238,16 +237,16 @@ int WorkMode_Init(char* ptype)
         break;
         
       default:
-        //ÕâÀï³öÏÖÎÊÌâ.¾ÍÖØÆô 
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
         
         TraceMsg("Bad Mode !",1);
         System_Reset();
         break;
     }  
 
-     //ÅÐ¶Ïµ±Ç°¹¤×÷×´Ì¬,   DTU/GSM      
+     //ï¿½Ð¶Ïµï¿½Ç°ï¿½ï¿½ï¿½ï¿½×´Ì¬,   DTU/GSM      
     if(Store_ReadSystemType(&_curType)<0)
-    {//Èç¹ûÎÞ·¨¶Á³ö ±£´æµÄÄ£Ê½,¾Í²»ÅÐ¶ÏÊÇ·ñ ÖØÐÂÉèÖÃÁË.
+    {//ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê?,ï¿½Í²ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         _ret =0;
     }
     else
@@ -262,24 +261,24 @@ int WorkMode_Init(char* ptype)
 }
 
 void Main_Init()
-{ //Ê±ÖÓÊ¹ÓÃ8M 
-    //¿ªÖÐ¶Ï,ÒÔ·ÀÖ®Ç°²¿·ÖÓÐ´íÎóµ¼ÖÂÖÐ¶Ï±»¹Ø±Õ
+{ //Ê±ï¿½ï¿½Ê¹ï¿½ï¿½8M 
+    //ï¿½ï¿½ï¿½Ð¶ï¿½,ï¿½Ô·ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï±ï¿½ï¿½Ø±ï¿½
     EnInt();
     TraceOpen();
-    RTC_Open();       // ´ò¿ªRTC
+    RTC_Open();       // ï¿½ï¿½RTC
     TimerB_Clear();
-    WatchDog_Clear();   // Çå³ý¸´Î»¼ÆÊýÆ÷ 
-    //ÔÚÀïÔÙ´ÎÔËÐÐÕâ¸öº¯Êý  Ôö¼Ó¿É¿¿ÐÔ.
+    WatchDog_Clear();   // ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿? 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½Ù´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?  ï¿½ï¿½ï¿½Ó¿É¿ï¿½ï¿½ï¿½.
     Sampler_Init();     
 }
 
 void Main_GotoSleep()
 {
-    //¿ªÖÐ¶Ï,ÒÔ·ÀÖ®Ç°²¿·ÖÓÐ´íÎóµ¼ÖÂÖÐ¶Ï±»¹Ø±Õ
+    //ï¿½ï¿½ï¿½Ð¶ï¿½,ï¿½Ô·ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï±ï¿½ï¿½Ø±ï¿½
     EnInt();
     
     TraceMsg("Device is going to sleep !",1);
-    //¹Ø±ÕÍâÎ§,½øÈëÐÝÃß
+    //ï¿½Ø±ï¿½ï¿½ï¿½Î§,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     RTC_Close();
     Console_Close();
 //    DTU_Close();
@@ -288,7 +287,7 @@ void Main_GotoSleep()
     Sampler_Close(); 
     TimerB_Clear();
     WatchDog_Clear();
-    //TraceMsg("Device sleep !",1); //´Ë´¦´®¿ÚÒÑ¾­¹Ø±Õ
+    //TraceMsg("Device sleep !",1); //ï¿½Ë´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½Ø±ï¿½
     LPM2;
 //    LPM3;
 }

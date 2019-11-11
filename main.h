@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     文件名: main.h
-//   文件版本: 1.0.0
-//   创建时间: 09年11月30日
-//   更新内容:  
-//       作者: 林智
-//       附注: 无
+//     锟侥硷拷锟斤拷: main.h
+//   锟侥硷拷锟芥本: 1.0.0
+//   锟斤拷锟斤拷时锟斤拷: 09锟斤拷11锟斤拷30锟斤拷
+//   锟斤拷锟斤拷锟斤拷锟斤拷:  
+//       锟斤拷锟斤拷: 锟斤拷锟斤拷
+//       锟斤拷注: 锟斤拷
 //
 //////////////////////////////////////////////////////
 
@@ -61,7 +61,7 @@ int  Main_485_Idle_Process();
 //void Hydrology_ReadIO_STATUS(char *value);
 //void Hydrology_SetIO_STATUS(char *value);
 void Main_GotoSleep();
-int  Main_Init_Process(); //串口设置命令的响应处理
+int  Main_Init_Process();
 int  Main_ProcCommand(char * _data, int _dataLen,int * _step);
 int Main_ProcInitConfig(char* _data,int _dataLen,int* _step);
 

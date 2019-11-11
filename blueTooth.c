@@ -9,7 +9,7 @@
 #include "uart1.h"
 // #include "uart2.h"
 #include "uart3.h"
-#include "console.h"
+#include "Console.h"
 #include "common.h"
 #include <string.h>
 #include <stdio.h>
@@ -65,7 +65,7 @@ void BLE_SendAtCmd(char *atCmd,int cmdLen)  //RTUï¿½ï¿½ï¿½ï¿½
 {
   BLE_buffer_Clear();
   char end[]={0x0D,0x0A};
-  UART1_Send(atCmd,cmdLen,0);     //µÚÒ»´ÎOKÊÕ²»µ½
+  UART1_Send(atCmd,cmdLen,0);     //ï¿½ï¿½Ò»ï¿½ï¿½OKï¿½Õ²ï¿½ï¿½ï¿½
   UART1_Send(end,sizeof(end),0);
   System_Delayms(100);
   UART1_Send(atCmd,cmdLen,0); 
@@ -164,7 +164,7 @@ BLERet BLE_SetName ( void )//    AT+BLENAME : RTU
           
 }
 
-BLERet BLE_SERVER()  // //AT+BLEINIT=2  ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿??
+BLERet BLE_SERVER()  // //AT+BLEINIT=2  ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½??
 {
   char cmd[]="AT+BLEINIT=2";
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x49,0x4E,0x49,0x54,0x3D,0x32 };
@@ -195,7 +195,7 @@ BLERet BLE_GATTSSRVCRE()// AT+BLEGATTSSRVCRE GATTS ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   // BLE_SendAtCmd(cmd,sizeof(cmd)-1);
   BLE_buffer_Clear();
   char end[]={0x0D,0x0A};
-  UART1_Send("AT",2,0);     //µÚÒ»´ÎOKÊÕ²»µ½
+  UART1_Send("AT",2,0);     //ï¿½ï¿½Ò»ï¿½ï¿½OKï¿½Õ²ï¿½ï¿½ï¿½
   UART1_Send(end,sizeof(end),0);
   System_Delayms ( 100 );
   UART1_Send(cmd,sizeof(cmd)-1,0);     
@@ -275,19 +275,19 @@ BLERet BLE_BLESPPCFG()//AT+BLESPPCFG=1,1,7,1,5  ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
 
 BLERet BLE_BLESP()//AT+BLESPP  
 {
-  System_Delayms ( 100 );     //±ØÐë
+  System_Delayms ( 100 );     //ï¿½ï¿½ï¿½ï¿½
   char cmd[]="AT+BLESPP";
 	// char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x53,0x50,0x50  };
   int num;
 	char result[100]=" ";
 
-  BLE_BLESPPCFG();    //±ØÐë
+  BLE_BLESPPCFG();    //ï¿½ï¿½ï¿½ï¿½
 
 	// BLE_SendAtCmd(cmd,sizeof(cmd)-1);
   BLE_buffer_Clear();
   char end[]={0x0D,0x0A};
 
-  // UART1_Send("AT",2,0);     //µÚÒ»´ÎOKÊÕ²»µ½
+  // UART1_Send("AT",2,0);     //ï¿½ï¿½Ò»ï¿½ï¿½OKï¿½Õ²ï¿½ï¿½ï¿½
   // UART1_Send(end,sizeof(end),0);
   // System_Delayms ( 100 );
   UART1_Send(cmd,sizeof(cmd)-1,0);     
@@ -342,7 +342,7 @@ BLERet BLE_BLESPPEND()//+++ ï¿½Ø±ï¿½Í¸ï¿½ï¿½
     BLE_buffer_Clear();
     char result[100]=" ";
 
-    System_Delayms(1000);   //±ØÐë
+    System_Delayms(1000);   //ï¿½ï¿½ï¿½ï¿½
     UART1_Send(cmd,sizeof(cmd)-1,0);
     BLE_RecAt(result,&num);
     // printf("REC:%s\r\n",result);
