@@ -80,6 +80,9 @@ int  Utility_UintToStr3(unsigned int _src, char *_dest);
 int  Utility_UintToStr2(unsigned int _src, char *_dest);
 int  Utility_UintToStr1(unsigned int _src, char *_dest);
 int Utility_atoi(char *str, int len);
+int AsciiStr_to_ASCII(char *input_buffer, int input_buffer_len, char *output_buffer);  //将字符串中每两个字符拼成一个字符的ASCII形式，最终转成新的长度为原来的一半的字符串
+int ASCII_to_AsciiStr(char *input_buffer, int input_buffer_len, char *output_buffer);
+char Char_to_Hex(char input_chr);
 
 //   时间辅助函数
 //   保证要传递一个正确的时间值

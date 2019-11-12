@@ -182,8 +182,8 @@ int  UART3_Send(char * _data ,int _len, int _CR)
     {
         //��ȫ�ֱ�����ֵ
         UART3_Tx_Buf=_data; //�����һ�������ж� ����Ϊ0
-        UART3_Tx_Len=_len; //
-        UART3_Tx_Flag=1; //
+        UART3_Tx_Len=_len; //�����һ�������ж� ����Ϊ0,�෢���һ����������
+        UART3_Tx_Flag=1; //���������������һ�����ݵ��ж���������Ϊ0��  
        for(int i=0;i<UART3_Tx_Len;i++)
        {
          
@@ -193,7 +193,7 @@ int  UART3_Send(char * _data ,int _len, int _CR)
        }
         UART3_Tx_Flag=0;
     }
-    if(_len==1) //
+    if(_len==1)//1���ַ���ʱ�� ���жϷ��� �޷��ɹ�.��ʱ�Ȼ��ɲ�ѯ����.�Ժ���о�
     {
       /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
         while (!(UCA3IFG&UCTXIFG));
@@ -221,18 +221,26 @@ int  UART3_Send(char * _data ,int _len, int _CR)
         
     }
 
-    // && (ptDevBle->isenable())
+   
     /* ������ӡ */
     PT_IODev  ptDevBle =  getIODev();
-    if( ptDevBle->isspp() == 1 )    //if BLE is already in SPP mode, send debug message to BLE receiver
+    // if( ptDevBle->isCanUse() )
+    if( ptDevBle->isspp() )
     {
+        // if( ptDevBle->open() != 0 )
+        // {
+            // printf("ble open failed! \r\n");
+            // ptDevBle->restart();
+            // ptDevBle->init();
+        // }
+            
         ptDevBle->sendMsg(_data,_len);
-        if(_CR)
+        if(_CR)//����һ������
         {
             System_Delayms(1000);    //ptDevBle->sendMsg�ļ������̫�̣�esp32�ᷴӦ������
             ptDevBle->sendMsg("\r\n",2);
         }
-        ptDevBle->close();
+        // ptDevBle->close();
     }
 
 

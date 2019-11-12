@@ -16,6 +16,7 @@
 #include "main.h"
 #include "wifi_config.h"
 #include <string.h>
+#include "ioDev.h"
 
 static int Opened=0;//ÊÇ·ñ´ò¿ª
 
@@ -57,6 +58,7 @@ int Console_WriteHexCharln(char * _str,int len)
 
     Console_WriteBytesln(dst,len*2);
 
+
     free(dst);
     
     return 0;
@@ -82,6 +84,7 @@ int Console_WriteString(char * _str)
     {
         UART3_Send(_str,Utility_Strlen(_str),0);
     }
+
     return 0;
 }
 
@@ -103,6 +106,7 @@ int Console_WriteStringln(char * _str)
     {
         UART3_Send(_str,Utility_Strlen(_str),1);
     }
+
     return 0;
 }
 int Console_WriteBytes(char * _bytes, int _len)
@@ -123,6 +127,7 @@ int Console_WriteBytes(char * _bytes, int _len)
     {
        UART3_Send(_bytes,_len,0);
     }
+
     return 0;
 }
 int Console_WriteBytesln(char * _bytes, int _len)
@@ -143,6 +148,8 @@ int Console_WriteBytesln(char * _bytes, int _len)
     {
        UART3_Send(_bytes,_len,1);   
     }
+
+
     return 0;
 }
 

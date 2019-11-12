@@ -45,82 +45,96 @@ int main(void)
      printf("\r\nBLE driver installed \r\n");
     
 
-    //  PT_IODev  ptDevBle =  getIODev();
-    //  if(ptDevBle == NULL)
-    //  {
-    //      printf("BLE not registerd !\r\n");
-    //      return 0;
-    //  }
+     PT_IODev  ptDevBle =  getIODev();
+     if(ptDevBle == NULL)
+     {
+         printf("BLE not registerd !\r\n");
+         return 0;
+     }
 
-    //  printf("BLE is waiting for matched in 30s ...\r\n");
-    //  ptDevBle->init();
+     printf("BLE is waiting for matched in 30s ...\r\n");
+     ptDevBle->init();
     
-
-    //  while (1)
-    //  {
+    int test=0;
+     while (1)
+     {
        
-    //      if(ptDevBle->isCanUse())
-    //      {
-    //          if( ptDevBle->open() != 0)
-    //          {
-    //              printf("ble open failed! \r\n");
-    //              ptDevBle->restart();
-    //              ptDevBle->init();
-    //              continue;
-    //          }
-    //         //  char acBleRcvBuf[200] = {0};
-    //         //  int iLen = 0;
-    //         ptDevBle->sendMsg(".",sizeof("."));
-    //         System_Delayms(3000);
-    //         ptDevBle->sendMsg("..",sizeof(".."));
-    //         System_Delayms(3000);
-    //         ptDevBle->sendMsg("...",sizeof("..."));
-    //         System_Delayms(3000);
-    //         //  ptDevBle->sendMsg("hello ... ",sizeof("hello ... "));
-    //         //  printf("waing msg from phone \r\n");
-    //         //  ptDevBle->getMsg(acBleRcvBuf,&iLen);
-    //         //  if(iLen > 0)
-    //         //  {
-    //         //      printf("rcv from phone : %s \r\n",acBleRcvBuf);
-    //         //  }
-    //          ptDevBle->close();
-    //      }
+         if(ptDevBle->isCanUse())
+         {
+             if( ptDevBle->open() != 0)
+             {
+                 printf("ble open failed! \r\n");
+                 ptDevBle->restart();
+                 ptDevBle->init();
+                 continue;
+             }
+             
+            // while(1)
+            // {
+                char acBleRcvBuf[200] = {0};
+                int iLen = 0;
+                ptDevBle->sendMsg(".",sizeof("."));
+                System_Delayms(3000);
+                ptDevBle->sendMsg("..",sizeof(".."));
+                System_Delayms(3000);
+                ptDevBle->sendMsg("...",sizeof("..."));
+                System_Delayms(3000); 
+                ptDevBle->sendMsg("hello ... ",sizeof("hello ... "));
+                printf("waing msg from phone \r\n");
+                ptDevBle->getMsg(acBleRcvBuf,&iLen);
+                if(iLen > 0)
+                {
+                    printf("rcv from phone : %s \r\n",acBleRcvBuf);
+                }
+            // }
+            
+            
+             ptDevBle->close();
+         }
          
-    //      System_Delayms(9000);
-    //  }
+     }
 
     
 
     // char result[100];
     // int num;
     // char end[2]={0x0D,0x0A};
-    P10DIR |= BIT1;         //MCU-P101=1
-    P10OUT |= BIT1;
-    P9DIR |= BIT6;           //P9.6=1
-    P9OUT |= BIT6;
-    UART1_Open(1);
+    // P10DIR |= BIT1;         //MCU-P101=1
+    // P10OUT |= BIT1;
+    // P9DIR |= BIT6;           //P9.6=1
+    // P9OUT |= BIT6;
+    // UART1_Open(1);
     // BLE_INIT();
     // BLE_Open();
     // while(1)
     //     if(ptDevBle->isCanUse())
     //         printf("connect\r\n");
-    while(1)
-    {
-        ATTEST();
-    }
+    // while(1)
+    // {
+
         
+    //     // printf("AT TEST!\r\n");
+    //     ATTEST();
+    // }
     
 
     
 
     /* End of BLE test */
 
+    if( ptDevBle->open() != 0 )     //ble spp
+    {
+        printf("ble open failed! \r\n");
+        ptDevBle->restart();
+        ptDevBle->init();
+    }
 
     TraceMsg("Device Open !",1);
+    
 
     Main_Init();
 
-    
+    ptDevBle->close();      //ble spp end
 
     /* BC95 Test */
     // char flag = BC95_Open();
@@ -147,15 +161,40 @@ int main(void)
     /* BC95 test */
     /* End of BC95 test */
     
+    if( ptDevBle->open() != 0 )         //ble spp
+    {
+        printf("ble open failed! \r\n");
+        ptDevBle->restart();
+        ptDevBle->init();
+    }
+
     Sampler_Open();
    
+   ptDevBle->close();               //ble spp end
+
+   if( ptDevBle->open() != 0 )  //ble spp
+    {
+        printf("ble open failed! \r\n");
+        ptDevBle->restart();
+        ptDevBle->init();
+    }
+
     Hydrology_InitWaitConfig();
    
+   ptDevBle->close();       //ble spp end
  
     while(1)
     {
+        //  if( ptDevBle->open() != 0 )     //ble spp 
+        // {
+        //     printf("ble open failed! \r\n");
+        //     ptDevBle->restart();
+        //     ptDevBle->init();
+        // }
 
-      HydrologyTask();
+        HydrologyTask();
+
+        // ptDevBle->close();       //ble spp end
    }
 
 }
@@ -188,7 +227,7 @@ void Restart_Init()
     P10OUT |= BIT0;
     
     P10DIR |= BIT1;             //ly P101���ߣ�uart1 P104��,105���͵Ļ�����485��,�ߵĻ���������
-    P10OUT |= BIT1;
+    P10OUT &=~ BIT1;
     
 /*wyq  ����485ȥ�������Ĳ���*/
 //     P3DIR &= ~BIT2;

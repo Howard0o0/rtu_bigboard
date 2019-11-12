@@ -58,8 +58,7 @@ int  Main_485_Alert_Process_Always(); //
 int  Main_485_Idle_Process();
 */
  
-//void Hydrology_ReadIO_STATUS(char *value);
-//void Hydrology_SetIO_STATUS(char *value);
+
 void Main_GotoSleep();
 int  Main_Init_Process(); //串口设置命令的响应处理
 int  Main_ProcCommand(char * _data, int _dataLen,int * _step);

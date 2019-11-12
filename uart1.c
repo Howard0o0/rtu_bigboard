@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: uart1.c
-//   ÎÄ¼þ°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê11ÔÂ30ÈÕ
-//   ¸üÐÂÄÚÈÝ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: ÎÞ
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: uart1.c
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½11ï¿½ï¿½30ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:  
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: ï¿½ï¿½
 //
 //////////////////////////////////////////////////////
 
@@ -23,25 +23,25 @@
 //int testcount=0;
 
 char * UART1_Tx_Buf=NULL; 
-char UART1_Rx_Buffer[UART1_MAXIndex][UART1_MAXBUFFLEN]; //  Êý¾Ý´æ´¢Çø 
-int  UART1_Rx_BufLen[UART1_MAXIndex];                   //  Ã¿ÐÐ½ÓÊÕµ½µÄÊý¾Ý³¤¶È  
-int  UART1_Rx_INTIndex=0;                               //  ÖÐ¶Ï¸ÃÐ´µÄÐÐÎ»ÖÃ
-int  UART1_Rx_INTLen=0;                                 //  ÖÐ¶Ï¸ÃÐ´¸ÃÐÐµÄµÚ¼¸¸ö×Ö·û 
-int  UART1_Rx_RecvIndex=0;                              //  µ±Ç°¸Ã¶ÁµÄÐÐÎ»ÖÃ 
+char UART1_Rx_Buffer[UART1_MAXIndex][UART1_MAXBUFFLEN]; //  ï¿½ï¿½ï¿½Ý´æ´¢ï¿½ï¿½ 
+int  UART1_Rx_BufLen[UART1_MAXIndex];                   //  Ã¿ï¿½Ð½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½  
+int  UART1_Rx_INTIndex=0;                               //  ï¿½Ð¶Ï¸ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+int  UART1_Rx_INTLen=0;                                 //  ï¿½Ð¶Ï¸ï¿½Ð´ï¿½ï¿½ï¿½ÐµÄµÚ¼ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ 
+int  UART1_Rx_RecvIndex=0;                              //  ï¿½ï¿½Ç°ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ 
 
 unsigned int UART1_Tx_Flag=0;
 unsigned int UART1_Tx_Len=0;
 extern int WIFI_Inited_Flag;
 
 
-//Ö¸Ê¾µ±Ç°ÀàÐÍµÄ
+//Ö¸Ê¾ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Íµï¿½
 static int s_uart1_type=0;  
 
 int UART1_Open(int  _type)
 {
     s_uart1_type = _type;
     
-    //¿ªÆôrs232  µçÆ½×ª»»µçÂ·
+    //ï¿½ï¿½ï¿½ï¿½rs232  ï¿½ï¿½Æ½×ªï¿½ï¿½ï¿½ï¿½Â·
  //   P4DIR |= BIT0;
  //   P4OUT |= BIT0;
     
@@ -49,7 +49,7 @@ int UART1_Open(int  _type)
  //   UCTL1 &=~ SWRST; 
  //   UCTL1 |= CHAR;
  //   UTCTL1 = 0X00;	
-    //115200£¬  XT2=8000000   SMCLK
+    //115200ï¿½ï¿½  XT2=8000000   SMCLK
     //UTCTL1=SSEL1; UBR0_1 = 0x45; UBR1_1 = 0x00; UMCTL1 = 0x4A;
     
     //  9600,    XT2=8000000   SMCLK
@@ -57,20 +57,20 @@ int UART1_Open(int  _type)
      
  //   UART1_ClearBuffer();
         
- //   ME2 |= UTXE1+URXE1;   //Ê¹ÄÜUART1µÄTXDºÍRXD  
- //   IE2 |= URXIE1+UTXIE1; //Ê¹ÄÜUART1µÄRXºÍTXÖÐ¶Ï  
+ //   ME2 |= UTXE1+URXE1;   //Ê¹ï¿½ï¿½UART1ï¿½ï¿½TXDï¿½ï¿½RXD  
+ //   IE2 |= URXIE1+UTXIE1; //Ê¹ï¿½ï¿½UART1ï¿½ï¿½RXï¿½ï¿½TXï¿½Ð¶ï¿½  
     
- //   P3SEL |= BIT6;//ÉèÖÃP3.6ÎªUART1µÄTXD 
- //   P3SEL |= BIT7;//ÉèÖÃP3.7ÎªUART1µÄRXD
- //   P3DIR |= BIT6;//P3.6ÎªÊä³ö¹Ü½Å   
+ //   P3SEL |= BIT6;//ï¿½ï¿½ï¿½ï¿½P3.6ÎªUART1ï¿½ï¿½TXD 
+ //   P3SEL |= BIT7;//ï¿½ï¿½ï¿½ï¿½P3.7ÎªUART1ï¿½ï¿½RXD
+ //   P3DIR |= BIT6;//P3.6Îªï¿½ï¿½ï¿½ï¿½Ü½ï¿½   
 //     if(s_uart1_type==1)
 ////    {
-//        P10DIR |= BIT0;             //ly P100À­¸ß£¬uart1ÓÃÓÚµ÷ÊÔ£¬µÍµÄ»°P104£¬,105¾ÍÊÇ485¿Ú
+//        P10DIR |= BIT0;             //ly P100ï¿½ï¿½ï¿½ß£ï¿½uart1ï¿½ï¿½ï¿½Úµï¿½ï¿½Ô£ï¿½ï¿½ÍµÄ»ï¿½P104ï¿½ï¿½,105ï¿½ï¿½ï¿½ï¿½485ï¿½ï¿½
 //        P10OUT |= BIT0;  
 ////    }
 ////    else
 ////    {
-//        P10DIR |= BIT0;             //ly P100À­¸ß£¬uart1ÓÃÓÚµ÷ÊÔ£¬µÍµÄ»°P104£¬,105¾ÍÊÇ485¿Ú
+//        P10DIR |= BIT0;             //ly P100ï¿½ï¿½ï¿½ß£ï¿½uart1ï¿½ï¿½ï¿½Úµï¿½ï¿½Ô£ï¿½ï¿½ÍµÄ»ï¿½P104ï¿½ï¿½,105ï¿½ï¿½ï¿½ï¿½485ï¿½ï¿½
 //        P10OUT &=~ BIT0;
 ////    }
    
@@ -89,7 +89,7 @@ int UART1_Open(int  _type)
   P5SEL |= TXD3 + RXD3;
   
   /*2418 UC1IE UCA1RXIE 5438 UCA1IE UCRXIE*/
-  UCA1IE |= UCRXIE;//ÊÇÄÜ´®¿Ú½ÓÊÕÖÐ¶Ï          
+  UCA1IE |= UCRXIE;//ï¿½ï¿½ï¿½Ü´ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½          
 
   return 0;
 }
@@ -97,7 +97,7 @@ void UART1_Open_9600(int _type)
 {
   s_uart1_type = _type;
     
-    //¿ªÆôrs232  µçÆ½×ª»»µçÂ·
+    //ï¿½ï¿½ï¿½ï¿½rs232  ï¿½ï¿½Æ½×ªï¿½ï¿½ï¿½ï¿½Â·
  //   P4DIR |= BIT0;
  //   P4OUT |= BIT0;
     
@@ -105,7 +105,7 @@ void UART1_Open_9600(int _type)
  //   UCTL1 &=~ SWRST; 
  //   UCTL1 |= CHAR;
  //   UTCTL1 = 0X00;	
-    //115200£¬  XT2=8000000   SMCLK
+    //115200ï¿½ï¿½  XT2=8000000   SMCLK
     //UTCTL1=SSEL1; UBR0_1 = 0x45; UBR1_1 = 0x00; UMCTL1 = 0x4A;
     
     //  9600,    XT2=8000000   SMCLK
@@ -113,16 +113,16 @@ void UART1_Open_9600(int _type)
      
   //  UART1_ClearBuffer();
         
-  //  ME2 |= UTXE1+URXE1;   //Ê¹ÄÜUART1µÄTXDºÍRXD  
- //   IE2 |= URXIE1+UTXIE1; //Ê¹ÄÜUART1µÄRXºÍTXÖÐ¶Ï  
+  //  ME2 |= UTXE1+URXE1;   //Ê¹ï¿½ï¿½UART1ï¿½ï¿½TXDï¿½ï¿½RXD  
+ //   IE2 |= URXIE1+UTXIE1; //Ê¹ï¿½ï¿½UART1ï¿½ï¿½RXï¿½ï¿½TXï¿½Ð¶ï¿½  
     
- //   P3SEL |= BIT6;//ÉèÖÃP3.6ÎªUART1µÄTXD 
- //   P3SEL |= BIT7;//ÉèÖÃP3.7ÎªUART1µÄRXD
- //   P3DIR |= BIT6;//P3.6ÎªÊä³ö¹Ü½Å    
+ //   P3SEL |= BIT6;//ï¿½ï¿½ï¿½ï¿½P3.6ÎªUART1ï¿½ï¿½TXD 
+ //   P3SEL |= BIT7;//ï¿½ï¿½ï¿½ï¿½P3.7ÎªUART1ï¿½ï¿½RXD
+ //   P3DIR |= BIT6;//P3.6Îªï¿½ï¿½ï¿½ï¿½Ü½ï¿½    
   UCA1CTL1 |= UCSWRST;
   UCA1CTL1 |= UCSSEL1;   //smclk 1M 
   
-  //104¶ÔÓ¦9600²¨ÌØÂÊ£¬52¶ÔÓ¦19200? 8¶ÔÓ¦115200
+  //104ï¿½ï¿½Ó¦9600ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½52ï¿½ï¿½Ó¦19200? 8ï¿½ï¿½Ó¦115200
   UCA1BR0 = 104;
   UCA1BR1 = 0;
   UCA1MCTL |= UCBRF_0+UCBRS_6;//
@@ -139,12 +139,12 @@ void UART1_Open_9600(int _type)
 }
 void UART1_Close()
 { 
-   //¹Ø±ÕRS232µçÆ½×ª»»µçÂ·
+   //ï¿½Ø±ï¿½RS232ï¿½ï¿½Æ½×ªï¿½ï¿½ï¿½ï¿½Â·
   //P4DIR |= BIT0;
   //P4OUT &= ~BIT0; 
    
    UART1_ClearBuffer(); 
-   //¹Ø±Õ´®¿Ú1
+   //ï¿½Ø±Õ´ï¿½ï¿½ï¿½1
    
 /*2418 UC1IE UCA1RXIE 5438 UCA1IE UCRXIE*/
    UCA1IE &= ~UCRXIE;	 
@@ -153,7 +153,7 @@ void UART1_Close()
 
 void UART1_ClearBuffer()
 {
-    DownInt();//¹ØÖÐ¶Ï
+    DownInt();//ï¿½ï¿½ï¿½Ð¶ï¿½
     
     UART1_Tx_Buf=0;
     UART1_Rx_INTIndex=0;
@@ -167,23 +167,23 @@ void UART1_ClearBuffer()
       UART1_Rx_BufLen[i]=0;
     }
     
-    UpInt();//¿ªÖÐ¶Ï
+    UpInt();//ï¿½ï¿½ï¿½Ð¶ï¿½
 }
 int  UART1_Send(char * _data ,int _len, int _CR)
 {
 
-    if(UART1_Tx_Flag!=0)//µÈ´ýÉÏÒ»´Î·¢ËÍ½áÊø
-    {//¾ÍµÈ500ms 
+    if(UART1_Tx_Flag!=0)//ï¿½È´ï¿½ï¿½ï¿½Ò»ï¿½Î·ï¿½ï¿½Í½ï¿½ï¿½ï¿½
+    {//ï¿½Íµï¿½500ms 
         System_Delayms(500);
    
-        UART1_Tx_Flag=0;//Ç¿ÖÆÉèÖÃÎª0;
+        UART1_Tx_Flag=0;//Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0;
     }
     if(_len>1)
     {
-        //¸øÈ«¾Ö±äÁ¿¸³Öµ
-        UART1_Tx_Buf=_data; //ÓÉ×îºóÒ»´ÎÊý¾ÝÖÐ¶Ï ÉèÖÃÎª0
-        UART1_Tx_Len=_len; //ÓÉ×îºóÒ»´ÎÊý¾ÝÖÐ¶Ï ÉèÖÃÎª0,¶à·¢×îºóÒ»¸ö½áÊø·ûºÅ
-        UART1_Tx_Flag=1; //Õâ¸ö±äÁ¿×îºóÓÉ×îºóÒ»¸öÊý¾ÝµÄÖÐ¶ÏÖØÐÂÉèÖÃÎª0£»  
+        //ï¿½ï¿½È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+        UART1_Tx_Buf=_data; //ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ ï¿½ï¿½ï¿½ï¿½Îª0
+        UART1_Tx_Len=_len; //ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ ï¿½ï¿½ï¿½ï¿½Îª0,ï¿½à·¢ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        UART1_Tx_Flag=1; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½  
        for(int i=0;i<UART1_Tx_Len;i++)
        {
          
@@ -193,7 +193,7 @@ int  UART1_Send(char * _data ,int _len, int _CR)
        }
         UART1_Tx_Flag=0;
     }
-    if(_len==1)//1¸ö×Ö·ûµÄÊ±ºò ÓÃÖÐ¶Ï·¢ËÍ ÎÞ·¨³É¹¦.ÔÝÊ±ÏÈ»»³É²éÑ¯·¢ËÍ.ÒÔºó´ýÑÐ¾¿
+    if(_len==1)//1ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ ï¿½ï¿½ï¿½Ð¶Ï·ï¿½ï¿½ï¿½ ï¿½Þ·ï¿½ï¿½É¹ï¿½.ï¿½ï¿½Ê±ï¿½È»ï¿½ï¿½É²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½.ï¿½Ôºï¿½ï¿½ï¿½Ð¾ï¿½
     {
       /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
         while (!(UCA1IFG&UCTXIFG));
@@ -201,7 +201,7 @@ int  UART1_Send(char * _data ,int _len, int _CR)
         
     }
     if(_CR)
-    {//²¹·¢Ò»¸ö»»ÐÐ
+    {//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
         while (!(UCA1IFG&UCTXIFG));
         UCA1TXBUF=13;
@@ -211,7 +211,7 @@ int  UART1_Send(char * _data ,int _len, int _CR)
         
     }
     if(_CR)
-    {//²¹·¢Ò»¸ö»»ÐÐ
+    {//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
         while (!(UCA1IFG&UCTXIFG));
         UCA1TXBUF=13;
@@ -223,7 +223,7 @@ int  UART1_Send(char * _data ,int _len, int _CR)
     return 0;
 }
 
-//µ÷ÊÔ
+//ï¿½ï¿½ï¿½ï¿½
 int  UART1_SendtoInt(int num)
 {
 /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
@@ -236,18 +236,18 @@ int  UART1_SendtoInt(int num)
 int  UART1_RecvLine(char * _dest ,int _max, int * _pNum)
 {
     int i=0;
-    //¸Ã¶ÁµÄÎ»ÖÃ³¤¶ÈÎª0, ÔòÑ­»·µÈ´ý 
+    //ï¿½Ã¶ï¿½ï¿½ï¿½Î»ï¿½Ã³ï¿½ï¿½ï¿½Îª0, ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½È´ï¿½ 
     while(UART1_Rx_BufLen[UART1_Rx_RecvIndex]==0);
-    //ÓÐÊý¾ÝÁË£¬¾Í°ÑÊý¾Ý¸´ÖÆ³öÀ´, 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½Æ³ï¿½ï¿½ï¿½, 
     for(i=0; ( i< _max) && ( i<UART1_Rx_BufLen[UART1_Rx_RecvIndex]); ++i)
     {
         _dest[i]=UART1_Rx_Buffer[UART1_Rx_RecvIndex][i];
     }
     *_pNum = UART1_Rx_BufLen[UART1_Rx_RecvIndex];
-    //¸´ÖÆÍê±Ïºó,¾Í°Ñ¸ÃÎ»ÖÃµÄ³¤¶ÈÉèÖÃÎª0,¸æËßÖÐ¶Ï¿ÉÒÔ¸²¸ÇÁË.
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½,ï¿½Í°Ñ¸ï¿½Î»ï¿½ÃµÄ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¿ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ï¿½ï¿½.
     UART1_Rx_BufLen[UART1_Rx_RecvIndex]=0;
-    //¶¨Î»µ½ÏÂÒ»ÐÐ
-    // Èç¹û µÈÓÚ9 ¾Í¼õÈ¥9 ,´ÓµÚÒ»ÐÐ¿ªÊ¼,·ñÔò¾Í¼ÌÐø×ÔÔö.
+    //ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½9 ï¿½Í¼ï¿½È¥9 ,ï¿½Óµï¿½Ò»ï¿½Ð¿ï¿½Ê¼,ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     if( UART1_Rx_RecvIndex >= UART1_MAXIndex -1)
         UART1_Rx_RecvIndex=0;
     else
@@ -258,7 +258,7 @@ int  UART1_RecvLine(char * _dest ,int _max, int * _pNum)
 int  UART1_RecvLineTry(char * _dest,const int _max, int * _pNum)
 {
     int i=0;
-    //¸Ã¶ÁµÄÎ»ÖÃ³¤¶ÈÎª0, ÔòÑ­»·µÈ´ý 
+    //ï¿½Ã¶ï¿½ï¿½ï¿½Î»ï¿½Ã³ï¿½ï¿½ï¿½Îª0, ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½È´ï¿½ 
 
     if(UART1_Rx_BufLen[UART1_Rx_RecvIndex]==0)
     {
@@ -267,16 +267,16 @@ int  UART1_RecvLineTry(char * _dest,const int _max, int * _pNum)
 
     TraceInt4(UART1_Rx_RecvIndex,1);
     TraceInt4(UART1_Rx_BufLen[UART1_Rx_RecvIndex],1);
-    //ÓÐÊý¾ÝÁË£¬¾Í°ÑÊý¾Ý¸´ÖÆ³öÀ´, 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½Æ³ï¿½ï¿½ï¿½, 
     for(i=0; ( i< _max) && ( i<UART1_Rx_BufLen[UART1_Rx_RecvIndex]); ++i)
     {
         _dest[i]=UART1_Rx_Buffer[UART1_Rx_RecvIndex][i];
     }
     *_pNum =UART1_Rx_BufLen[UART1_Rx_RecvIndex];
-    //¸´ÖÆÍê±Ïºó,¾Í°Ñ¸ÃÎ»ÖÃµÄ³¤¶ÈÉèÖÃÎª0,¸æËßÖÐ¶Ï¿ÉÒÔ¸²¸ÇÁË.
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½,ï¿½Í°Ñ¸ï¿½Î»ï¿½ÃµÄ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¿ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ï¿½ï¿½.
     UART1_Rx_BufLen[UART1_Rx_RecvIndex]=0;
-    //¶¨Î»µ½ÏÂÒ»ÐÐ
-    // Èç¹û µÈÓÚ9 ¾Í¼õÈ¥9 ,´ÓµÚÒ»ÐÐ¿ªÊ¼,·ñÔò¾Í¼ÌÐø×ÔÔö.
+    //ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½9 ï¿½Í¼ï¿½È¥9 ,ï¿½Óµï¿½Ò»ï¿½Ð¿ï¿½Ê¼,ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     if( UART1_Rx_RecvIndex >= UART1_MAXIndex -1)
         UART1_Rx_RecvIndex=0;
     else
@@ -286,7 +286,7 @@ int  UART1_RecvLineTry(char * _dest,const int _max, int * _pNum)
 int  UART1_RecvLineWait(char *_dest ,const int _max, int * _pNum)
 {
     int i=0; 
-    //¸Ã¶ÁµÄÎ»ÖÃ³¤¶ÈÎª0, ÔòÑ­»·µÈ´ý 
+    //ï¿½Ã¶ï¿½ï¿½ï¿½Î»ï¿½Ã³ï¿½ï¿½ï¿½Îª0, ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½È´ï¿½ 
     while(UART1_Rx_BufLen[UART1_Rx_RecvIndex]==0)
     {
         System_Delayms(30);
@@ -294,16 +294,16 @@ int  UART1_RecvLineWait(char *_dest ,const int _max, int * _pNum)
         if(i>10) 
             return -1;
     }
-    //ÓÐÊý¾ÝÁË£¬¾Í°ÑÊý¾Ý¸´ÖÆ³öÀ´, 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½Æ³ï¿½ï¿½ï¿½, 
     for(i=0; ( i< _max) && ( i<UART1_Rx_BufLen[UART1_Rx_RecvIndex]); ++i)
     {
         _dest[i]=UART1_Rx_Buffer[UART1_Rx_RecvIndex][i];
     }
     *_pNum = UART1_Rx_BufLen[UART1_Rx_RecvIndex];
-    //¸´ÖÆÍê±Ïºó,¾Í°Ñ¸ÃÎ»ÖÃµÄ³¤¶ÈÉèÖÃÎª0,¸æËßÖÐ¶Ï¿ÉÒÔ¸²¸ÇÁË.
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½,ï¿½Í°Ñ¸ï¿½Î»ï¿½ÃµÄ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¿ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ï¿½ï¿½.
     UART1_Rx_BufLen[UART1_Rx_RecvIndex]=0;
-    //¶¨Î»µ½ÏÂÒ»ÐÐ
-    // Èç¹û µÈÓÚ9 ¾Í¼õÈ¥9 ,´ÓµÚÒ»ÐÐ¿ªÊ¼,·ñÔò¾Í¼ÌÐø×ÔÔö.
+    //ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½9 ï¿½Í¼ï¿½È¥9 ,ï¿½Óµï¿½Ò»ï¿½Ð¿ï¿½Ê¼,ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     if( UART1_Rx_RecvIndex >= UART1_MAXIndex -1)
         UART1_Rx_RecvIndex=0;
     else
@@ -313,24 +313,24 @@ int  UART1_RecvLineWait(char *_dest ,const int _max, int * _pNum)
 int  UART1_RecvLineLongWait(char *_dest,int _max, int * _pNum)
 {
     int i=0;
-    //¸Ã¶ÁµÄÎ»ÖÃ³¤¶ÈÎª0, ÔòÑ­»·µÈ´ý 
+    //ï¿½Ã¶ï¿½ï¿½ï¿½Î»ï¿½Ã³ï¿½ï¿½ï¿½Îª0, ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½È´ï¿½ 
     while(UART1_Rx_BufLen[UART1_Rx_RecvIndex]==0)
-    {//µÈ´ý5Ãë.
+    {//ï¿½È´ï¿½5ï¿½ï¿½.
         System_Delayms(50);
         ++i;
         if(i>100)
             return -1;        
     }
-    //ÓÐÊý¾ÝÁË£¬¾Í°ÑÊý¾Ý¸´ÖÆ³öÀ´, 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½Æ³ï¿½ï¿½ï¿½, 
     for(i=0; ( i< _max) && ( i<UART1_Rx_BufLen[UART1_Rx_RecvIndex]); ++i)
     {
         _dest[i]=UART1_Rx_Buffer[UART1_Rx_RecvIndex][i];
     }
     *_pNum = UART1_Rx_BufLen[UART1_Rx_RecvIndex];
-    //¸´ÖÆÍê±Ïºó,¾Í°Ñ¸ÃÎ»ÖÃµÄ³¤¶ÈÉèÖÃÎª0,¸æËßÖÐ¶Ï¿ÉÒÔ¸²¸ÇÁË.
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½,ï¿½Í°Ñ¸ï¿½Î»ï¿½ÃµÄ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¿ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ï¿½ï¿½.
     UART1_Rx_BufLen[UART1_Rx_RecvIndex]=0;
-    //¶¨Î»µ½ÏÂÒ»ÐÐ
-    // Èç¹û µÈÓÚ9 ¾Í¼õÈ¥9 ,´ÓµÚÒ»ÐÐ¿ªÊ¼,·ñÔò¾Í¼ÌÐø×ÔÔö.
+    //ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½9 ï¿½Í¼ï¿½È¥9 ,ï¿½Óµï¿½Ò»ï¿½Ð¿ï¿½Ê¼,ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     if( UART1_Rx_RecvIndex >= UART1_MAXIndex -1)
         UART1_Rx_RecvIndex=0;
     else
@@ -353,19 +353,19 @@ void Judge_Watermeter()
 
 
 //
-//    ½ÓÊÜµ½Ò»¸ö×Ö·û.
+//    ï¿½ï¿½ï¿½Üµï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½.
 //    
-//    ×°ÔØµ½UART1_Rx_Buffer[UART1_Rx_INTIndex][UART1_Rx_INTLen]ÖÐ.
-//    ²¢µÝÔöUART1_Rx_INTLen ;Èç¹ûUART1_Rx_INTLenÒÑ¾­ÊÇ×îºóÒ»¸ö»òÕß×Ö·ûÎª»»ÐÐ
-//    ÌîÐ´±¾ÐÐ»º´æµÄ³¤¶ÈÎª UART1_Rx_INTLen+1;
-//    µÝÔöUART1_Rx_INTIndex,Ö¸ÏòÏÂÒ»¸ö»º³åÇø. Èç¹ûÏÂÒ»¸ö»º´æÇøµÄÊý¾ÝÈÔÎ´±»´¦Àí.
-//    ÄÇÃ´¾Í²»µÝÔö,¸²¸ÇÌîÐ´µ±Ç°µÄ»º³åÇø.
+//    ×°ï¿½Øµï¿½UART1_Rx_Buffer[UART1_Rx_INTIndex][UART1_Rx_INTLen]ï¿½ï¿½.
+//    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UART1_Rx_INTLen ;ï¿½ï¿½ï¿½UART1_Rx_INTLenï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½Îªï¿½ï¿½ï¿½ï¿½
+//    ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½Îª UART1_Rx_INTLen+1;
+//    ï¿½ï¿½ï¿½ï¿½UART1_Rx_INTIndex,Ö¸ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+//    ï¿½ï¿½Ã´ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ç°ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½.
 //    
 //    
 //    
 /*************VECTOR*/
 #pragma vector=USCI_A1_VECTOR 
-__interrupt void UART1_RX_ISR(void)   //½«½ÓÊÕµ½µÄ×Ö·ûÏÔÊ¾µ½´®¿ÚÊä³ö
+__interrupt void UART1_RX_ISR(void)   //ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
    //_DINT();
    char _temp; 
@@ -381,17 +381,17 @@ __interrupt void UART1_RX_ISR(void)   //½«½ÓÊÕµ½µÄ×Ö·ûÏÔÊ¾µ½´®¿ÚÊä³ö
       
         if(((_temp==0x0A) && (UART1_Rx_INTLen!=0) && (UART1_Rx_Buffer[UART1_Rx_INTIndex][UART1_Rx_INTLen-2]==0x0D)) || (_temp == ')'))
         {
-            //Èç¹ûÊÇÍ·²¿ÊÕµ½µÄÕâ¸ö»»ÐÐ·ûºÅ,Ö±½ÓÅ×Æú
+            //ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½,Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if(UART1_Rx_INTLen==1)
             {
-                UART1_Rx_INTLen=0; //ÖØÐÂ¿ªÊ¼½ÓÊÕ 
+                UART1_Rx_INTLen=0; //ï¿½ï¿½ï¿½Â¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ 
                 return ;
             }
             else
             {
-                //   ¶¨Î»µ½ÏÂÒ»ÐÐ 
-                //UART1_Rx_Buffer[UART1_Rx_INTIndex][UART1_Rx_INTLen-1]=13; //Ëæ±ãÉèÖÃ¸ö13
-                UART1_Rx_BufLen[UART1_Rx_INTIndex] = UART1_Rx_INTLen - 2;//²»°üÀ¨»»ÐÐ·û
+                //   ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ 
+                //UART1_Rx_Buffer[UART1_Rx_INTIndex][UART1_Rx_INTLen-1]=13; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½13
+                UART1_Rx_BufLen[UART1_Rx_INTIndex] = UART1_Rx_INTLen - 2;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½
                 UART1_Rx_INTLen=0;
                 if(UART1_Rx_INTIndex >= UART1_MAXIndex-1)
                     UART1_Rx_INTIndex=0;
@@ -417,7 +417,7 @@ __interrupt void UART1_RX_ISR(void)   //½«½ÓÊÕµ½µÄ×Ö·ûÏÔÊ¾µ½´®¿ÚÊä³ö
 //    }
     
     if(UART1_Rx_INTLen >= UART1_MAXBUFFLEN-1)
-    {//ÐÐ³¤¶ÈÂú³öÁË, ÎÒÃÇÖ±½Ó½Ø¶Ï³ÉÒ»ÐÐ.
+    {//ï¿½Ð³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó½Ø¶Ï³ï¿½Ò»ï¿½ï¿½.
         UART1_Rx_BufLen[UART1_Rx_INTIndex] = UART1_Rx_INTLen + 1;
         UART1_Rx_INTLen=0;
         if(UART1_Rx_INTIndex >= UART1_MAXIndex-1)
@@ -426,15 +426,15 @@ __interrupt void UART1_RX_ISR(void)   //½«½ÓÊÕµ½µÄ×Ö·ûÏÔÊ¾µ½´®¿ÚÊä³ö
             ++UART1_Rx_INTIndex;
     }
     
-    //ÅÐ¶Ï»º³åÇøÊÇ·ñÒÑÂú:UART1_Rx_INTIndex¼ÇÂ¼ÏÂ´Î±£´æµÄÐÐÊý£¬ÏÂ´ÎÐÐÊýÒÑ¾­ÓÐ´æ´¢£¬ËµÃ÷»º³åÆ÷ÂúÁË
+    //ï¿½Ð¶Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½:UART1_Rx_INTIndexï¿½ï¿½Â¼ï¿½Â´Î±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½Ð´æ´¢ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if( UART1_Rx_BufLen[UART1_Rx_INTIndex]!=0)
     {
-        //ÏÂÒ»ÐÐ»¹Î´±»´¦Àí£¬ÄÇ¾Í¸²¸Ç×îºó´¦ÀíµÄÕâÒ»ÐÐ
+        //ï¿½ï¿½Ò»ï¿½Ð»ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
         if(UART1_Rx_INTIndex <= 0)
             UART1_Rx_INTIndex = UART1_MAXIndex-1;
         else
             --UART1_Rx_INTIndex;
-        //°Ñ¸ÃÐÐ³¤¶ÈÉèÖÃÎª0,ÓÉÖÐ¶ÏÕ¼ÓÃ
+        //ï¿½Ñ¸ï¿½ï¿½Ð³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0,ï¿½ï¿½ï¿½Ð¶ï¿½Õ¼ï¿½ï¿½
         UART1_Rx_BufLen[UART1_Rx_INTIndex]=0;
     }
 

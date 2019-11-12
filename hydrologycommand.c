@@ -71,30 +71,20 @@ void RS485_ValueDefine(char *buffer,char *value,int index,int times)
 //    }
     case 0:
     {
-      //TraceHexMsg(buffer,4);
-      buffer1[3] = buffer[0];
-      buffer1[2] = buffer[1];
-      buffer1[1] = buffer[2];
-      buffer1[0] = buffer[3];
+      buffer1[3] = buffer[2];
+      buffer1[2] = buffer[3];
+      buffer1[1] = buffer[0];
+      buffer1[0] = buffer[1];
       memcpy(value,buffer1,4);
-      TraceMsg("瞬时流量：",1);
-      TraceHexMsg(value,4);
       break;
     }
     case 1:
-    {   //TraceHexMsg(buffer,4);
-//      buffer1[3] = buffer[2];
-//      buffer1[2] = buffer[3];
-//      buffer1[1] = buffer[0];
-//      buffer1[0] = buffer[1];
-//      memcpy(value,buffer1,4);
-      intvalue = buffer[0]*16777216 + buffer[1]*65536 + buffer[2]*256 + buffer[3];
-     // intvalue /= 1000;
-      
-      memcpy(value,(char*)(&intvalue),4);
-      TraceMsg("总流量：",1);
-       TraceHexMsg(value,4);
-   
+    {
+      buffer1[3] = buffer[2];
+      buffer1[2] = buffer[3];
+      buffer1[1] = buffer[0];
+      buffer1[0] = buffer[1];
+      memcpy(value,buffer1,4);
       break;
     }
  
@@ -119,10 +109,9 @@ void RS485_Send(char device,char function,char reg_addrH,char reg_addrL,char tim
   command[4] = 0;
   command[5] = 2;
   crc = hydrologyCRC16(command,6);
-  command[6] = crc% 256;         
-  command[7] = crc>>8;              
+  command[6] = crc% 256;
+  command[7] = crc>> 8;
   //RS485_Dir(1);
-  TraceHexMsg(command,8);
   RS485_SerilWrite(command,8);
   RS485_Delayms(1);
   RS485_Delayus(500);
@@ -163,6 +152,8 @@ int RS485_Read(char *buffer)
 void Hydrology_ReadRS485(char *value,int index)
 {
   char temp_value[5] = {0,0,0,0,0};
+  // char temp_value[5] = {0x01,0x04,0x10,0x10,2};
+  // char read_value[5]; //debug
   char test[3]={3,4,5};
   char buffer[4] = {0,0,0,0};
   char single_count1 = 0,single_count2 = 0;
@@ -173,13 +164,14 @@ void Hydrology_ReadRS485(char *value,int index)
   single_count2 = single_count1;
   while(single_count1--)
   {
+
+    //Hydrology_WriteStoreInfo(HYDROLOGY_RS4851,temp_value,HYDROLOGY_RS485_LEN);   //debug
     Hydrology_ReadStoreInfo(HYDROLOGY_RS4851 + HYDROLOGY_RS485_LEN * (i+rs485_count),temp_value,HYDROLOGY_RS485_LEN);
     for(error = 0;error < 3;error++)
     { 
-         RS485_Send(temp_value[0],temp_value[1],temp_value[2],temp_value[3],temp_value[4]);
-         RS485_Delayms(5000);
-
-         
+      
+      RS485_Send(temp_value[0],temp_value[1],temp_value[2],temp_value[3],temp_value[4]);
+      RS485_Delayms(5000);
       if(RS485_Read(buffer) != 0)
         continue;
       else
@@ -196,91 +188,7 @@ void Hydrology_ReadRS485(char *value,int index)
   else
     rs485_count += single_count2;
 }
-/*读取开关量状态值，一个字节表示8个io口*/
-void Hydrology_ReadIO_STATUS(char *value,int flag)  //0是对P2开关输入，1是io9-16，2是io17-24，对P8开关输入（分时复用）
-{
-   //开关量 
-   char _tempChar1=BIT0;
-   char *temp = value;
 
-   if(0 == flag)
-   {    
-          
-      for(int i=0;i<8;++i)
-      {
-            if(P2IN & _tempChar1)
-            {
-                *temp |=1<<i;
-            }
-            else
-            {
-                *temp &=~(1<<i);
-            }
-         
-         //判断下一个
-        _tempChar1= _tempChar1 << 1;
-         
-    }
-   }
-   if(1 == flag)
-   {
-      P11DIR |= BIT0+BIT1+BIT2;             
-      P11OUT &=~(BIT0+BIT1+BIT2);
-      
-    for(int i=0;i<8;i++)
-    {
-        if(P8IN & _tempChar1)
-            {
-                *temp |=1<<i;
-            }
-            else
-            {
-               *temp &=~(1<<i);
-            }
-         _tempChar1= _tempChar1 << 1;
-    }
-   
-   }
-   
-   if(2 == flag)
-   {
-     P11DIR |= BIT0+BIT1+BIT2;
-     P11OUT |=BIT0;
-     P11OUT &=~(BIT1+BIT2);
-     
-    for(int i=0;i<8;i++)
-    {
-        if(P8IN & _tempChar1)
-            {
-                *temp |=1<<i;
-            }
-            else
-            {
-                *temp &=~(1<<i);
-            }
-         _tempChar1= _tempChar1 << 1;
-    }
-   
-   }
-   return ;
-
-
-}
-/*设置开关量*/
-void Hydrology_SetIO_STATUS(char *value)
-{
-    char _temp = 0xff;
-    char _temp2 = *value;
-    
-    P4DIR |= _temp;   // temp2
-    P4OUT |= _temp2;
-
-    //驱动IO口
-    //对该位进行设置
-
-    return ;
-
-}
 void hydrologyChangeMode(char M)
 {
 //    HYDROLOGY_MODE = M;
@@ -1302,32 +1210,17 @@ int Hydrology_Reset(void)
 //  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT1,temp,HYDROLOGY_RS485_COUNT_LEN);
 //  temp[0] = 0x01;temp[1] = 0x03;temp[2] = 0x00;temp[3] = 0x03;temp[4] = 5;
 //  Hydrology_WriteStoreInfo(HYDROLOGY_RS4851,temp,HYDROLOGY_RS485_LEN);
-  
   temp[0] = 1;
-  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT1,temp,HYDROLOGY_RS485_COUNT_LEN); 
+  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT1,temp,HYDROLOGY_RS485_COUNT_LEN);
+  
   temp[0] = 0x01;temp[1] = 0x04;temp[2] = 0x10;temp[3] = 0x10;temp[4] = 2;
   Hydrology_WriteStoreInfo(HYDROLOGY_RS4851,temp,HYDROLOGY_RS485_LEN);
   
   temp[0] = 1;
-  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT2,temp,HYDROLOGY_RS485_COUNT_LEN); 
-  temp[0] = 0x01;temp[1] = 0x04;temp[2] = 0x10;temp[3] = 0x18;temp[4] = 2;
-  Hydrology_WriteStoreInfo(HYDROLOGY_RS4852,temp,HYDROLOGY_RS485_LEN);
+  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT2,temp,HYDROLOGY_RS485_COUNT_LEN);
   
-// temp[0] = 1;
-//  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT3,temp,HYDROLOGY_RS485_COUNT_LEN);  
-//  temp[0] = 0x01;temp[1] = 0x04;temp[2] = 0x10;temp[3] = 0x18;temp[4] = 2;
-//  Hydrology_WriteStoreInfo(HYDROLOGY_RS4853,temp,HYDROLOGY_RS485_LEN);
-//  
-// temp[0] = 1;
-//  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT4,temp,HYDROLOGY_RS485_COUNT_LEN);  
-//  temp[0] = 0x01;temp[1] = 0x04;temp[2] = 0x10;temp[3] = 0x1A;temp[4] = 2;
-//  Hydrology_WriteStoreInfo(HYDROLOGY_RS4854,temp,HYDROLOGY_RS485_LEN);
-//  
-//   temp[0] = 1;
-//  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT5,temp,HYDROLOGY_RS485_COUNT_LEN);  
-//  temp[0] = 0x01;temp[1] = 0x04;temp[2] = 0x10;temp[3] = 0x1C;temp[4] = 2;
-//  Hydrology_WriteStoreInfo(HYDROLOGY_RS4855,temp,HYDROLOGY_RS485_LEN);
-//
+  temp[0] = 0x01;temp[1] = 0x04;temp[2] = 0x10;temp[3] = 0x14;temp[4] = 2;
+  Hydrology_WriteStoreInfo(HYDROLOGY_RS4852,temp,HYDROLOGY_RS485_LEN);
 
   
   return 0;
@@ -1365,7 +1258,6 @@ int hydrologyPump(void)
   hydrologyDownBody* pbody = (hydrologyDownBody*)(g_HydrologyMsg.downbody);
 
   Hydrology_WriteStoreInfo(HYDROLOGY_PUMP,(pbody->element)[0].value,HYDROLOGY_PUMP_LEN);
-  Hydrology_SetIO_STATUS((pbody->element)[0].value);
           
   return 0;
 }
@@ -1375,8 +1267,7 @@ int hydrologyValve(void)
   hydrologyDownBody* pbody = (hydrologyDownBody*)(g_HydrologyMsg.downbody);
 
   Hydrology_WriteStoreInfo(HYDROLOGY_VALVE,(pbody->element)[0].value,HYDROLOGY_VALVE_LEN);
-  
-  Hydrology_SetIO_STATUS((pbody->element)[0].value);       
+          
   return 0;
 }
 
@@ -1388,8 +1279,7 @@ int hydrologyGate(void)
   gatesize = (pbody->element)[0].guide[0];
   gatesize = ((gatesize - 1)/8 + 1) + 2*gatesize + 1;
   Hydrology_WriteStoreInfo(HYDROLOGY_GATE,(pbody->element)[0].value,HYDROLOGY_GATE_LEN);
-  
-  Hydrology_SetIO_STATUS((pbody->element)[0].value);      
+          
   return 0;
 }
 

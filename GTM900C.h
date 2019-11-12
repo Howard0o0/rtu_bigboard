@@ -15,17 +15,17 @@ int GPRS_QueryRemainData();
 
 char* GPRS_Receive();
 
-int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center);
+int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center);   //called 
 
 int GPRS_Create_TCP_Link(int center);
 
-int GPRS_Close_TCP_Link();
+int GPRS_Close_TCP_Link();   //called
 
-void GPRS_Close_GSM();
+void GPRS_Close_GSM();  //called
 
-void JudgeServerDataArrived(void);
+void JudgeServerDataArrived(void);   //called
 
-int Hydrology_ProcessGPRSReceieve();
+int Hydrology_ProcessGPRSReceieve();   //called
 
 extern char* _ReceiveData;
 extern int _ReceiveDataLen;

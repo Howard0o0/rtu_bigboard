@@ -7,9 +7,13 @@
 //       附注: 无
 // 
 //////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+//     文件名: gsm.c
 //   文件版本: 3.0.0
 //   创建时间: 19年8月28日
-//   更新内容: 更换充电引脚和GPRS的IGT引脚      
+//   更新内容: 更换充电引脚和GPRS的IGT引脚
+//       
 //////////////////////////////////////////////////////
 //#include <msp430x26x.h>
 #include "GSM.h"
@@ -51,35 +55,38 @@ char s_NetState='0';
 
 int GSM_Open()
 {
+//    int _retNum;
+//    char _recv[30]="AT%TSIM";
     TraceMsg("GSM Open !",1);
-                                    //初始化串口0,
+    //初始化串口0,
     UART0_Open(UART0_GTM900_TYPE);  //lmj0814,GTM900 AT指令最后需要附加的是\r\n,和mc35i有所不同，因此，在串口发送函数里面，最后附加\r\n
     
-                                  // 为SIM模块上电 
-    P10DIR |= BIT7;              // 2438 P4.2 为 BATT,给高电平  5438为P10.7
+    // 为SIM模块上电 
+    P10DIR |= BIT7; // 2438 P4.2 为 BATT,给高电平  5438为P10.7
     P10OUT &= ~BIT7; 
      P10OUT |= BIT7; 
     System_Delayms(100);
     
-    P3DIR |= BIT0;              //  2438 p1.0 为 /IGT  5438为P3.0
-    P3OUT |= BIT0;              //  开始为高阻态   
-    System_Delayms(10);         //  最少需要10ms 
+    P3DIR |= BIT0; //  2438 p1.0 为 /IGT  5438为P3.0
+    P3OUT |= BIT0; //  开始为高阻态   
+    System_Delayms(10);//  最少需要10ms 
     
     
-    P3OUT &=~BIT0;              // 给/IGT一个下降,保持100ms
-                                // 需要延时     
+    P3OUT &=~BIT0; // 给/IGT一个下降,保持100ms
+//    System_Delayms(50);  // 需要延时 
+    
+//    P3DIR &= ~BIT3; 
+    System_Delayms(50); // GTM900需要50ms
+    //System_Delayms(50); // MC35i需要150ms
+    P3OUT |= BIT0; // 再把/IGT 拉高
 
-    System_Delayms(50);         // GTM900需要50ms
-                                // MC35i需要150ms
-    P3OUT |= BIT0;              // 再把/IGT 拉高
-
-    System_Delayms(1200);       // 等待串口 1秒的无效状态
-                                // 串口正常通信
-                                //再等12秒 等SIM连上网络,至少也得7秒
-                                // 貌似10秒还不太够///
+    System_Delayms(1200);// 等待串口 1秒的无效状态
+                 // 串口正常通信
+    //再等12秒 等SIM连上网络,至少也得7秒
+    // 貌似10秒还不太够///
     System_Delayms(30000);
   
-                                //初始化相关变量
+    //初始化相关变量
     s_RecvIdx=0;     
     s_ProcIdx=0;
     s_MsgNum=0;

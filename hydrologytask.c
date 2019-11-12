@@ -87,16 +87,14 @@ float ConvertAnalog(int v,int range)
 {
   float tmp;
   
-  tmp = (v -4096.0) / (4096.0) * range;
-  
+  tmp = v / (4096.0) * range;
   
   return tmp;
 }
 
 void ADC_Element(char *value,int index)
 {
-//int range[5] = {1,20,100,5000,4000};     //模拟量范围
-  int range[16] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+  int range[5] = {1,20,100,5000,4000};     //模拟量范围
   float floatvalue = 0;
   
   floatvalue = ConvertAnalog(A[index+1],range[index]);
@@ -104,7 +102,6 @@ void ADC_Element(char *value,int index)
 }
 
 char value[4] = {0,0,0,0};
-
 void HydrologyOneMinute()
 {
   char _temp_sampertime[6] = {0,0,0,0,0,0};
@@ -115,7 +112,6 @@ void HydrologyOneMinute()
   char isr_count_temp[5] = {0,0,0,0,0};
   
   ADC_Sample();
-  System_Delayms(20);
   UART1_Open_9600(UART3_U485_TYPE);
   while(Element_table[i].ID != 0)
   {
@@ -138,7 +134,6 @@ void HydrologyOneMinute()
       }
       case IO_STATUS:
       {
-        //Hydrology_ReadIO_STATUS(value,io_i);
         io_i++;
         break;
       }
@@ -202,8 +197,8 @@ int HydrologyOffline()
 int HydrologyInstantWaterLevel(char* _saveTime)
 {
 //    char _temp_instantwaterlevel[4];
-      char waterlevelstoreinterval;
-      static char endtime[6] = {0,0,0,0,0,0};
+    char waterlevelstoreinterval;
+    static char endtime[6] = {0,0,0,0,0,0};
     
 //    if(endtime[0] == 0 && endtime[1] == 0 && endtime[2] == 0 && endtime[3] == 0 && endtime[4] == 0 && endtime[5] == 0)
 //    {
@@ -215,8 +210,8 @@ int HydrologyInstantWaterLevel(char* _saveTime)
 //    }RTC_IsPassed(endtime) < 0 || 
       
 //ly 为了方便调试关闭检查，正式运行时需恢复判断
-   if(endtime[4]%waterlevelstoreinterval != 0 && !IsDebug)
-        return -1;
+//   if(endtime[4]%waterlevelstoreinterval != 0 && !IsDebug)
+//        return -1;
     
    hydrologyProcessSend(TimerReport);
     
@@ -230,7 +225,7 @@ int HydrologyInstantWaterLevel(char* _saveTime)
       JudgeServerDataArrived();
       Hydrology_ProcessGPRSReceieve();
       if(GPRS_Close_TCP_Link() != 0)
-            GPRS_Close_GSM();
+        GPRS_Close_GSM();
     }
     
     time_10min = 0;

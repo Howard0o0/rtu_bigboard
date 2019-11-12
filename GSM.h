@@ -10,12 +10,12 @@
 
 #pragma once 
 
-int GSM_Open();
-int GSM_Close(int _type);
-int GSM_Init(); // 关闭回显,并设置短信为txt模式 
-int GSM_CheckOK();
-int GSM_Waiting_Process(int type);
-int GSM_Report_Process();
+int GSM_Open();   //called by others
+int GSM_Close(int _type); //called by others
+int GSM_Init(); // 关闭回显,并设置短信为txt模式   //called by others
+int GSM_CheckOK();  //called by others
+int GSM_Waiting_Process(int type);  
+int GSM_Report_Process();  
 int GSM_Alert_Process();
 int GSM_CheckLive();// 检测GSM是否正常工作
 int GSM_SendReportMsg();

@@ -79,8 +79,8 @@ int  Sampler_Init()
     
 // 2418 P2设置,P2.3 开启中断 放在RTC准备好了之后 . P2.0-2.4中断flag high-to-low transition
 //5438 P1设置  P1.3                                P1.0-1.4
-    P1IE = 0xff;
-    P1IES = 0xff;
+    P1IE = 0x03;
+    P1IES = 0x0F;
     
     return 0;
 }
@@ -114,9 +114,9 @@ int Sampler_IO_Level(int _ioIdx, int _level)
     if(Store_SetIoLevelConfig(_temp3)<0)
         return -1;
     
-    P4DIR |= _temp2;   //输入还是输出
+    P4DIR |= _temp2;
     //驱动IO口
-    if(_level)         //对该位进行设置
+    if(_level)//对该位进行设置
         P4OUT |= _temp2;
     else
         P4OUT &= ~ _temp2;
@@ -449,12 +449,11 @@ void ISR_Count_Cal(char* ISR_Count_Arr)
   ISR_Count_Arr[0] = (ISR_Count & 0x00000000FF) >> 0;
 }
 
-/*脉冲计数中断*/
-#pragma vector = PORT1_VECTOR
-__interrupt void PORT1_ISR(void) 
-{       
-  static int a[8] = {0};
-    //TraceInt4(i++,1);
+
+#pragma vector = PORT2_VECTOR
+__interrupt void PORT2_ISR(void) 
+{
+    TraceInt4(i++,1);
     _DINT();
     //脉冲1
     if(P1IFG & BIT0)
@@ -464,77 +463,64 @@ __interrupt void PORT1_ISR(void)
         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
         Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
-        TraceMsg("PULS1:",1);
-        TraceInt4(a[0]++,1);
-    
     }
     //脉冲2 
     if(P1IFG & BIT1)
     {
         P1IFG &= ~(BIT1);
         //检查标记
-        Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT2 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+        Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
-        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT2 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
-        TraceMsg("PULS2:",1);  
-        TraceInt4(a[1]++,1);
+        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+        
     }
     //脉冲3
   if(P1IFG & BIT2)
   {
       P1IFG &= ~(BIT2);
-        Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT3 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+        Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
-        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT3 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
-        TraceMsg("PULS3:",1); 
-        TraceInt4(a[2]++,1);
+        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+        
    }
     //脉冲4 
    if(P1IFG & BIT3)
-    {   P1IFG &= ~(BIT3);
-        Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT4 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+    {
+        Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
-        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT4 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
-        TraceMsg("PULS4:",1); 
-        TraceInt4(a[3]++,1);
+        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+        
    }
     //脉冲5
  if(P1IFG & BIT4)
    {
       P1IFG &= ~(BIT4);
-        Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT5 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+        Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
-        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT5 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
-        TraceMsg("PULS5:",1);
-        TraceInt4(a[4]++,1);
-   }
+        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+    }
      //脉冲6
     if(P1IFG & BIT5)
    {
        P1IFG &= ~(BIT5);
-         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT6 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
-        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT6 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
-        TraceMsg("PULS6:",1);
-        TraceInt4(a[5]++,1);
+        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
    }
     //脉冲7
    if(P1IFG & BIT6)
-   {    P1IFG &= ~(BIT6);
-         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT7 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+   {
+         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
-        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT7 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
-        TraceMsg("PULS7:",1);
-        TraceInt4(a[6]++,1);
-   }
+        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+    }
      //脉冲8
     if(P1IFG & BIT7)
-   {    P1IFG &= ~(BIT7);
-         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT8 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+   {
+         Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
         ISR_Count_Cal(ISR_Count_Temp);
-        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT8 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
-       TraceMsg("PULS8:",1);
-        TraceInt4(a[7]++,1);    
+        Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN,ISR_Count_Temp,HYDROLOGY_ISR_COUNT_LEN);
+         
     } 
     
     _EINT();

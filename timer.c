@@ -115,12 +115,15 @@ __interrupt void TIMER0A0_ISR(void)
         {
           ptDevBle->adv();
         } 
-        else
-        {
-          ptDevBle->open();
-        }
+        // else
+        // {
+        //   ptDevBle->open();
+        // }
+        
       }
+       
     }
+    
 }
 
 

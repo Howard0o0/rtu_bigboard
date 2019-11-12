@@ -35,7 +35,7 @@
 #define RS485                           3
 
 #define ELEMENT_REGISTER(id,type,D,d,Mode) {id,type,D,d,Mode}
-#define UserElementCount                5
+#define UserElementCount                2
 #define RS485RegisterCount              2
 
 #define ERC1                            1

@@ -9,7 +9,7 @@
 #include "uart1.h"
 // #include "uart2.h"
 #include "uart3.h"
-#include "Console.h"
+#include "console.h"
 #include "common.h"
 #include <string.h>
 #include <stdio.h>
@@ -47,7 +47,7 @@ void SPPTX(char * result,int * len) //�ֻ�����
 
   while(UART1_RecvLineWait(result,100,len)<0)
   {
-      if(time>10)//30s 100
+      if(time>30)//30s 100
         return;
       time++;
   }
@@ -91,7 +91,7 @@ void BLE_RecAt(char *result,int *num)   //RTU����
         BLE_RecvLineTry(result,100,num);
       break;
     }
-    printf("waiting for rec!time:%d\r\n",_repeat);
+    // printf("waiting for rec!time:%d\r\n",_repeat);
     _repeat++;
   }
 }
@@ -127,9 +127,9 @@ BLERet ATTEST()  // AT
   {
       BLE_buffer_Clear(); 
       BLE_SendAtCmd(cmd,sizeof(cmd)-1);
-      printf("AT SEND: %s \r\n",cmd);//
+      // printf("AT SEND: %s \r\n",cmd);//
       BLE_RecAt(result,&num);
-      printf("REC:%s\r\n",result); //
+      // printf("REC:%s\r\n",result); //
       if(strstr(result,"K") != 0)
       {
         // printf("ATTEST OK!\r\n");//
@@ -164,7 +164,7 @@ BLERet BLE_SetName ( void )//    AT+BLENAME : RTU
           
 }
 
-BLERet BLE_SERVER()  // //AT+BLEINIT=2  ��ʼ��Ϊ�����??
+BLERet BLE_SERVER()  // //AT+BLEINIT=2  ��ʼ��Ϊ�����???
 {
   char cmd[]="AT+BLEINIT=2";
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x49,0x4E,0x49,0x54,0x3D,0x32 };
@@ -275,7 +275,7 @@ BLERet BLE_BLESPPCFG()//AT+BLESPPCFG=1,1,7,1,5  ����͸��
 
 BLERet BLE_BLESP()//AT+BLESPP  
 {
-  System_Delayms ( 100 );     //����
+  // System_Delayms ( 100 );     //����
   char cmd[]="AT+BLESPP";
 	// char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x53,0x50,0x50  };
   int num;
@@ -318,7 +318,7 @@ BLERet BLE_BLESPP() //����͸��
 {
   int time=0;
   sppflag=1;
-
+  System_Delayms ( 500 );
   while(BLE_BLESP()!=BLE_SUCCESS)
   {
     time++;
@@ -330,7 +330,7 @@ BLERet BLE_BLESPP() //����͸��
       return BLE_ERROR;
     }
   }
-  printf( "SPP!\r\n" );
+  printf( "SPP!!\r\n" );
   return BLE_SUCCESS;
 }
 
@@ -350,7 +350,7 @@ BLERet BLE_BLESPPEND()//+++ �ر�͸��
     BLERet ret;
     ret=ATTEST();
     if(ret==BLE_SUCCESS)
-      printf("SPPEND!\r\n");
+      printf("SPPEND!\r\n\r\n");
     sppflag=0;
     return ret;
 }
@@ -364,8 +364,8 @@ BLERet BLE_INIT()       //��ʼ������
     UART1_Open(1);
     printf("uart open\r\n",9,1);
 
-    // BLE_buffer_Clear();
-    // ATTEST();
+    BLE_buffer_Clear();
+    ATTEST();
     
     printf("wait for 10s ...\r\n");
     System_Delayms(1000);
@@ -439,9 +439,9 @@ BLERet BLE_CONNECT()    //�ж��Ƿ�����
   char result[100]=" ";
 
   BLE_SendAtCmd(cmd,sizeof(cmd)-1);
-  printf("AT SEND: %s \r\n",cmd);
+  // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
-  printf("REC:%s\r\n",result);
+  // printf("REC:%s\r\n",result);
   if(strstr(result,"N:0") != 0)
   {
     return BLE_SUCCESS;
@@ -569,74 +569,93 @@ int BLE_MAIN()  //����-����ʼ��-������ -���
         
         
         
+        time=0;
+        while(BLE_CONNECT() != BLE_SUCCESS)
+        {
+          time++;
+          printf( "CONNECT...\r\n" );
+          System_Delayms ( 1000 );
+          // if(time>30)
+          if(0)
+          {
+            printf("failed to connect\r\n");
+            return -1;
+          }
+        }
+        printf( "CONNECTED!\r\n\r\n" );
+        
+        
+        
+        
+        time=0;
+        while(BLE_BLESPPCFG() != BLE_SUCCESS)
+        {
+          time++;
+          printf( "CONFIG...\r\n" );
+          System_Delayms ( 100 );
+          if(time>5)
+          {
+            printf("failed,please check system\r\n");
+            return -1;
+          }
+        }
+        printf( "CONFIG!\r\n\r\n" );
+        
+        BLE_buffer_Clear();
+        printf("waiting CCCD\r\n");
+        char result[100]=" ";
+        int num;
+        int flag1=0,flag2=0;
+        for(int i=0;i<2;i++)
+        {
+          time=0;
+          while(1)
+          {
+            BLE_RecAt(result,&num);
+            if(flag1==0 && strstr(result,"6") != 0 && strstr(result,"ITE") != 0)
+            {
+              printf("success6  ...\r\n");
+              flag1=1;
+              break;
+            }
+            else if(flag2==0 && strstr(result,"7") != 0 && strstr(result,"ITE") != 0)
+            {
+              printf("success7  ...\r\n");
+              flag2=1;
+              break;
+            }
+            else if(time>20)
+            {
+              printf("failed to enable CCCD\r\n");
+              return -1;
+            }
+            time++;
+            printf("waiting CCCD\r\n");
+            System_Delayms(100);
+          }
+        }
+        printf("CCCD!\r\n\r\n");
+
+
+        
+
+       
+        
         // time=0;
-        // while(BLE_CONNECT() != BLE_SUCCESS)
+        // while(BLE_BLESPP()!=BLE_SUCCESS)
         // {
         //   time++;
-        //   printf( "CONNECT...\r\n" );
+        //   printf( "SPP...\r\n" );
         //   System_Delayms ( 1000 );
-        //   // if(time>30)
-        //   if(0)
-        //   {
-        //     printf("failed to connect\r\n");
-        //     return -1;
-        //   }
-        // }
-        // printf( "CONNECTED!\r\n\r\n" );
-        
-        
-        
-        
-        // time=0;
-        // while(BLE_BLESPPCFG() != BLE_SUCCESS)
-        // {
-        //   time++;
-        //   printf( "CONFIG...\r\n" );
-        //   System_Delayms ( 100 );
         //   if(time>5)
         //   {
         //     printf("failed,please check system\r\n");
         //     return -1;
         //   }
         // }
-        // printf( "CONFIG!\r\n\r\n" );
+        // printf( "SPP!\r\n" );
         
-        // BLE_buffer_Clear();
-        // printf("waiting CCCD\r\n");
-        // char result[100]=" ";
-        // int num;
-        // int flag1=0,flag2=0;
-        // for(int i=0;i<2;i++)
-        // {
-        //   time=0;
-        //   while(1)
-        //   {
-        //     BLE_RecAt(result,&num);
-        //     if(flag1==0 && strstr(result,"6") != 0 && strstr(result,"ITE") != 0)
-        //     {
-        //       printf("success6  ...\r\n");
-        //       flag1=1;
-        //       break;
-        //     }
-        //     else if(flag2==0 && strstr(result,"7") != 0 && strstr(result,"ITE") != 0)
-        //     {
-        //       printf("success7  ...\r\n");
-        //       flag2=1;
-        //       break;
-        //     }
-        //     else if(time>20)
-        //     {
-        //       printf("failed to enable CCCD\r\n");
-        //       return -1;
-        //     }
-        //     time++;
-        //     printf("waiting CCCD\r\n");
-        //     System_Delayms(100);
-        //   }
-        // }
-        // printf("CCCD!\r\n\r\n");
-
-
+        // System_Delayms(2000);
         return 0;
 	//System_Reset();
 }
@@ -656,9 +675,7 @@ int ble_close();
 int ble_isinit();
 int ble_sppflag();
 void ble_rst();
-void ble_connect();
 void ble_adv();
-
 T_IODev T_CommuteDevBLE = 
 {
     .name = "BLE",
@@ -673,7 +690,7 @@ T_IODev T_CommuteDevBLE =
     .restart=ble_rst,
     .isinit = ble_isinit,
     .isspp = ble_sppflag,
-    .adv   = ble_adv,
+    .adv = ble_adv,
 };
 
 void ble_rst()

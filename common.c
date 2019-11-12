@@ -1,16 +1,13 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: common.c
-//   ÎÄ¼þ°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ30ÈÕ
-//   ¸üÐÂÄÚÈÝ:   
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: ÎÞ
-////////////////////////////////////////////////////////
-//   ÎÄ¼þ°æ±¾: 3.0.0
-//   ´´½¨Ê±¼ä: 19Äê 9ÔÂ4ÈÕ
-//   ¸üÐÂÄÚÈÝ: ¸ü»»msp4305438AµÄÊ±ÖÓ³õÊ¼»¯º¯Êý  
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: common.c
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½ 11ï¿½ï¿½30ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: ï¿½ï¿½
+//
 //////////////////////////////////////////////////////
-  
+
 #include "msp430common.h"
 #include "common.h"
 #include "rtc.h"
@@ -19,258 +16,279 @@
 #include "Console.h"
 #include "wifi_config.h"
 #include "led.h"
+#include "ioDev.h"
 
-char switcher,anahigh,analow,pulsehigh,pulsemedium,pulselow,vthigh,vtlow,tthex;
-int trace_open=0;
-static int s_clock=0;   //ÓÃÀ´Ö¸Ê¾µ±Ç°ÆµÂÊ 
-static unsigned int _int = 0; //ÖÐ¶Ï½ûÓÃDownInt() µÄ²ãÊýstatic unsigned int s_reset_pin =0;
-static unsigned int s_reset_pin =0;
+char switcher, anahigh, analow, pulsehigh, pulsemedium, pulselow, vthigh, vtlow, tthex;
+int trace_open = 0;
+static int s_clock = 0;       //ï¿½ï¿½ï¿½ï¿½Ö¸Ê¾ï¿½ï¿½Ç°Æµï¿½ï¿½
+static unsigned int _int = 0; //ï¿½Ð¶Ï½ï¿½ï¿½ï¿½DownInt() ï¿½Ä²ï¿½ï¿½ï¿½static unsigned int s_reset_pin =0;
+static unsigned int s_reset_pin = 0;
+
+
 
 void TraceOpen()
-{//µ÷ÊÔ´ò¿ª
-  if(trace_open){
-       Console_Open(); 
-       
+{ //ï¿½ï¿½ï¿½Ô´ï¿½
+  if (trace_open)
+  {
+    Console_Open();
   }
-   else
-   {
-       Console_Close();//´¿´âÎªÁË±£ÏÕ,´®¿Ú¿ª×Å»áÀË·ÑºÜ¶àµç
-   }
+  else
+  {
+    Console_Close(); //ï¿½ï¿½ï¿½ï¿½Îªï¿½Ë±ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½Å»ï¿½ï¿½Ë·ÑºÜ¶ï¿½ï¿½
+  }
 }
 
-void TraceFunctionLine(char const*_funcname,int _linename)
+int  strMsgLen(char *str)
 {
-    if(trace_open)
-    {
-        Console_WriteString((char*)_funcname);
-        Console_WriteString(",");
-        Console_WriteInt(_linename);
-    }
+  int len = 0;
+  while (str != NULL)
+  {
+    len++;
+    str++;
+  }
+  
+  return  len;
+  
 }
 
-void TraceHexMsgFuncLine(char* _str,int len,char const*_funcname, int _linename)
+void TraceFunctionLine(char const *_funcname, int _linename)
 {
-    if(trace_open)
-    {
-        TraceFunctionLine(_funcname, _linename);
-        Console_WriteHexCharln(_str,len);
-    }
+  if (trace_open)
+  {
+    Console_WriteString((char *)_funcname);
+    Console_WriteString(",");
+    Console_WriteInt(_linename);
+  }
 }
 
-void TraceMsgFuncLine(char * _str,int _ln,char const* _funcname,int _linename)
-{//·¢ËÍÒ»¸ö×Ö·û´®
-  trace_open=1;
- if(trace_open)
- {
-    if(_ln)
+void TraceHexMsgFuncLine(char *_str, int len, char const *_funcname, int _linename)
+{
+  if (trace_open)
+  {
+    TraceFunctionLine(_funcname, _linename);
+    Console_WriteHexCharln(_str, len);
+  }
+}
+
+void TraceMsgFuncLine(char *_str, int _ln, char const *_funcname, int _linename)
+{ //ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+  trace_open = 1;
+  if (trace_open)
+  {
+    if (_ln)
     {
-        TraceFunctionLine(_funcname, _linename);
-        Console_WriteStringln(_str);
+      TraceFunctionLine(_funcname, _linename);
+      Console_WriteStringln(_str);
     }
     else
-    {   
-        TraceFunctionLine(_funcname, _linename);       
-        Console_WriteString(_str);
+    {
+      TraceFunctionLine(_funcname, _linename);
+      Console_WriteString(_str);
     }
- }
-} 
+  }
 
-void TraceStrFuncLine(char * _str,int _len,int _ln,char const* _funcname,int _linename)
-{//·¢ËÍÖ¸¶¨³¤¶ÈµÄ×Ö·û´®
- if(trace_open)
- {
-    if(_ln)
-    {   
-        TraceFunctionLine(_funcname,_linename);
-        Console_WriteBytesln(_str,_len);
+
+}
+
+void TraceStrFuncLine(char *_str, int _len, int _ln, char const *_funcname, int _linename)
+{ //ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+  if (trace_open)
+  {
+    if (_ln)
+    {
+      TraceFunctionLine(_funcname, _linename);
+      Console_WriteBytesln(_str, _len);
     }
     else
-    {   
-        TraceFunctionLine(_funcname,_linename); 
-        Console_WriteBytes(_str,_len);
+    {
+      TraceFunctionLine(_funcname, _linename);
+      Console_WriteBytes(_str, _len);
     }
- }
+  }
+
+  
 }
-void TracePulseValue(char * _bytes3,int _ln)
-{//Êä³öÂö³åÖµ
- if(trace_open)
- {
+void TracePulseValue(char *_bytes3, int _ln)
+{ //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+  if (trace_open)
+  {
     char _temp[7];
-    Utility_Bytes3ToDecStr7(_bytes3,_temp);
-    if(_ln)
-        Console_WriteBytesln(_temp,7);
+    Utility_Bytes3ToDecStr7(_bytes3, _temp);
+    if (_ln)
+      Console_WriteBytesln(_temp, 7);
     else
-        Console_WriteBytes(_temp,7);
- }
+      Console_WriteBytes(_temp, 7);
+  }
 }
 
-void TraceInt4FuncLine(int _val, int _ln,char const* _funcname,int _linename)
-{//Êä³öÒ»¸öint 4Î»
-  if(trace_open)
- {
+void TraceInt4FuncLine(int _val, int _ln, char const *_funcname, int _linename)
+{ //ï¿½ï¿½ï¿½Ò»ï¿½ï¿½int 4Î»
+  if (trace_open)
+  {
     char _temp[4];
-    
-    Utility_UintToStr4(_val,_temp);
-    
-    if(_ln)
-    {   
-        TraceFunctionLine(_funcname, _linename);
-        Console_WriteBytesln(_temp,4);
+
+    Utility_UintToStr4(_val, _temp);
+
+    if (_ln)
+    {
+      TraceFunctionLine(_funcname, _linename);
+      Console_WriteBytesln(_temp, 4);
     }
     else
     {
-        TraceFunctionLine(_funcname, _linename);
-        Console_WriteBytes(_temp,4);
+      TraceFunctionLine(_funcname, _linename);
+      Console_WriteBytes(_temp, 4);
     }
- }
-} 
+  }
+}
 
 int hex_2_ascii(char *data, char *buffer, int len)
 {
-    const char ascTable[17] = {"0123456789ABCDEF"};
-    char *tmp_p = buffer;
-    int i, pos;
-    pos = 0;
-    for(i = 0; i < len; i++)
-    {
-        tmp_p[pos++] = ascTable[data[i] >> 4];
-        tmp_p[pos++] = ascTable[data[i] & 0x0f];
-    }
-    tmp_p[pos] = '\0';
-    return pos;
+  const char ascTable[17] = {"0123456789ABCDEF"};
+  char *tmp_p = buffer;
+  int i, pos;
+  pos = 0;
+  for (i = 0; i < len; i++)
+  {
+    tmp_p[pos++] = ascTable[data[i] >> 4];
+    tmp_p[pos++] = ascTable[data[i] & 0x0f];
+  }
+  tmp_p[pos] = '\0';
+  return pos;
 }
 /*ascii to int*/
-int Utility_atoi(char *str, int len)  
-{  
-    int res = 0;
-    int i = 0;
-    
-    for(i = 0;i < len;i++)  
-    {  
-        res = res * 10 + (*str - '0');  
-        str++;  
-    }  
-    return res;  
-} 
+int Utility_atoi(char *str, int len)
+{
+  int res = 0;
+  int i = 0;
 
-void System_Delayms( unsigned int nValue)
-{//º¯Êý²ÎÊýÊÇ¼Ä´æÆ÷,²Ù×÷ËÙ¶È¹ý¿ì,ËùÒÔÎÒÃÇ²»ÓÃnValue
-    unsigned long nCount = 1150;
-    unsigned long i;
-    unsigned long j;
-    if(s_clock==32)
-    {
-        nCount = 3;
-    }
-    for(i = nValue;i > 0;--i)
-    {
-        for(j = nCount;j > 0;--j);
-    }
-    return ;
+  for (i = 0; i < len; i++)
+  {
+    res = res * 10 + (*str - '0');
+    str++;
+  }
+  return res;
 }
 
-void System_Delayus( unsigned int nValue)
-{//º¯Êý²ÎÊýÊÇ¼Ä´æÆ÷,²Ù×÷ËÙ¶È¹ý¿ì,ËùÒÔÎÒÃÇ²»ÓÃnValue
-    unsigned long nCount = 1;
-    unsigned long i;
-    unsigned long j;
-    if(s_clock==32)
-    {
-        nCount = 3;
-    }
-    for(i = nValue;i > 0;--i)
-    {
-        for(j = nCount;j > 0;--j);
-    }
-    return ;
+void System_Delayms(unsigned int nValue)
+{ //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼Ä´ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È¹ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½nValue
+  unsigned long nCount = 1150;
+  unsigned long i;
+  unsigned long j;
+  if (s_clock == 32)
+  {
+    nCount = 3;
+  }
+  for (i = nValue; i > 0; --i)
+  {
+    for (j = nCount; j > 0; --j)
+      ;
+  }
+  return;
 }
 
+void System_Delayus(unsigned int nValue)
+{ //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼Ä´ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È¹ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½nValue
+  unsigned long nCount = 1;
+  unsigned long i;
+  unsigned long j;
+  if (s_clock == 32)
+  {
+    nCount = 3;
+  }
+  for (i = nValue; i > 0; --i)
+  {
+    for (j = nCount; j > 0; --j)
+      ;
+  }
+  return;
+}
 
-//  ¹ØÖÐ¶Ï Á¢¼´ÆðÐ§,
-//  ¿ªÖÐ¶Ï,ÔòÒª¿´Ç°Ãæ¹Ø±ÕÁË¶àÉÙ´ÎÖÐ¶Ï
-//  Á½ÕßÒªÑÏÃÜµÄ ¶Ô³ÆÊ¹ÓÃ.
+//  ï¿½ï¿½ï¿½Ð¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§,
+//  ï¿½ï¿½ï¿½Ð¶ï¿½,ï¿½ï¿½Òªï¿½ï¿½Ç°ï¿½ï¿½Ø±ï¿½ï¿½Ë¶ï¿½ï¿½Ù´ï¿½ï¿½Ð¶ï¿½
+//  ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Üµï¿½ ï¿½Ô³ï¿½Ê¹ï¿½ï¿½.
 //
 void DownInt()
 {
-    ++ _int;
-    _DINT();
+  ++_int;
+  _DINT();
 }
 void UpInt()
 {
-    if(_int)
-        --_int;
-    if(_int==0)
-        _EINT();
-} 
-//2438 ½«P2¶ÔÓ¦µÄ¶Ë¿ÚµÄÖÐ¶Ï¹¦ÄÜ½ûÓÃ»òÊ¹ÄÜ
-//Âö³åÖÐ¶ÏÖÐÊ¹ÓÃ 
+  if (_int)
+    --_int;
+  if (_int == 0)
+    _EINT();
+}
+//2438 ï¿½ï¿½P2ï¿½ï¿½Ó¦ï¿½Ä¶Ë¿Úµï¿½ï¿½Ð¶Ï¹ï¿½ï¿½Ü½ï¿½ï¿½Ã»ï¿½Ê¹ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
 //5438 P1
-void DsP2Int(int i)//0~7
-{//½«¸ÃÎ»Çå0 
-    P1IFG &= ~(BIT0<<i);
-    P1IE &= ~(BIT0<<i);
+void DsP2Int(int i) //0~7
+{                   //ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½0
+  P1IFG &= ~(BIT0 << i);
+  P1IE &= ~(BIT0 << i);
 }
 void EnP2Int(int i)
-{//½«¸ÃÎ»ÖÃ1
-    //Ê¹ÄÜÇ°Çå³ýÔ­ÏÈÓÐµÄÖÐ¶Ï±ê¼Ç 
-    P1IFG &= ~(BIT0<<i);
-    P1IE  |=  (BIT0<<i);
+{ //ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½1
+  //Ê¹ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ð¶Ï±ï¿½ï¿½
+  P1IFG &= ~(BIT0 << i);
+  P1IE |= (BIT0 << i);
 }
 
-void DsInt()//²»½¨Òéµ÷ÓÃ
+void DsInt() //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
-    _DINT();
+  _DINT();
 }
-void EnInt()//²»½¨Òéµ÷ÓÃ
+void EnInt() //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
-    _EINT();
+  _EINT();
 }
 
 void Max3222_Open()
 {
-//    //¿ªÆôrs232  µçÆ½×ª»»µçÂ·  outputÔÙÀ­¸ß
-//     P4DIR |= BIT0;
-//     P4OUT |= BIT0; 
-       P9DIR |= BIT7;
-       P9OUT |= BIT7; 
+  //    //ï¿½ï¿½ï¿½ï¿½rs232  ï¿½ï¿½Æ½×ªï¿½ï¿½ï¿½ï¿½Â·  outputï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //     P4DIR |= BIT0;
+  //     P4OUT |= BIT0;
+  P9DIR |= BIT7;
+  P9OUT |= BIT7;
 }
 
 void Max3222_Close()
 {
-    //¹Ø±Õrs232×ª»»µçÂ·
+  //ï¿½Ø±ï¿½rs232×ªï¿½ï¿½ï¿½ï¿½Â·
 
-    P9DIR |= BIT7;
-    P9OUT &= ~BIT7;
+  P9DIR |= BIT7;
+  P9OUT &= ~BIT7;
 }
 
-//1±íÊ¾wifi,0±íÊ¾´®¿Ú
+//1ï¿½ï¿½Ê¾wifi,0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
 void Select_Debug_Mode(int type)
 {
 
-    if (type == 1)
-    {
-        System_Delayms(100);
-        WIFI_Open();
-        System_Delayms(100);
-        Max3222_Close();
-    }
-    else
-    {
-        WIFI_Close();
-//        System_Delayms(1000);
-        Max3222_Open();
-        System_Delayms(100);
-    }
+  if (type == 1)
+  {
+    System_Delayms(100);
+    WIFI_Open();
+    System_Delayms(100);
+    Max3222_Close();
+  }
+  else
+  {
+    WIFI_Close();
+    //        System_Delayms(1000);
+    Max3222_Open();
+    System_Delayms(100);
+  }
 }
 
 void System_Reset()
 {
-    TraceMsg("reset system",1);
-    System_Delayms(1000);
-    //ÖØÆôÏµÍ³
-    WDTCTL =WDTCNTCL;
+  TraceMsg("reset system", 1);
+  System_Delayms(1000);
+  //ï¿½ï¿½ï¿½ï¿½ÏµÍ³
+  WDTCTL = WDTCNTCL;
 }
-/*2418·ÖÆµº¯Êý*/
+/*2418ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½*/
 /*
 void Clock_SMCLK_DIV(int i)
 {
@@ -278,27 +296,27 @@ void Clock_SMCLK_DIV(int i)
     {
       case 1:
         BCSCTL2 &= ~ DIVS1;
-        BCSCTL2 &= ~ DIVS0; //ACLK ²»·ÖÆµ
+        BCSCTL2 &= ~ DIVS0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
         break;
       case 2:
-        BCSCTL2 &= ~ DIVS1;   //ACLK 2·ÖÆµ
+        BCSCTL2 &= ~ DIVS1;   //ACLK 2ï¿½ï¿½Æµ
         BCSCTL2 |=  DIVS0;  
         break;
       case 4:
-        BCSCTL2 |=  DIVS1;   //ACLK 4·ÖÆµ
+        BCSCTL2 |=  DIVS1;   //ACLK 4ï¿½ï¿½Æµ
         BCSCTL2 &= ~ DIVS0;
         break;        
       case 8:
-        BCSCTL2 |= DIVS1 +DIVS0; //ACLK 8·ÖÆµ
+        BCSCTL2 |= DIVS1 +DIVS0; //ACLK 8ï¿½ï¿½Æµ
         break;
       default:
         BCSCTL2 &= ~ DIVS1;
-        BCSCTL2 &= ~ DIVS0; //ACLK ²»·ÖÆµ
+        BCSCTL2 &= ~ DIVS0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
     }
-    //µÈ´ýÊ±ÖÓÕý³£
+    //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     do
     {
-        //µÈ´ýÊ±ÖÓÎÈ¶¨
+        //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
         IFG1 &= ~OFIFG ;
         for(int i=0x20; i >0; i--);
     }while( (IFG1 & OFIFG)==OFIFG ); 
@@ -309,27 +327,27 @@ void Clock_ACLK_DIV(int i)
     {
       case 1:
         BCSCTL1 &= ~ DIVA1;
-        BCSCTL1 &= ~ DIVA0; //ACLK ²»·ÖÆµ
+        BCSCTL1 &= ~ DIVA0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
         break;
       case 2:
-        BCSCTL1 &= ~ DIVA1;   //ACLK 2·ÖÆµ
+        BCSCTL1 &= ~ DIVA1;   //ACLK 2ï¿½ï¿½Æµ
         BCSCTL1 |=  DIVA0;  
         break;
       case 4:
-        BCSCTL1 |=  DIVA1;   //ACLK 4·ÖÆµ
+        BCSCTL1 |=  DIVA1;   //ACLK 4ï¿½ï¿½Æµ
         BCSCTL1 &= ~ DIVA0;
         break;        
       case 8:
-        BCSCTL1 |= DIVA1 +DIVA0; //ACLK 8·ÖÆµ
+        BCSCTL1 |= DIVA1 +DIVA0; //ACLK 8ï¿½ï¿½Æµ
         break;
       default:
         BCSCTL1 &= ~ DIVA1;
-        BCSCTL1 &= ~ DIVA0; //ACLK ²»·ÖÆµ
+        BCSCTL1 &= ~ DIVA0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
     }
-    //µÈ´ýÊ±ÖÓÕý³£
+    //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     do
     {
-        //µÈ´ýÊ±ÖÓÎÈ¶¨
+        //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
         SFRIFG1 &= ~OFIFG ;
         for(int i=0x20; i >0; i--);
     }while( (SFRIFG1 & OFIFG)==OFIFG ); 
@@ -340,86 +358,88 @@ void Clock_ACLK_DIV(int i)
 //{
 //    s_clock=8;
 //    unsigned int i;
-//    BCSCTL1= 0x00; //¿ªÆôXT2
+//    BCSCTL1= 0x00; //ï¿½ï¿½ï¿½ï¿½XT2
 //    do
 //    {
-//     //µÈ´ýÊ±ÖÓÎÈ¶¨
+//     //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
 //        IFG1 &= ~OFIFG ;
 //        for(i=0x20; i >0; i--) ;
 //    }while( (IFG1 & OFIFG)==OFIFG );
-//  
+//
 //    BCSCTL2= 0x00;
-//    BCSCTL2 |= SELM1;       // MCLK  Ê¹ÓÃXT2   8M
-//    BCSCTL2 |= SELS;        // SMCLK Ê¹ÓÃXT2   8M
-//                            // ACLK  Ê¹ÓÃXT1   32K
+//    BCSCTL2 |= SELM1;       // MCLK  Ê¹ï¿½ï¿½XT2   8M
+//    BCSCTL2 |= SELS;        // SMCLK Ê¹ï¿½ï¿½XT2   8M
+//                            // ACLK  Ê¹ï¿½ï¿½XT1   32K
 //}
 
-/*2418·ÖÆµº¯Êý*/
+/*2418ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½*/
 void Clock_SMCLK_DIV(int i)
 {
-    switch(i)
-    {
-      case 1:
-        UCSCTL5 &= ~ DIVS1;
-        UCSCTL5 &= ~ DIVS0; //ACLK ²»·ÖÆµ
-        break;
-      case 2:
-        UCSCTL5 &= ~ DIVS1;   //ACLK 2·ÖÆµ
-        UCSCTL5 |=  DIVS0;  
-        break;
-      case 4:
-        UCSCTL5 |=  DIVS1;   //ACLK 4·ÖÆµ
-        UCSCTL5 &= ~ DIVS0;
-        break;        
-      case 8:
-        UCSCTL5 |= DIVS1 +DIVS0; //ACLK 8·ÖÆµ
-        break;
-      default:
-        UCSCTL5 &= ~ DIVS1;
-        UCSCTL5 &= ~ DIVS0; //ACLK ²»·ÖÆµ
-    }
-    //µÈ´ýÊ±ÖÓÕý³£
-    do
-    {
-        //µÈ´ýÊ±ÖÓÎÈ¶¨
-        SFRIFG1 &= ~OFIFG ;
-        for(int i=0x20; i >0; i--);
-    }while( (SFRIFG1 & OFIFG)==OFIFG ); 
-} 
+  switch (i)
+  {
+  case 1:
+    UCSCTL5 &= ~DIVS1;
+    UCSCTL5 &= ~DIVS0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+    break;
+  case 2:
+    UCSCTL5 &= ~DIVS1; //ACLK 2ï¿½ï¿½Æµ
+    UCSCTL5 |= DIVS0;
+    break;
+  case 4:
+    UCSCTL5 |= DIVS1; //ACLK 4ï¿½ï¿½Æµ
+    UCSCTL5 &= ~DIVS0;
+    break;
+  case 8:
+    UCSCTL5 |= DIVS1 + DIVS0; //ACLK 8ï¿½ï¿½Æµ
+    break;
+  default:
+    UCSCTL5 &= ~DIVS1;
+    UCSCTL5 &= ~DIVS0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+  }
+  //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  do
+  {
+    //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
+    SFRIFG1 &= ~OFIFG;
+    for (int i = 0x20; i > 0; i--)
+      ;
+  } while ((SFRIFG1 & OFIFG) == OFIFG);
+}
 void Clock_ACLK_DIV(int i)
 {
-    switch(i)
-    {
-      case 1:
-        UCSCTL5 &= ~ DIVA1;
-        UCSCTL5 &= ~ DIVA0; //ACLK ²»·ÖÆµ
-        break;
-      case 2:
-        UCSCTL5 &= ~ DIVA1;   //ACLK 2·ÖÆµ
-        UCSCTL5 |=  DIVA0;  
-        break;
-      case 4:
-        UCSCTL5 |=  DIVA1;   //ACLK 4·ÖÆµ
-        UCSCTL5 &= ~ DIVA0;
-        break;        
-      case 8:
-        UCSCTL5 |= DIVA1 +DIVA0; //ACLK 8·ÖÆµ
-        break;
-      default:
-        UCSCTL5 &= ~ DIVA1;
-        UCSCTL5 &= ~ DIVA0; //ACLK ²»·ÖÆµ
-    }
-    //µÈ´ýÊ±ÖÓÕý³£
-    do
-    {
-        //µÈ´ýÊ±ÖÓÎÈ¶¨
-        SFRIFG1 &= ~OFIFG ;
-        for(int i=0x20; i >0; i--);
-    }while( (SFRIFG1 & OFIFG)==OFIFG ); 
-} 
+  switch (i)
+  {
+  case 1:
+    UCSCTL5 &= ~DIVA1;
+    UCSCTL5 &= ~DIVA0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+    break;
+  case 2:
+    UCSCTL5 &= ~DIVA1; //ACLK 2ï¿½ï¿½Æµ
+    UCSCTL5 |= DIVA0;
+    break;
+  case 4:
+    UCSCTL5 |= DIVA1; //ACLK 4ï¿½ï¿½Æµ
+    UCSCTL5 &= ~DIVA0;
+    break;
+  case 8:
+    UCSCTL5 |= DIVA1 + DIVA0; //ACLK 8ï¿½ï¿½Æµ
+    break;
+  default:
+    UCSCTL5 &= ~DIVA1;
+    UCSCTL5 &= ~DIVA0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+  }
+  //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  do
+  {
+    //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
+    SFRIFG1 &= ~OFIFG;
+    for (int i = 0x20; i > 0; i--)
+      ;
+  } while ((SFRIFG1 & OFIFG) == OFIFG);
+}
 /******************************************************************************
-¹¦ÄÜ£ºÉèÖÃÄÚºËµçÑ¹
-ÏêÏ¸£ºPower Management Module (PMM).The PMM manages all functions related to the power supply and its supervision for the device. Its primary
+ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚºËµï¿½Ñ¹
+ï¿½ï¿½Ï¸ï¿½ï¿½Power Management Module (PMM).The PMM manages all functions related to the power supply and its supervision for the device. Its primary
 functions are first to generate a supply voltage for the core logic, and second, provide several
 mechanisms for the supervision and monitoring of both the voltage applied to the device (DVCC) and thevoltage generated for the core (VCORE).
 The PMM uses an integrated low-dropout voltage regulator (LDO) to produce a secondary core voltage(VCORE) from the primary one applied to the device (DVCC).
@@ -431,85 +451,87 @@ The output or secondary side is referred to in this chapter as its low side.
 ******************************************************************************/
 
 void Set_Vcore(unsigned int level)
-{  
-  PMMCTL0_H = PMMPW_H;                    // Open PMM registers for write  
-  SVSMHCTL = SVSHE + SVSHRVL0 * level + SVMHE + SVSMHRRL0 * level;  // Set SVS/SVM high side new level  
-  SVSMLCTL = SVSLE + SVMLE + SVSMLRRL0 * level;   // Set SVM low side to new level  
-  while ((PMMIFG & SVSMLDLYIFG) == 0);    // Wait till SVM is settled  
-  PMMIFG &= ~(SVMLVLRIFG + SVMLIFG);      // Clear already set flags  
-  PMMCTL0_L = PMMCOREV0 * level;          // Set VCore to new level  
-  if ((PMMIFG & SVMLIFG))                 // Wait till new level reached
-  while ((PMMIFG & SVMLVLRIFG) == 0);
-  SVSMLCTL = SVSLE + SVSLRVL0 * level + SVMLE + SVSMLRRL0 * level;  // Set SVS/SVM low side to new level  
-  PMMCTL0_H = 0x00;                       // Lock PMM registers for write access
+{
+  PMMCTL0_H = PMMPW_H;                                             // Open PMM registers for write
+  SVSMHCTL = SVSHE + SVSHRVL0 * level + SVMHE + SVSMHRRL0 * level; // Set SVS/SVM high side new level
+  SVSMLCTL = SVSLE + SVMLE + SVSMLRRL0 * level;                    // Set SVM low side to new level
+  while ((PMMIFG & SVSMLDLYIFG) == 0)
+    ;                                // Wait till SVM is settled
+  PMMIFG &= ~(SVMLVLRIFG + SVMLIFG); // Clear already set flags
+  PMMCTL0_L = PMMCOREV0 * level;     // Set VCore to new level
+  if ((PMMIFG & SVMLIFG))            // Wait till new level reached
+    while ((PMMIFG & SVMLVLRIFG) == 0)
+      ;
+  SVSMLCTL = SVSLE + SVSLRVL0 * level + SVMLE + SVSMLRRL0 * level; // Set SVS/SVM low side to new level
+  PMMCTL0_H = 0x00;                                                // Lock PMM registers for write access
 }
 
 /* for msp430f5438
  * Assume XT1=32K XT2=8M
- * MCLK,SMCLKÊ±ÖÓÔ´Ñ¡ÔñXT2Õñµ´Æ÷(8MHz)£¬ ACLKÊ±ÖÓÔ´Ñ¡ÔñXT1Õñµ´Æ÷(32k)
+ * MCLK,SMCLKÊ±ï¿½ï¿½Ô´Ñ¡ï¿½ï¿½XT2ï¿½ï¿½ï¿½ï¿½(8MHz)ï¿½ï¿½ ACLKÊ±ï¿½ï¿½Ô´Ñ¡ï¿½ï¿½XT1ï¿½ï¿½ï¿½ï¿½(32k)
  * MCLK,SMCLK = 1MHz, ACLK = 4k
  */
 
-void Clock_Init(){
-    unsigned char i;
-    
-    WDTCTL=WDTPW+WDTHOLD;                 //¹Ø±Õ¿´ÃÅ¹·¶¨Ê±
-    
-    P5SEL |= BIT2 + BIT3;                   //P5.2ºÍP5.3Ñ¡ÔñÎª¾§ÕñXT2ÊäÈë  
-    P7SEL |= BIT0 + BIT1;                   //P7.0ºÍP7.1Ñ¡ÔñÎª¾§ÕñXT1ÊäÈë  
-    Set_Vcore(PMMCOREV_3);                  // Set frequency up to 25MHz
-    UCSCTL6 &= ~(XT1OFF + XT2OFF);          // Set XT1 & XT2 On 
-    
-    UCSCTL6 |= XCAP_3;                      // Internal load XT1 cap 12pF£¬MSP430F5438A V4.0×îÐ¡ÏµÍ³XT1Î´½ÓÍâ²¿¾§Õñ
-    
-    UCSCTL6 |= XT2BYPASS;                   //Ñ¡ÔñÍâ²¿¼¤ÀøÕñ¶¯
-    UCSCTL6 |= XT1BYPASS;
-    UCSCTL4 |= SELA__XT1CLK + SELS__XT2CLK + SELM__XT2CLK;    //Ñ¡ÔñMCLK¡¢SMCLKÎªXT2,
-    do                                      // Loop until XT1,XT2 & DCO stabilizes
-    {
-      UCSCTL7 &= ~(XT2OFFG + XT1LFOFFG + XT1HFOFFG + DCOFFG);
-      SFRIFG1 &= ~OFIFG;                    // Çå³ýÕñµ´Æ÷Ê§Ð§±êÖ¾
-//      for (i = 0xFF; i > 0; i--);           // ÑÓÊ±£¬µÈ´ýXT2ÆðÕñ
-    } while (SFRIFG1 & OFIFG);              // ÅÐ¶ÏXT2ÊÇ·ñÆðÕñ
-    //Delay_ms(50);
-     System_Delayms(50);
-    Clock_ACLK_DIV(8);  
-    Clock_SMCLK_DIV(8);
-        
+void Clock_Init()
+{
+  unsigned char i;
+
+  WDTCTL = WDTPW + WDTHOLD; //ï¿½Ø±Õ¿ï¿½ï¿½Å¹ï¿½ï¿½ï¿½Ê±
+
+  P5SEL |= BIT2 + BIT3;          //P5.2ï¿½ï¿½P5.3Ñ¡ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½XT2ï¿½ï¿½ï¿½ï¿½
+  P7SEL |= BIT0 + BIT1;          //P7.0ï¿½ï¿½P7.1Ñ¡ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½XT1ï¿½ï¿½ï¿½ï¿½
+  Set_Vcore(PMMCOREV_3);         // Set frequency up to 25MHz
+  UCSCTL6 &= ~(XT1OFF + XT2OFF); // Set XT1 & XT2 On
+
+  UCSCTL6 |= XCAP_3; // Internal load XT1 cap 12pFï¿½ï¿½MSP430F5438A V4.0ï¿½ï¿½Ð¡ÏµÍ³XT1Î´ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½
+
+  UCSCTL6 |= XT2BYPASS; //Ñ¡ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  UCSCTL6 |= XT1BYPASS;
+  UCSCTL4 |= SELA__XT1CLK + SELS__XT2CLK + SELM__XT2CLK; //Ñ¡ï¿½ï¿½MCLKï¿½ï¿½SMCLKÎªXT2,
+  do                                                     // Loop until XT1,XT2 & DCO stabilizes
+  {
+    UCSCTL7 &= ~(XT2OFFG + XT1LFOFFG + XT1HFOFFG + DCOFFG);
+    SFRIFG1 &= ~OFIFG;       // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§Ð§ï¿½ï¿½Ö¾
+                             //      for (i = 0xFF; i > 0; i--);           // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½È´ï¿½XT2ï¿½ï¿½ï¿½ï¿½
+  } while (SFRIFG1 & OFIFG); // ï¿½Ð¶ï¿½XT2ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
+                             //Delay_ms(50);
+  System_Delayms(50);
+  Clock_ACLK_DIV(8);
+  Clock_SMCLK_DIV(8);
 }
 
 /* for msp430f2418 */
 
 //void Clock_Init()
-//{//³õÊ¼»¯Ê±ÖÓ
+//{//ï¿½ï¿½Ê¼ï¿½ï¿½Ê±ï¿½ï¿½
 //#if 0
 //    Clock_Use8MHZ();
 //    Clock_ACLK_DIV(8);
 //    Clock_SMCLK_DIV(8);
-//  
+//
 //#else
 //
-//   /*ÍøÉÏÕÒÁËÒ»¶ÎÊÊºÏ2418ºÍ2169 CPUÊ±ÖÓ³õÊ¼»¯µÄµÄ´úÂë*/
+//   /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Êºï¿½2418ï¿½ï¿½2169 CPUÊ±ï¿½Ó³ï¿½Ê¼ï¿½ï¿½ï¿½ÄµÄ´ï¿½ï¿½ï¿½*/
 //    unsigned long i=0xffff;
-//    _BIC_SR(0xFFFF);                      //½«SRÖÐµÄ¸÷Î»ÇåÁã£¬ÄÚÁªº¯Êý¡£Í¨¹ý¿´ËüµÄ»ã±à´úÂë¿ÉÒÔÖªµÀ¡£Ò»¸öÖ±½Óºó¹ûÊÇGIE±»¸´Î»£¬ËùÓÐµÄ¿ÉÆÁ±ÎÖÐ¶Ï¹Ø¶Ï¡£
+//    _BIC_SR(0xFFFF);                      //ï¿½ï¿½SRï¿½ÐµÄ¸ï¿½Î»ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ö±ï¿½Óºï¿½ï¿½ï¿½ï¿½GIEï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¹Ø¶Ï¡ï¿½
 //
-//    WDTCTL=WDTPW+WDTHOLD;                 //¹Ø±Õ¿´ÃÅ¹·¶¨Ê±
+//    WDTCTL=WDTPW+WDTHOLD;                 //ï¿½Ø±Õ¿ï¿½ï¿½Å¹ï¿½ï¿½ï¿½Ê±
 //
-//    BCSCTL1&=~XT2OFF;                     //´ò¿ªXT2  
+//    BCSCTL1&=~XT2OFF;                     //ï¿½ï¿½XT2
 //
 //    BCSCTL2= 0x00;
-//    BCSCTL2 |= SELM1;       // MCLK  Ê¹ÓÃXT2   8M
-//    BCSCTL2 |= SELS;        // SMCLK Ê¹ÓÃXT2   8M
-//                    // ACLK  Ê¹ÓÃXT1   32K
+//    BCSCTL2 |= SELM1;       // MCLK  Ê¹ï¿½ï¿½XT2   8M
+//    BCSCTL2 |= SELS;        // SMCLK Ê¹ï¿½ï¿½XT2   8M
+//                    // ACLK  Ê¹ï¿½ï¿½XT1   32K
 //
 //
-//    // BCSCTL2 |= (SELM_2+DIVM_2+SELS);        //MCLK¡¢SMCLKÑ¡Ôñxt2£¨5MHz£¬ËùÒÔMCLK=1.25MHz£¬SMCLK=5MHz
-//   // BCSCTL3 |=  (XT2S_2+LFXT1S_2+XCAP_1);                  //6pFµçÈÝ 
+//    // BCSCTL2 |= (SELM_2+DIVM_2+SELS);        //MCLKï¿½ï¿½SMCLKÑ¡ï¿½ï¿½xt2ï¿½ï¿½5MHzï¿½ï¿½ï¿½ï¿½ï¿½ï¿½MCLK=1.25MHzï¿½ï¿½SMCLK=5MHz
+//   // BCSCTL3 |=  (XT2S_2+LFXT1S_2+XCAP_1);                  //6pFï¿½ï¿½ï¿½ï¿½
 //    IFG1 &= ~OFIFG;
 //
-//    IFG1&=~(WDTIFG+OFIFG+NMIIFG+PORIFG+RSTIFG);  //ÖÐ¶Ï±êÖ¾ÇåÁã
-//    FCTL3=FWKEY;                          //ACCVIFGÇåÁã
-//    //IE1|=OFIE+NMIIE+ACCVIE;               //ÖÐ¶Ï³õÊ¼»¯ÉèÖÃ
+//    IFG1&=~(WDTIFG+OFIFG+NMIIFG+PORIFG+RSTIFG);  //ï¿½Ð¶Ï±ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+//    FCTL3=FWKEY;                          //ACCVIFGï¿½ï¿½ï¿½ï¿½
+//    //IE1|=OFIE+NMIIE+ACCVIE;               //ï¿½Ð¶Ï³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //
 //    while(i)
 //    {
@@ -524,1328 +546,1406 @@ void Clock_Init(){
 //       IFG1 &= ~OFIFG;                      // Clear OSCFault flag
 //        for (i = 0xFF; i > 0; i--);          // Time for flag to set
 //    }
-//    while (IFG1 & OFIFG);                 // OSCFault flag still set  
+//    while (IFG1 & OFIFG);                 // OSCFault flag still set
 //
 //   Clock_ACLK_DIV(8);
 //    Clock_SMCLK_DIV(8);
-//    
+//
 //#endif
-//   
-//}  
+//
+//}
 
-int Utility_GetGprsServerIp(char* _str,int* len)
+int Utility_GetGprsServerIp(char *_str, int *len)
 {
-    int _ret = 0;
-    hydrologyConfigPara configpara = {0};
-    
-    _ret = Store_ReadHydrologyConfigData((char*)&configpara);
+  int _ret = 0;
+  hydrologyConfigPara configpara = {0};
 
-    if(0 != _ret)
-    {
-       Console_WriteErrorStringln("get gprs server ip faied");
-       return _ret;
-    }
+  _ret = Store_ReadHydrologyConfigData((char *)&configpara);
 
-    *len = Utility_Strlen(configpara.serverip);
+  if (0 != _ret)
+  {
+    Console_WriteErrorStringln("get gprs server ip faied");
+    return _ret;
+  }
 
-    if (*len > REMOTE_GPRS_SERVER_IP_ADDR_LEN)
-    {
-        Console_WriteErrorStringln("get gprs server ip faied,len is out of limit");
-        return _ret;
-    }
+  *len = Utility_Strlen(configpara.serverip);
 
-    Utility_Strncpy(_str,configpara.serverip, *len);
+  if (*len > REMOTE_GPRS_SERVER_IP_ADDR_LEN)
+  {
+    Console_WriteErrorStringln("get gprs server ip faied,len is out of limit");
+    return _ret;
+  }
 
-    return 0;
-    
+  Utility_Strncpy(_str, configpara.serverip, *len);
+
+  return 0;
 }
 
-int Utility_GetGprsServerPort(char* _str,int *len)
+int Utility_GetGprsServerPort(char *_str, int *len)
 {
-    int _ret = 0;
-    hydrologyConfigPara configpara = {0};
-    
-    _ret = Store_ReadHydrologyConfigData((char*)&configpara);
+  int _ret = 0;
+  hydrologyConfigPara configpara = {0};
 
-    if(0 != _ret)
-    {
-       Console_WriteErrorStringln("get gprs server port faied");
-       return _ret;
-    }
-    
-    *len = Utility_Strlen(configpara.serverport);
+  _ret = Store_ReadHydrologyConfigData((char *)&configpara);
 
-    if (*len > REMOTE_GRPS_SERVER_PORT_ADDR_LEN)
-    {
-        Console_WriteErrorStringln("get gprs server port faied,len is out of limit");
-        return _ret;
-    }
+  if (0 != _ret)
+  {
+    Console_WriteErrorStringln("get gprs server port faied");
+    return _ret;
+  }
 
-    Utility_Strncpy(_str,configpara.serverport, *len);
+  *len = Utility_Strlen(configpara.serverport);
 
-    return 0;
-    
+  if (*len > REMOTE_GRPS_SERVER_PORT_ADDR_LEN)
+  {
+    Console_WriteErrorStringln("get gprs server port faied,len is out of limit");
+    return _ret;
+  }
+
+  Utility_Strncpy(_str, configpara.serverport, *len);
+
+  return 0;
 }
 
-int Utility_GetGprsServerApn(char* _str,int* len)
+int Utility_GetGprsServerApn(char *_str, int *len)
 {
-    int _ret = 0;
-    hydrologyConfigPara configpara = {0};
-    
-    _ret = Store_ReadHydrologyConfigData((char*)&configpara);
+  int _ret = 0;
+  hydrologyConfigPara configpara = {0};
 
-    if(0 != _ret)
-    {
-       Console_WriteErrorStringln("get gprs server apn faied");
-       return _ret;
-    }
+  _ret = Store_ReadHydrologyConfigData((char *)&configpara);
 
-    *len = Utility_Strlen(configpara.serverapn);
+  if (0 != _ret)
+  {
+    Console_WriteErrorStringln("get gprs server apn faied");
+    return _ret;
+  }
 
-    if (*len > REMOTE_GPRS_SERVER_APN_ADDR_LEN)
-    {
-        Console_WriteErrorStringln("get gprs server apn faied,len is out of limit");
-        return _ret;
-    }
+  *len = Utility_Strlen(configpara.serverapn);
 
-    Utility_Strncpy(_str,configpara.serverapn, *len);
+  if (*len > REMOTE_GPRS_SERVER_APN_ADDR_LEN)
+  {
+    Console_WriteErrorStringln("get gprs server apn faied,len is out of limit");
+    return _ret;
+  }
 
-    return 0;
-    
+  Utility_Strncpy(_str, configpara.serverapn, *len);
+
+  return 0;
 }
 
-
-int  Utility_CheckDigital(const char * _str,int _start ,int _end)
+int Utility_CheckDigital(const char *_str, int _start, int _end)
 {
-    for(int i=_start; i <= _end; ++i)
-    {
-        if( _str[i]<'0' || _str[i]>'9')
-            return -1;
-    }
-    return 0;
+  for (int i = _start; i <= _end; ++i)
+  {
+    if (_str[i] < '0' || _str[i] > '9')
+      return -1;
+  }
+  return 0;
 }
 
-int  Utility_CheckAlphabet(const char * _str,int _start ,int _end)
+int Utility_CheckAlphabet(const char *_str, int _start, int _end)
 {
-    for(int i=_start; i <= _end; ++i)
-    {
-        if( (_str[i]>='A' && _str[i]<='Z') || (_str[i]>='a' && _str[i]<='z'))
-            return 0;
-    }
-    return -1;
+  for (int i = _start; i <= _end; ++i)
+  {
+    if ((_str[i] >= 'A' && _str[i] <= 'Z') || (_str[i] >= 'a' && _str[i] <= 'z'))
+      return 0;
+  }
+  return -1;
 }
 
-int  Utility_CheckHexChar(const char * _str,int _start ,int _end)
+int Utility_CheckHexChar(const char *_str, int _start, int _end)
 {
-    for(int i=_start; i <= _end; ++i)
-    {
-        if( (_str[i]>='0' && _str[i]<='9') || (_str[i]>='A' && _str[i]<='Z') || (_str[i]>='a' && _str[i]<='z'))
-            return 0;
-    }
-    return -1;
+  for (int i = _start; i <= _end; ++i)
+  {
+    if ((_str[i] >= '0' && _str[i] <= '9') || (_str[i] >= 'A' && _str[i] <= 'Z') || (_str[i] >= 'a' && _str[i] <= 'z'))
+      return 0;
+  }
+  return -1;
 }
 
-int  Utility_CheckBinary(const char * _str,int _start,int _end)
+int Utility_CheckBinary(const char *_str, int _start, int _end)
 {
-    for(int i= _start; i <= _end; ++i)
+  for (int i = _start; i <= _end; ++i)
+  {
+    if (_str[i] != '0' && _str[i] != '1')
+      return -1;
+  }
+  return 0;
+}
+
+//ï¿½ï¿½ï¿½check ipï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ä¿Ç°Ð£ï¿½é·¶Î§ï¿½ï¿½[0-9].[0-9].[0-9].[0-9]
+int Utility_CheckIp(const char *_str, int _start, int _end)
+{
+  int section = 0; //Ã¿Ò»ï¿½Úµï¿½Ê®ï¿½ï¿½ï¿½ï¿½Öµ
+  int dot = 0;     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½
+
+  for (int i = _start; i <= _end; ++i)
+  {
+    if (_str[i] == '.')
     {
-        if( _str[i]!='0' && _str[i]!='1')
-            return -1;
+      dot++;
+      if (dot > 3)
+      {
+        goto IPErrorHandle;
+      }
+      if (section >= 0 && section <= 255)
+      {
+        section = 0;
+      }
+      else
+      {
+        goto IPErrorHandle;
+      }
     }
-    return 0;
-} 
-
-//Õâ¸öcheck ip²¢²»ÍêÉÆ£¬Ä¿Ç°Ð£Ñé·¶Î§ÊÇ[0-9].[0-9].[0-9].[0-9]
-int Utility_CheckIp(const char* _str,int _start,int _end)
-{
-    int section = 0;  //Ã¿Ò»½ÚµÄÊ®½øÖÆÖµ 
-    int dot = 0;       //¼¸¸öµã·Ö¸ô·û 
-
-    for(int i= _start; i <= _end; ++i)
-    { 
-        if(_str[i] == '.')
-        { 
-            dot++; 
-            if(dot > 3)
-            { 
-                goto IPErrorHandle; 
-            } 
-            if(section >= 0 && section <=255)
-            { 
-                section = 0; 
-            }
-            else
-            { 
-                goto IPErrorHandle; 
-            } 
-        }
-        else if(_str[i] >= '0' && _str[i] <= '9')
-        { 
-            section = section * 10 + _str[i] - '0'; 
-        }
-        else
-        { 
-            goto IPErrorHandle;
-        } 
+    else if (_str[i] >= '0' && _str[i] <= '9')
+    {
+      section = section * 10 + _str[i] - '0';
     }
+    else
+    {
+      goto IPErrorHandle;
+    }
+  }
 
-    if(section >= 0 && section <=255)
-    { 
-        if(3 == dot)
-        {
-            section = 0; 
-            return 0;
-        }
-    } 
+  if (section >= 0 && section <= 255)
+  {
+    if (3 == dot)
+    {
+      section = 0;
+      return 0;
+    }
+  }
 IPErrorHandle:
-    Console_WriteErrorStringln("IP address invalid!\n");       
-    return -1; 
+  Console_WriteErrorStringln("IP address invalid!\n");
+  return -1;
 }
 
-int  Utility_BytesCompare3(const char * _bytes1,const char * _bytes2)
-{// ÅÐ¶Ï3×Ö½ÚÊý¾ÝµÄ´óÐ¡,Âö³åÖÐ¶ÏÖÐÊ¹ÓÃ 
-    if(_bytes1[0] > _bytes2[0]) 
-        return  1;
-    if(_bytes1[0] < _bytes2[0]) 
-        return  -1;
+int Utility_BytesCompare3(const char *_bytes1, const char *_bytes2)
+{ // ï¿½Ð¶ï¿½3ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ÝµÄ´ï¿½Ð¡,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
+  if (_bytes1[0] > _bytes2[0])
+    return 1;
+  if (_bytes1[0] < _bytes2[0])
+    return -1;
+  else
+  {
+    if (_bytes1[1] > _bytes2[1])
+      return 1;
+    if (_bytes1[1] < _bytes2[1])
+      return -1;
     else
     {
-        if(_bytes1[1] > _bytes2[1]) 
-            return  1;
-        if(_bytes1[1] < _bytes2[1]) 
-            return  -1;
-        else
-        {
-            if(_bytes1[2] > _bytes2[2]) 
-                return  1;
-            if(_bytes1[2] < _bytes2[2])
-                return -1;
-            else
-                return 0;
-        }
+      if (_bytes1[2] > _bytes2[2])
+        return 1;
+      if (_bytes1[2] < _bytes2[2])
+        return -1;
+      else
+        return 0;
     }
+  }
 }
 
-int  Utility_Strlen(char * str)
+int Utility_Strlen(char *str)
 {
-    int temp=0;
-    while(*(str++)!='\0')
-        ++temp;
-    return temp;
-} 
-void Utility_Strncpy(char *dest,char *src, int Len)
-{//²»Ö÷¶¯Ìí¼Ó½áÊø·û
-    for(int i=0;i<Len;++i)
-    {
-        dest[i]=src[i];
-    }
+  int temp = 0;
+  while (*(str++) != '\0')
+    ++temp;
+  return temp;
 }
-int  Utility_Strncmp(const char * src,const char *dest ,int len)
-{//²»Ö÷¶¯Ìí¼Ó½áÊø·û
-    for(int i=0;i<len;++i)
-    {
-        if(src[i]!=dest[i])
-            return -1;
-    }
-    return 0;
-} 
+void Utility_Strncpy(char *dest, char *src, int Len)
+{ //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½ï¿½
+  for (int i = 0; i < Len; ++i)
+  {
+    dest[i] = src[i];
+  }
+}
+int Utility_Strncmp(const char *src, const char *dest, int len)
+{ //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½ï¿½
+  for (int i = 0; i < len; ++i)
+  {
+    if (src[i] != dest[i])
+      return -1;
+  }
+  return 0;
+}
 //  0 ->00   255->FF
-int  Utility_CharToHex(char _src , char * _dest)
+int Utility_CharToHex(char _src, char *_dest)
 {
-    char _temp=0x00;
-    _temp = _src>>4;
-    if(_temp >= 10 )
-        _dest[0] = 'A' + _temp - 10 ;
-    else
-        _dest[0] = '0' + _temp ;
-    _temp = _src & 0x0F;
-    if( _temp >= 10 )
-        _dest[1] = 'A' + _temp - 10 ;
-    else
-        _dest[1] = '0' + _temp ;
-    
-    return 0;
-} 
+  char _temp = 0x00;
+  _temp = _src >> 4;
+  if (_temp >= 10)
+    _dest[0] = 'A' + _temp - 10;
+  else
+    _dest[0] = '0' + _temp;
+  _temp = _src & 0x0F;
+  if (_temp >= 10)
+    _dest[1] = 'A' + _temp - 10;
+  else
+    _dest[1] = '0' + _temp;
 
+  return 0;
+}
 
 //
-//  ÎÒÃÇÕâ¸öÓ¦ÓÃÖ»»áÓÐ7Î»DEC×Ö´®,6Î»HEX×Ö´® ºÍ3¸ö×Ö½ÚÖ®¼äµÄ»¥»»,
-//  Òò´Ëº¯ÊýÒ²Ã»ÓÐÉè¼Æ³ÉÍ¨ÓÃÕýÈ·µÄ.
+//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½7Î»DECï¿½Ö´ï¿½,6Î»HEXï¿½Ö´ï¿½ ï¿½ï¿½3ï¿½ï¿½ï¿½Ö½ï¿½Ö®ï¿½ï¿½Ä»ï¿½ï¿½ï¿½,
+//  ï¿½ï¿½Ëºï¿½ï¿½ï¿½Ò²Ã»ï¿½ï¿½ï¿½ï¿½Æ³ï¿½Í¨ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½.
 //
-int  Utility_Bytes3ToDecStr7(char * _src ,char * _dest)
-{//Ê×ÏÈÐèÒª×ª»»³ÉlongÕâ¸öÊÇ±ØÐëµÄ.
-    unsigned long _tempLong=0;
-    _tempLong += (((unsigned long)_src[0])<<16);
-    _tempLong += (((unsigned long)_src[1])<<8);
-    _tempLong += _src[2];
-    //ÒÑ¾­²úÉúlongÁË.¿ªÊ¼×ª»» 
-    _dest[0] = (char)(_tempLong /(1000000L))+'0';
-    _tempLong %=1000000L;
-    _dest[1] = (char) (_tempLong /(100000L))+'0';
-    _tempLong %= 100000L;
-    _dest[2] = (char) (_tempLong /(10000L))+'0';
-    _tempLong %= 10000L;
-    
-    //ºóÐø¾Í²»ÐèÒªlongÄÇÃ´´óÁË. ¾Í×ª»»³Éint, 
-    //ÒòÎªlong·ÇCPUÀàÐÍ,²Ù×÷»ºÂý 
-    Utility_UintToStr4((unsigned int)_tempLong,&_dest[3]); 
-    return 0;//·µ»Ø×Ö·û´®³¤¶È
+int Utility_Bytes3ToDecStr7(char *_src, char *_dest)
+{ //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª×ªï¿½ï¿½ï¿½ï¿½longï¿½ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½.
+  unsigned long _tempLong = 0;
+  _tempLong += (((unsigned long)_src[0]) << 16);
+  _tempLong += (((unsigned long)_src[1]) << 8);
+  _tempLong += _src[2];
+  //ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½longï¿½ï¿½.ï¿½ï¿½Ê¼×ªï¿½ï¿½
+  _dest[0] = (char)(_tempLong / (1000000L)) + '0';
+  _tempLong %= 1000000L;
+  _dest[1] = (char)(_tempLong / (100000L)) + '0';
+  _tempLong %= 100000L;
+  _dest[2] = (char)(_tempLong / (10000L)) + '0';
+  _tempLong %= 10000L;
+
+  //ï¿½ï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½Òªlongï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½int,
+  //ï¿½ï¿½Îªlongï¿½ï¿½CPUï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  Utility_UintToStr4((unsigned int)_tempLong, &_dest[3]);
+  return 0; //ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
-
-
-int Utility_DecStr7ToBytes3(char * _src, char * _dest)
-{//
-    unsigned long _tempLong=0;
-    for(int i=0;i<6;++i)
-    {
-        _tempLong+= _src[i]-'0';
-        _tempLong*=10;
-    }
-    _tempLong += _src[6]-'0';//¸öÎ»Êý
-    //²úÉúlongÁË
-    _dest[0] = (char)(_tempLong>>16);//È¡µÚ2¸ö×Ö½Ú
-    _dest[1] = (char)(_tempLong>>8);//È¡µÚ3¸ö×Ö½Ú
-    _dest[2] = (char)(_tempLong&0xFF);//È¡µÚ1¸ö×Ö½Ú
-    return 0;
+int Utility_DecStr7ToBytes3(char *_src, char *_dest)
+{ //
+  unsigned long _tempLong = 0;
+  for (int i = 0; i < 6; ++i)
+  {
+    _tempLong += _src[i] - '0';
+    _tempLong *= 10;
+  }
+  _tempLong += _src[6] - '0'; //ï¿½ï¿½Î»ï¿½ï¿½
+  //ï¿½ï¿½ï¿½ï¿½longï¿½ï¿½
+  _dest[0] = (char)(_tempLong >> 16);  //È¡ï¿½ï¿½2ï¿½ï¿½ï¿½Ö½ï¿½
+  _dest[1] = (char)(_tempLong >> 8);   //È¡ï¿½ï¿½3ï¿½ï¿½ï¿½Ö½ï¿½
+  _dest[2] = (char)(_tempLong & 0xFF); //È¡ï¿½ï¿½1ï¿½ï¿½ï¿½Ö½ï¿½
+  return 0;
 }
-int  Utility_UintToStr4(unsigned int _src, char *_dest)
+int Utility_UintToStr4(unsigned int _src, char *_dest)
 {
-    _dest[0]=_src/1000+'0';
-    _src %=1000;
-    _dest[1]=_src/100+'0';
-    _src %=100;
-    _dest[2]=_src/10+'0';
-    _dest[3]=_src%10+'0';
-    return 0;
+  _dest[0] = _src / 1000 + '0';
+  _src %= 1000;
+  _dest[1] = _src / 100 + '0';
+  _src %= 100;
+  _dest[2] = _src / 10 + '0';
+  _dest[3] = _src % 10 + '0';
+  return 0;
 }
-int  Utility_UintToStr3(unsigned int _src, char *_dest)
+int Utility_UintToStr3(unsigned int _src, char *_dest)
 {
-    _dest[0]=_src/100+'0';
-    _src %=100;
-    _dest[1]=_src/10+'0';
-    _dest[2]=_src%10+'0';
+  _dest[0] = _src / 100 + '0';
+  _src %= 100;
+  _dest[1] = _src / 10 + '0';
+  _dest[2] = _src % 10 + '0';
 
-    return 0;
+  return 0;
 }
 
-int  Utility_UintToStr2(unsigned int _src, char *_dest)
+int Utility_UintToStr2(unsigned int _src, char *_dest)
 {
-    _dest[0]=_src/10+'0';
-    _dest[1]=_src%10+'0';
-    return 0;
+  _dest[0] = _src / 10 + '0';
+  _dest[1] = _src % 10 + '0';
+  return 0;
 }
-int  Utility_UintToStr1(unsigned int _src, char *_dest)
+int Utility_UintToStr1(unsigned int _src, char *_dest)
 {
-    _dest[0]=_src%10+'0';
+  _dest[0] = _src % 10 + '0';
 
-    return 0;
+  return 0;
 }
 
+void IntTo0xInt(unsigned int num, int count)
+{
 
-void IntTo0xInt(unsigned int num,int count){
-	   
-	   if(count==1){
-	    switcher=0x00;
-        switcher+=num;
-	   	
-	   }
-           if(count==2){
-             tthex=0x00;
-             int a,b;
-             a=num/10;
-             b=num%10;
-             tthex+=a;
-             tthex<<=4;
-             tthex+=b;
-           }
-	   if(count==4)
-	   {
-	   	   anahigh=0x00;
-	   	   analow=0x00;
-	   	   int a,b,c,d;
-	   	   a=num/1000;
-	   	   b=num/100%10;
-	   	   c=num%100/10;
-	   	   d=num%100%10;
-	       anahigh+=a;
-	       anahigh<<=4;
-	       anahigh+=b;
-	       analow+=c;
-	       analow<<=4;
-	       analow+=d;
-	   }
-	   if(count==6){
-	   	  pulsehigh=0x00;
-	   	  pulsemedium=0x00;
-	   	  pulselow=0x00;
-	   	  int a,b,c,d,e,f;
-	   	  a=num/100000;
-	   	  b=num/10000%10;
-	   	  c=num/1000%10;
-	   	  d=num/100%10;
-	   	  e=num/10%10;
-	   	  f=num%10;
-		  pulsehigh+=a;
-		  pulsehigh<<=4; 
-		  pulsehigh+=b;
-		   
-		  pulsemedium+=c;
-		  pulsemedium<<=4; 
-		  pulsemedium+=d; 
-		  
-		  pulselow+=e;
-		  pulselow<<=4; 
-		  pulselow+=f; 	  
-	   }
+  if (count == 1)
+  {
+    switcher = 0x00;
+    switcher += num;
+  }
+  if (count == 2)
+  {
+    tthex = 0x00;
+    int a, b;
+    a = num / 10;
+    b = num % 10;
+    tthex += a;
+    tthex <<= 4;
+    tthex += b;
+  }
+  if (count == 4)
+  {
+    anahigh = 0x00;
+    analow = 0x00;
+    int a, b, c, d;
+    a = num / 1000;
+    b = num / 100 % 10;
+    c = num % 100 / 10;
+    d = num % 100 % 10;
+    anahigh += a;
+    anahigh <<= 4;
+    anahigh += b;
+    analow += c;
+    analow <<= 4;
+    analow += d;
+  }
+  if (count == 6)
+  {
+    pulsehigh = 0x00;
+    pulsemedium = 0x00;
+    pulselow = 0x00;
+    int a, b, c, d, e, f;
+    a = num / 100000;
+    b = num / 10000 % 10;
+    c = num / 1000 % 10;
+    d = num / 100 % 10;
+    e = num / 10 % 10;
+    f = num % 10;
+    pulsehigh += a;
+    pulsehigh <<= 4;
+    pulsehigh += b;
+
+    pulsemedium += c;
+    pulsemedium <<= 4;
+    pulsemedium += d;
+
+    pulselow += e;
+    pulselow <<= 4;
+    pulselow += f;
+  }
 }
-//°ÑASCII×ª»»Îª16½øÖÆ
+//ï¿½ï¿½ASCII×ªï¿½ï¿½Îª16ï¿½ï¿½ï¿½ï¿½
 char ConvertHexChar(char ch)
 {
-  if((ch>='0')&&(ch <='9'))
-    return ch-0x30;
-  else if((ch>='A')&&(ch <='F'))
-    return ch-'A'+10;
-  else if((ch>='a')&&(ch <='f'))
-    return ch-'a'+10;
-  else 
+  if ((ch >= '0') && (ch <= '9'))
+    return ch - 0x30;
+  else if ((ch >= 'A') && (ch <= 'F'))
+    return ch - 'A' + 10;
+  else if ((ch >= 'a') && (ch <= 'f'))
+    return ch - 'a' + 10;
+  else
     return (-1);
 }
-//°ÑÁ½Î»ASCIIÊý×é×ª»»ÎªÒ»Î»16½øÖÆÊý×é
-char ConvertAscIItoHex(char* ascii,char* hex,int asciilen)
+//ï¿½ï¿½ï¿½ï¿½Î»ASCIIï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ÎªÒ»Î»16ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+char ConvertAscIItoHex(char *ascii, char *hex, int asciilen)
 {
-    int i,j;
-//    if((asciilen % 2) == 0)
-//    {
-//        TraceMsg("The size of AscII array is odd, it must be even. The size of hex array must be even too£¡",1);
-//        return -1;
-//    }
-    for(i = 0,j = 0; i < asciilen;i+=2,j++)
-        hex[j] = ConvertHexChar(ascii[i]) * 16 + ConvertHexChar(ascii[i+1]);
-    return 0;
+  int i, j;
+  //    if((asciilen % 2) == 0)
+  //    {
+  //        TraceMsg("The size of AscII array is odd, it must be even. The size of hex array must be even tooï¿½ï¿½",1);
+  //        return -1;
+  //    }
+  for (i = 0, j = 0; i < asciilen; i += 2, j++)
+    hex[j] = ConvertHexChar(ascii[i]) * 16 + ConvertHexChar(ascii[i + 1]);
+  return 0;
 }
 
-// ×¨ÃÅÕë¶ÔÌìÊýµÄÅÐ¶Ï
-static void _addDay(char *dest)// ¼õÉÙ´úÂë´óÐ¡
-{//ÌìÊýÅÐ¶Ï¸´ÔÓ
-  //1 ÊÇ·ñÈòÄê 
-  //2 ÔÂ·ÝÊý 
-  //ÈòÄê¶¨Òå:  4Äê1Èò;100Äê²»Èò;400ÄêÒªÈò.  
-    if(dest[1]==2)//ÊÇ·ñÊÇ2ÔÂ, 28,29
-    {//20¿ªÍ·µÄÈòÄê
-    //±¾ÏµÍ³¿Ï¶¨²»»áÊ¹ÓÃµ½2100Äê
-    //ËùÒÔ¾ÍÖ»ÅÐ¶ÏÄÜ·ñ±»4³ý  
-        if(dest[0]%4==0)//ÈòÄê
-        {
-            if(dest[2]<30)//Ã»³¬¹ý29Ìì
-                return;
-            dest[2]-=29; //¼õÈ¥Òç³öµÄ29
-            ++dest[1];  //ÔÂ·Ý +1
-        }
-        else//²»ÊÇÈòÄê
-        {
-            if(dest[2] < 29)//Ã»³¬¹ý28Ìì
-                return ;
-            dest[2]-=28; //¼õÈ¥Òç³öµÄ28
-            ++dest[1];  //ÔÂ·Ý +1
-        }
-    }
-    // ÊÇ·ñÊÇ30ÌìµÄÔÂ
-    if(dest[1]==4||dest[1]==6||dest[1]==9||dest[1]==11)
+// ×¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+static void _addDay(char *dest) // ï¿½ï¿½ï¿½Ù´ï¿½ï¿½ï¿½ï¿½Ð¡
+{                               //ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¸ï¿½ï¿½ï¿½
+                                //1 ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
+                                //2 ï¿½Â·ï¿½ï¿½ï¿½
+                                //ï¿½ï¿½ï¿½ê¶¨ï¿½ï¿½:  4ï¿½ï¿½1ï¿½ï¿½;100ï¿½ê²»ï¿½ï¿½;400ï¿½ï¿½Òªï¿½ï¿½.
+  if (dest[1] == 2)             //ï¿½Ç·ï¿½ï¿½ï¿½2ï¿½ï¿½, 28,29
+  {                             //20ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                                //ï¿½ï¿½ÏµÍ³ï¿½Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½2100ï¿½ï¿½
+                                //ï¿½ï¿½ï¿½Ô¾ï¿½Ö»ï¿½Ð¶ï¿½ï¿½Ü·ï¿½4ï¿½ï¿½
+    if (dest[0] % 4 == 0)       //ï¿½ï¿½ï¿½ï¿½
     {
-        if(dest[2]<31) //Ã»³¬¹ý30Ìì
-            return;
-        dest[2]-=30; //¼õÈ¥Òç³öµÄ30Ìì
-        ++dest[1]; //ÔÂ·Ý+1
-    } 
-    // ÊÇ·ñÊÇ31ÌìµÄÔÂ
-    if(dest[1]==1||dest[1]==3||dest[1]==5||dest[1]==7
-       ||dest[1]==8||dest[1]==10||dest[1]==12)
-    {
-        if(dest[2]<32) //Ã»³¬¹ý31Ìì
-            return;
-        dest[2]-=31;//¼õÈ¥Òç³öµÄ31Ìì
-        ++dest[1]; //ÔÂ·Ý +1
-    }
-    if(dest[1]<13)//Ã»³¬¹ý12ÔÂ
-        return ;
-    dest[1]-=12; //¼õÈ¥Òç³öµÄ12¸öÔÂ
-    ++dest[0];  //Äê·Ý +1 
-    return;//¸ãÍêÁË  : )
-    
-} 
-
-void Utility_Time_AddSecond(char *dest, int second)// second²»¿ÉÒÔ´óÓÚ60Ãë
-{
-  if(second>60)
-    return ;
-  dest[5]+=second;//¼ÓÉÏÃëÊý
-  if(dest[5]<60)
-    return ; //Íê³ÉÁË 
-  dest[5]-=60;//·ÖÖÓ¼Ó1
-  ++dest[3];
-  if(dest[4]<60)
-    return ; //Íê³ÉÁË 
-  dest[4]-=60;//Ð¡Ê±¼Ó1
-  ++dest[3];   
-  if(dest[3]<24)
-    return ;//Íê³ÉÁË
-  dest[3]-=24;//ÌìÊý¼Ó1;
-  ++dest[2];
-  _addDay(dest);
-}  
-//  ÄêÔÂÈÕÊ±·Ö char[5] ÊýÖµ 
-void Utility_Time_AddMinute(char *dest, int minute)// minute²»¿ÉÒÔ´óÓÚ60·ÖÖÓ
-{
-  if(minute>60)
-    return ;
-  dest[4]+=minute;//¼ÓÉÏ·ÖÖÓÊý
-  if(dest[4]<60)
-    return ; //Íê³ÉÁË 
-  dest[4]-=60;//Ð¡Ê±¼Ó1
-  ++dest[3]; 
-  if(dest[3]<24)
-    return ;//Íê³ÉÁË
-  dest[3]-=24;//ÌìÊý¼Ó1;
-  ++dest[2];
-  _addDay(dest);
-}  
-void Utility_Time_AddHour(char *dest, int hour)//hour²»¿ÉÒÔ´óÓÚ24
-{
-  if(hour>24)
-    return;
-  dest[3]+=hour; 
-  if(dest[3]<24)
-    return ;//Íê³ÉÁË
-  
-  dest[3]-=24;//ÌìÊý¼Ó1;
-  ++dest[2];
-  _addDay(dest); 
-}
-void Utility_Time_AddDay(char *dest,int Day)
-{
-  if(Day>28)//ÎªÁË±£Ö¤1ÔÂ31ÈÕ¼ÓÌìÊý,²»»áÌøÔÂ³öÏÖ´íÎó
-    return;
-  dest[2]+=Day;
-  _addDay(dest);
-}
-void Utility_Time_AddMonth(char *dest,int Month)
-{
-    if(Month>12)
-        return ;
-    dest[1]+=Month;
-    if(dest[1]<13)
+      if (dest[2] < 30) //Ã»ï¿½ï¿½ï¿½ï¿½29ï¿½ï¿½
         return;
-    dest[1]-=12;
-    ++dest[0];
-}
-void Utility_CalculateNextReportTimeBytes(char *dest)//¸ù¾Ýµ±Ç°ÉèÖÃ,¼ÆËã³öÏÂÒ»´Î±¨¸æÊ±¼ä
-{//±¨¸æÊ±¼ä 5·ÖÖÓ
-    for(int i=0;i<5;++i)
+      dest[2] -= 29; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½29
+      ++dest[1];     //ï¿½Â·ï¿½ +1
+    }
+    else //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
-        dest[i]=g_rtc_nowTime[i];
+      if (dest[2] < 29) //Ã»ï¿½ï¿½ï¿½ï¿½28ï¿½ï¿½
+        return;
+      dest[2] -= 28; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½28
+      ++dest[1];     //ï¿½Â·ï¿½ +1
     }
-    //¶ÁÈ¡ReportMode
-    char temp[2];
-    int mode=0;
-    if(Store_ReadReportTimeMode(temp)<0)
-    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
-        mode=1;
-    }
-    else
-        mode=(temp[0]-'0')*10 + temp[1] - '0';
-//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
-//  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
-//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ 
-    
-    switch(mode)
-    {
-      case 1: 
-        dest[4] -= dest[4]%5;
-        Utility_Time_AddMinute(dest,5); //¼Ó5·ÖÖÓ   
-        break;
-        
-      case 2:
-        dest[4] -= dest[4]%10; 
-        Utility_Time_AddMinute(dest,10);//¼Ó10·ÖÖÓ 
-        break; 
-        
-      case 3:
-        dest[4] -= dest[4]%20;
-        Utility_Time_AddMinute(dest,20);//¼Ó20·ÖÖÓ
-        break;
-        
-      case 4:
-        dest[4] -= dest[4]%30;
-        Utility_Time_AddMinute(dest,30);//¼Ó30·ÖÖÓ
-        break; 
-        
-      case 5:
-        dest[4]=0; //·ÖÖÓÇå0 ¼´¿É 
-        Utility_Time_AddHour(dest,1);//¼Ó1Ð¡Ê± 
-        break;
-        
-      case 6:
-        dest[4]=0;//·ÖÖÓÇå0
-        dest[3] -= dest[3]%2;//
-        Utility_Time_AddHour(dest,2);//¼Ó2Ð¡Ê± 
-        break; 
-        
-      case 7:
-        dest[4] =0;
-        dest[3] -= dest[3]%3;
-        Utility_Time_AddHour(dest,3);//¼Ó3Ð¡Ê±
-        
-        break;
-      case 8:
-        dest[4]=0;
-        dest[3] -= dest[3]%6;
-        Utility_Time_AddHour(dest,6);//¼Ó6Ð¡Ê±
-        break; 
-        
-      case 9:
-        dest[4]=0;
-        dest[3] -= dest[3]%12;
-        Utility_Time_AddHour(dest,12);//¼Ó12Ð¡Ê±
-        break;
-        
-      case 10:
-        dest[4]=0;
-        dest[3]=8;
-        Utility_Time_AddDay(dest,1);//¼Ó1Ìì  
-        break;
-        
-//  ¶ÔÓÚÌìÊý,ÎÒÃÇ²»½öÒªÔÚ¼ÓÄ£Ê½¼ä¸ôÖµÇ°ÇóÕû,
-//  ¼ÓÁËÖ®ºó,ÈÔÐèÒªÇóÕû.
-//  ÒòÎªÌìÊýÊÇ±ä¶¯µÄ, ²»ÊÇ¼ä¸ôÖµµÄÕûÊý±¶.        
-//  ÌìÊýµÄÇóÕû ±È½Ï¸´ÔÓ,ÒòÎªÊÇÒÔ1ÎªÆðÊ¼.
-        
-        //
-        //  »¹ÊÇÓÐÎÊÌâ. ÈÔÈ»ÐèÒªÐÞ¸Ä!!!!
-        //
-    case 11:
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        
-        Utility_Time_AddDay(dest,2);//¼Ó2Ìì
-        
-        dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        break;
-      case 12: 
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        Utility_Time_AddDay(dest,3);//¼Ó3Ìì
-        dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        
-        break;
-      case 13:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼ 
-        
-        Utility_Time_AddDay(dest,5);//¼Ó5Ìì
-        dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        break;
-      case 14:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        Utility_Time_AddDay(dest,10);//¼Ó10Ìì
-        dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        
-        break;
-      case 15:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%15;
-        //++dest[2];
-        Utility_Time_AddDay(dest,15);//¼Ó15Ìì
-        dest[2]-=(dest[2]-1)%15;
-        //++dest[2];
-        
-        break;
-      case 16:
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]=1;
-        Utility_Time_AddMonth(dest,1);//¼Ó1¸öÔÂ
-        break;
-      default:
-        //ÒªÊÇÄ£Ê½ÓÐÎÊÌâ.
-        //ÎÒÃÇ¾ÍÄ¬ÈÏÎª5·ÖÖÓ±£´æÒ»´Î
-        Utility_Time_AddMinute(dest,5);
-    }
+  }
+  // ï¿½Ç·ï¿½ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½ï¿½
+  if (dest[1] == 4 || dest[1] == 6 || dest[1] == 9 || dest[1] == 11)
+  {
+    if (dest[2] < 31) //Ã»ï¿½ï¿½ï¿½ï¿½30ï¿½ï¿½
+      return;
+    dest[2] -= 30; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½30ï¿½ï¿½
+    ++dest[1];     //ï¿½Â·ï¿½+1
+  }
+  // ï¿½Ç·ï¿½ï¿½ï¿½31ï¿½ï¿½ï¿½ï¿½ï¿½
+  if (dest[1] == 1 || dest[1] == 3 || dest[1] == 5 || dest[1] == 7 || dest[1] == 8 || dest[1] == 10 || dest[1] == 12)
+  {
+    if (dest[2] < 32) //Ã»ï¿½ï¿½ï¿½ï¿½31ï¿½ï¿½
+      return;
+    dest[2] -= 31; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½31ï¿½ï¿½
+    ++dest[1];     //ï¿½Â·ï¿½ +1
+  }
+  if (dest[1] < 13) //Ã»ï¿½ï¿½ï¿½ï¿½12ï¿½ï¿½
+    return;
+  dest[1] -= 12; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½12ï¿½ï¿½ï¿½ï¿½
+  ++dest[0];     //ï¿½ï¿½ï¿½ +1
+  return;        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : )
 }
 
-void Utility_CalculateNextCameraGoTimes(char *dest)//¸ù¾Ýµ±Ç°ÉèÖÃ,¼ÆËã³öÏÂÒ»´ÎÉãÏñÊ±¼ä
-{//±¨¸æÊ±¼ä 5·ÖÖÓ
-    for(int i=0;i<5;++i)
-    {
-        dest[i]=g_rtc_nowTime[i];
-    }
-    //¶ÁÈ¡ReportMode
-    char temp[2];
-    int mode=0;
-    if(Store_ReadCameraTimeMode(temp)<0)
-    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
-        mode=1;
-    }
-    else
-        mode=(temp[0]-'0')*10 + temp[1] - '0';
-//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
-//  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
-//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ 
-    
-    switch(mode)
-    {
-      case 1: 
-        dest[4] -= dest[4]%5;
-        Utility_Time_AddMinute(dest,5); //¼Ó5·ÖÖÓ   
-        break;
-        
-      case 2:
-        dest[4] -= dest[4]%10; 
-        Utility_Time_AddMinute(dest,10);//¼Ó10·ÖÖÓ 
-        break; 
-        
-      case 3:
-        dest[4] -= dest[4]%20;
-        Utility_Time_AddMinute(dest,20);//¼Ó20·ÖÖÓ
-        break;
-        
-      case 4:
-        dest[4] -= dest[4]%30;
-        Utility_Time_AddMinute(dest,30);//¼Ó30·ÖÖÓ
-        break; 
-        
-      case 5:
-        dest[4]=0; //·ÖÖÓÇå0 ¼´¿É 
-        Utility_Time_AddHour(dest,1);//¼Ó1Ð¡Ê± 
-        break;
-        
-      case 6:
-        dest[4]=0;//·ÖÖÓÇå0
-        dest[3] -= dest[3]%2;//
-        Utility_Time_AddHour(dest,2);//¼Ó2Ð¡Ê± 
-        break; 
-        
-      case 7:
-        dest[4] =0;
-        dest[3] -= dest[3]%3;
-        Utility_Time_AddHour(dest,3);//¼Ó3Ð¡Ê±
-        
-        break;
-      case 8:
-        dest[4]=0;
-        dest[3] -= dest[3]%6;
-        Utility_Time_AddHour(dest,6);//¼Ó6Ð¡Ê±
-        break; 
-        
-      case 9:
-        dest[4]=0;
-        dest[3] -= dest[3]%12;
-        Utility_Time_AddHour(dest,12);//¼Ó12Ð¡Ê±
-        break;
-        
-      case 10:
-        dest[4]=0;
-        dest[3]=8;
-        Utility_Time_AddDay(dest,1);//¼Ó1Ìì  
-        break;
-        
-//  ¶ÔÓÚÌìÊý,ÎÒÃÇ²»½öÒªÔÚ¼ÓÄ£Ê½¼ä¸ôÖµÇ°ÇóÕû,
-//  ¼ÓÁËÖ®ºó,ÈÔÐèÒªÇóÕû.
-//  ÒòÎªÌìÊýÊÇ±ä¶¯µÄ, ²»ÊÇ¼ä¸ôÖµµÄÕûÊý±¶.        
-//  ÌìÊýµÄÇóÕû ±È½Ï¸´ÔÓ,ÒòÎªÊÇÒÔ1ÎªÆðÊ¼.
-        
-        //
-        //  »¹ÊÇÓÐÎÊÌâ. ÈÔÈ»ÐèÒªÐÞ¸Ä!!!!
-        //
-    case 11:
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        
-        Utility_Time_AddDay(dest,2);//¼Ó2Ìì
-        
-        dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        break;
-      case 12: 
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        Utility_Time_AddDay(dest,3);//¼Ó3Ìì
-        dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        
-        break;
-      case 13:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼ 
-        
-        Utility_Time_AddDay(dest,5);//¼Ó5Ìì
-        dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        break;
-      case 14:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        Utility_Time_AddDay(dest,10);//¼Ó10Ìì
-        dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        
-        break;
-      case 15:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%15;
-        //++dest[2];
-        Utility_Time_AddDay(dest,15);//¼Ó15Ìì
-        dest[2]-=(dest[2]-1)%15;
-        //++dest[2];
-        
-        break;
-      case 16:
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]=1;
-        Utility_Time_AddMonth(dest,1);//¼Ó1¸öÔÂ
-        break;
-      default:
-        //ÒªÊÇÄ£Ê½ÓÐÎÊÌâ.
-        //ÎÒÃÇ¾ÍÄ¬ÈÏÎª5·ÖÖÓ±£´æÒ»´Î
-        Utility_Time_AddMinute(dest,5);
-    }
-}
-
-
-void Utility_CalculateNextSaveTimeBytes(char *dest)//¸ù¾Ýµ±Ç°ÉèÖÃ,¼ÆËã³öÏÂÒ»´Î±£´æÊ±¼ä
-{//±£´æÊ±¼ä 5·ÖÖÓ
-    for(int i=0;i<5;++i)
-    {
-        dest[i]=g_rtc_nowTime[i];
-    }
-    //¶ÁÈ¡SaveMode
-    char temp[2];
-    int mode=0;
-    if(Store_ReadSaveTimeMode(temp)<0)
-    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
-        mode=1;
-    }
-    else
-        mode=(temp[0]-'0')*10+ temp[1] - '0'; 
-//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
-//  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
-//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ  
-     
-    // ·ÖÖÓµÄÕûµã ¾ÍÊÇ00 ,Ð¡Ê±ÊÇ 8µã?   ÌìÊý ¾ÍÊÇ1ÈÕ.
-    
-    switch(mode)
-    {
-      case 1: 
-        dest[4] -= dest[4]%5;
-        Utility_Time_AddMinute(dest,5); //¼Ó5·ÖÖÓ  
-        
-        break;
-      case 2:
-        dest[4] -= dest[4]%10; 
-        Utility_Time_AddMinute(dest,10);//¼Ó10·ÖÖÓ
-        
-        break; 
-      case 3:
-        dest[4] -= dest[4]%20;
-        Utility_Time_AddMinute(dest,20);//¼Ó20·ÖÖÓ
-        break;
-      case 4:
-        dest[4] -= dest[4]%30;
-        Utility_Time_AddMinute(dest,30);//¼Ó30·ÖÖÓ
-
-        
-        break; 
-      case 5:  
-        dest[4]=0; //·ÖÖÓÇå0 ¼´¿É 
-        Utility_Time_AddHour(dest,1);//¼Ó1Ð¡Ê±
-        
-        break;
-      case 6:
-        dest[4]=0;//·ÖÖÓÇå0
-        dest[3] -= dest[3]%2;  //
-        Utility_Time_AddHour(dest,2);//¼Ó2Ð¡Ê±
-        
-        
-        break; 
-      case 7:
-        dest[4] =0;
-        dest[3] -= dest[3]%3;
-        Utility_Time_AddHour(dest,3);//¼Ó3Ð¡Ê±
-        
-        
-        break;
-      case 8:
-        dest[4]=0;
-        dest[3] -= dest[3]%6;
-        Utility_Time_AddHour(dest,6);//¼Ó6Ð¡Ê±
-        
-        
-        break; 
-      case 9:
-        dest[4]=0;
-        dest[3] -= dest[3]%12;
-        Utility_Time_AddHour(dest,12);//¼Ó12Ð¡Ê±
-        
-        
-        break;
-        
-      case 10:
-        dest[4]=0;
-        dest[3]=8;
-        Utility_Time_AddDay(dest,1);//¼Ó1Ìì  
-        break;
-        
-//  ¶ÔÓÚÌìÊý,ÎÒÃÇ²»½öÒªÔÚ¼ÓÄ£Ê½¼ä¸ôÖµÇ°ÇóÕû,
-//  ¼ÓÁËÖ®ºó,ÈÔÐèÒªÇóÕû.
-//  ÒòÎªÌìÊýÊÇ±ä¶¯µÄ, ²»ÊÇ¼ä¸ôÖµµÄÕûÊý±¶.        
-//  ÌìÊýµÄÇóÕû ±È½Ï¸´ÔÓ,ÒòÎªÊÇÒÔ1ÎªÆðÊ¼.
-    
-    case 11:
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        Utility_Time_AddDay(dest,2);//¼Ó2Ìì    
-        dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        break;
-      case 12: 
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        Utility_Time_AddDay(dest,3);//¼Ó3Ìì
-        dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        
-        break;
-      case 13:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼ 
-        
-        Utility_Time_AddDay(dest,5);//¼Ó5Ìì
-        dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        break;
-      case 14:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        Utility_Time_AddDay(dest,10);//¼Ó10Ìì
-        dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
-        
-        break;
-      case 15:
-        
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]-=(dest[2]-1)%15;
-        //++dest[2];
-        Utility_Time_AddDay(dest,15);//¼Ó15Ìì
-        dest[2]-=(dest[2]-1)%15;
-        //++dest[2];
-        
-        break;
-      case 16:
-        dest[4]=0;
-        dest[3]=8;
-        dest[2]=1;
-        Utility_Time_AddMonth(dest,1);//¼Ó1¸öÔÂ
-        break;
-      default:
-        //ÒªÊÇÄ£Ê½ÓÐÎÊÌâ.
-        //ÎÒÃÇ¾ÍÄ¬ÈÏÎª5·ÖÖÓ±£´æÒ»´Î
-        Utility_Time_AddMinute(dest,5);
-    }
-}
-void Utility_CalculateNextCheckTimeBytes(char *dest)//¸ù¾Ýµ±Ç°Ê±¼ä,¼ÆËãÏÂÒ»´Î¼ì²éÊ±¼ä
-{//¼ì²éÊ±¼ä 5·ÖÖÓ
-    for(int i=0;i<5;++i)
-    {
-        dest[i]=g_rtc_nowTime[i];
-    }
-    //±ØÐëÕûµãÕûµã¼Ó5·ÖÖÓ.
-    dest[4] -= dest[4]%5;
-    Utility_Time_AddMinute(dest,5);
-}
-int  Utility_Is_A_CheckTime(char *  _time)
-{//·ÖÖÓÎª5µÄ±¶Êý ¾ÍÊÇ¼ì²éÊ±¼ä
-    if(_time[4]%5==0) 
-        return 1;
-    else
-        return 0;
-}
-
-int  Utility_Is_A_SaveTime(char *  _time)
-{//
-    char _temp[2];
-    int _mode=0;
-    if(Store_ReadSaveTimeMode(_temp)<0)
-    {
-        return 0;
-    }
-    else
-        _mode= (_temp[0]-'0')*10+ _temp[1] - '0'; 
-//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
-//  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
-//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ  
-    switch(_mode)
-    {
-      case 1:  
-        if(_time[4]%5==0)
-            return 1; 
-        break;
-      case 2:
-        if(_time[4]%10==0)
-            return 1;
-        break;
-      case 3:
-        if(_time[4]%20==0)
-            return 1;
-        break;
-      case 4:
-        if(_time[4]%30==0)
-            return 1;
-        break;
-      case 5:
-        if(_time[4]==0)
-            return 1;
-        break;
-      case 6:
-        if(_time[3]%2==0 && _time[4]==0)
-            return 1;
-        break;
-      case 7:
-        if(_time[3]%3==0 && _time[4]==0)
-            return 1;
-        break;
-      case 8: 
-        if(_time[3]%6==0 && _time[4]==0)
-            return 1;
-        break; 
-      case 9:
-        if( (_time[3]%12==0 || _time[3]==0 )&& _time[4]==0)
-            return 1;
-        break;
-      case 10:
-        if(_time[3]==8 && _time[4]==0)
-            return 1;
-        break;  
-      case 11:
-        if( (_time[2]-1)%2==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 12:
-        if( (_time[2]-1)%3==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 13:
-        if( (_time[2]-1)%5==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 14:
-        if( (_time[2]-1)%10==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 15:
-        if( (_time[2]-1)%15==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 16:
-        if(_time[2]==1 && _time[3]==8 && _time[4]==0)
-            return 1;
-        break;
-        
-      default:
-        break;
-    }
-    return 0;
-}
-
-int  Utility_Is_A_ReportTime(char *  _time)
+void Utility_Time_AddSecond(char *dest, int second) // secondï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½60ï¿½ï¿½
 {
-    char _temp[2];
-    int _mode=0;
-    if(Store_ReadReportTimeMode(_temp)<0)
-    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
-        _mode = 0;
-    }
-    else
-        _mode= (_temp[0]-'0')*10+ _temp[1] - '0'; 
-//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
-//  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
-//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ  
-    switch(_mode)
-    {
-      case 1:  
-        if(_time[4]%5==0)
-            return 1;
-        break;
-      case 2:
-        if(_time[4]%10==0)
-            return 1;
-        break;
-      case 3:
-        if(_time[4]%20==0)
-            return 1;
-        break;
-      case 4:
-        if(_time[4]%30==0)
-            return 1;
-        break;
-      case 5:
-        if(_time[4]==0)
-            return 1;
-        break;
-      case 6:
-        if(_time[3]%2==0 && _time[4]==0)
-            return 1;
-        break;
-      case 7:
-        if(_time[3]%3==0 && _time[4]==0)
-            return 1;
-        break;
-      case 8: 
-        if(_time[3]%6==0 && _time[4]==0)
-            return 1;
-        break; 
-      case 9: 
-        if( ( _time[3]%12==0 || _time[3]==0 )&& _time[4]==0)
-            return 1;
-        break;
-      case 10:
-        if(_time[3]==8 && _time[4]==0)
-            return 1;
-        break;  
-      case 11:
-        if( (_time[2]-1)%2==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 12:
-        if( (_time[2]-1)%3==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 13:
-        if( (_time[2]-1)%5==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 14:
-        if( (_time[2]-1)%10==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 15:
-        if( (_time[2]-1)%15==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 16:
-        if(_time[2]==1 && _time[3]==8 && _time[4]==0)
-            return 1;
-        break;
-      default:
-        break;
-    }
-    return 0;
+  if (second > 60)
+    return;
+  dest[5] += second; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  if (dest[5] < 60)
+    return;      //ï¿½ï¿½ï¿½ï¿½ï¿½
+  dest[5] -= 60; //ï¿½ï¿½ï¿½Ó¼ï¿½1
+  ++dest[3];
+  if (dest[4] < 60)
+    return;      //ï¿½ï¿½ï¿½ï¿½ï¿½
+  dest[4] -= 60; //Ð¡Ê±ï¿½ï¿½1
+  ++dest[3];
+  if (dest[3] < 24)
+    return;      //ï¿½ï¿½ï¿½ï¿½ï¿½
+  dest[3] -= 24; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1;
+  ++dest[2];
+  _addDay(dest);
 }
-
-
-int  Utility_Is_A_CameraTime(char *  _time)
+//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ char[5] ï¿½ï¿½Öµ
+void Utility_Time_AddMinute(char *dest, int minute) // minuteï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½60ï¿½ï¿½ï¿½ï¿½
 {
-    char _temp[2];
-    int _mode=0;
-    if(Store_ReadCameraTimeMode(_temp)<0)
-    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
-        _mode = 0;
-    }
-    else
-        _mode= (_temp[0]-'0')*10+ _temp[1] - '0'; 
-//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
-//  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
-//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ  
-    switch(_mode)
-    {
-      case 1:  
-        if(_time[4]%5==0)
-            return 1;
-        break;
-      case 2:
-        if(_time[4]%10==0)
-            return 1;
-        break;
-      case 3:
-        if(_time[4]%20==0)
-            return 1;
-        break;
-      case 4:
-        if(_time[4]%30==0)
-            return 1;
-        break;
-      case 5:
-        if(_time[4]==0)
-            return 1;
-        break;
-      case 6:
-        if(_time[3]%2==0 && _time[4]==0)
-            return 1;
-        break;
-      case 7:
-        if(_time[3]%3==0 && _time[4]==0)
-            return 1;
-        break;
-      case 8: 
-        if(_time[3]%6==0 && _time[4]==0)
-            return 1;
-        break; 
-      case 9: 
-        if( ( _time[3]%12==0 || _time[3]==0 )&& _time[4]==0)
-            return 1;
-        break;
-      case 10:
-        if(_time[3]==8 && _time[4]==0)
-            return 1;
-        break;  
-      case 11:
-        if( (_time[2]-1)%2==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 12:
-        if( (_time[2]-1)%3==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 13:
-        if( (_time[2]-1)%5==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 14:
-        if( (_time[2]-1)%10==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 15:
-        if( (_time[2]-1)%15==0 && _time[3]==8 && _time[4]==0 )
-            return 1;
-        break;
-      case 16:
-        if(_time[2]==1 && _time[3]==8 && _time[4]==0)
-            return 1;
-        break;
-      default:
-        break;
-    }
+  if (minute > 60)
+    return;
+  dest[4] += minute; //ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½
+  if (dest[4] < 60)
+    return;      //ï¿½ï¿½ï¿½ï¿½ï¿½
+  dest[4] -= 60; //Ð¡Ê±ï¿½ï¿½1
+  ++dest[3];
+  if (dest[3] < 24)
+    return;      //ï¿½ï¿½ï¿½ï¿½ï¿½
+  dest[3] -= 24; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1;
+  ++dest[2];
+  _addDay(dest);
+}
+void Utility_Time_AddHour(char *dest, int hour) //hourï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½24
+{
+  if (hour > 24)
+    return;
+  dest[3] += hour;
+  if (dest[3] < 24)
+    return; //ï¿½ï¿½ï¿½ï¿½ï¿½
+
+  dest[3] -= 24; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1;
+  ++dest[2];
+  _addDay(dest);
+}
+void Utility_Time_AddDay(char *dest, int Day)
+{
+  if (Day > 28) //Îªï¿½Ë±ï¿½Ö¤1ï¿½ï¿½31ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â³ï¿½ï¿½Ö´ï¿½ï¿½ï¿½
+    return;
+  dest[2] += Day;
+  _addDay(dest);
+}
+void Utility_Time_AddMonth(char *dest, int Month)
+{
+  if (Month > 12)
+    return;
+  dest[1] += Month;
+  if (dest[1] < 13)
+    return;
+  dest[1] -= 12;
+  ++dest[0];
+}
+void Utility_CalculateNextReportTimeBytes(char *dest) //ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+{                                                     //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½
+  for (int i = 0; i < 5; ++i)
+  {
+    dest[i] = g_rtc_nowTime[i];
+  }
+  //ï¿½ï¿½È¡ReportMode
+  char temp[2];
+  int mode = 0;
+  if (Store_ReadReportTimeMode(temp) < 0)
+  { //Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    mode = 1;
+  }
+  else
+    mode = (temp[0] - '0') * 10 + temp[1] - '0';
+  //  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½
+  //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±
+  //  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½
+  //  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½
+
+  switch (mode)
+  {
+  case 1:
+    dest[4] -= dest[4] % 5;
+    Utility_Time_AddMinute(dest, 5); //ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½
+    break;
+
+  case 2:
+    dest[4] -= dest[4] % 10;
+    Utility_Time_AddMinute(dest, 10); //ï¿½ï¿½10ï¿½ï¿½ï¿½ï¿½
+    break;
+
+  case 3:
+    dest[4] -= dest[4] % 20;
+    Utility_Time_AddMinute(dest, 20); //ï¿½ï¿½20ï¿½ï¿½ï¿½ï¿½
+    break;
+
+  case 4:
+    dest[4] -= dest[4] % 30;
+    Utility_Time_AddMinute(dest, 30); //ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½
+    break;
+
+  case 5:
+    dest[4] = 0;                   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0 ï¿½ï¿½ï¿½ï¿½
+    Utility_Time_AddHour(dest, 1); //ï¿½ï¿½1Ð¡Ê±
+    break;
+
+  case 6:
+    dest[4] = 0;                   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0
+    dest[3] -= dest[3] % 2;        //
+    Utility_Time_AddHour(dest, 2); //ï¿½ï¿½2Ð¡Ê±
+    break;
+
+  case 7:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 3;
+    Utility_Time_AddHour(dest, 3); //ï¿½ï¿½3Ð¡Ê±
+
+    break;
+  case 8:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 6;
+    Utility_Time_AddHour(dest, 6); //ï¿½ï¿½6Ð¡Ê±
+    break;
+
+  case 9:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 12;
+    Utility_Time_AddHour(dest, 12); //ï¿½ï¿½12Ð¡Ê±
+    break;
+
+  case 10:
+    dest[4] = 0;
+    dest[3] = 8;
+    Utility_Time_AddDay(dest, 1); //ï¿½ï¿½1ï¿½ï¿½
+    break;
+
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½Ú¼ï¿½Ä£Ê½ï¿½ï¿½ï¿½ÖµÇ°ï¿½ï¿½ï¿½ï¿½,
+    //  ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½.
+    //  ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ç±ä¶¯ï¿½ï¿½, ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È½Ï¸ï¿½ï¿½ï¿½,ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½1Îªï¿½ï¿½Ê¼.
+
+    //
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½È»ï¿½ï¿½Òªï¿½Þ¸ï¿½!!!!
+    //
+  case 11:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 2;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    Utility_Time_AddDay(dest, 2); //ï¿½ï¿½2ï¿½ï¿½
+
+    dest[2] -= (dest[2] - 1) % 2;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    break;
+  case 12:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 3;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    Utility_Time_AddDay(dest, 3); //ï¿½ï¿½3ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 3;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    break;
+  case 13:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 5;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    Utility_Time_AddDay(dest, 5); //ï¿½ï¿½5ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 5;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    break;
+  case 14:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 10;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    Utility_Time_AddDay(dest, 10); //ï¿½ï¿½10ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 10;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    break;
+  case 15:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 15;
+    //++dest[2];
+    Utility_Time_AddDay(dest, 15); //ï¿½ï¿½15ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 15;
+    //++dest[2];
+
+    break;
+  case 16:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] = 1;
+    Utility_Time_AddMonth(dest, 1); //ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
+    break;
+  default:
+    //Òªï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+    //ï¿½ï¿½ï¿½Ç¾ï¿½Ä¬ï¿½ï¿½Îª5ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+    Utility_Time_AddMinute(dest, 5);
+  }
+}
+
+void Utility_CalculateNextCameraGoTimes(char *dest) //ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+{                                                   //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½
+  for (int i = 0; i < 5; ++i)
+  {
+    dest[i] = g_rtc_nowTime[i];
+  }
+  //ï¿½ï¿½È¡ReportMode
+  char temp[2];
+  int mode = 0;
+  if (Store_ReadCameraTimeMode(temp) < 0)
+  { //Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    mode = 1;
+  }
+  else
+    mode = (temp[0] - '0') * 10 + temp[1] - '0';
+  //  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½
+  //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±
+  //  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½
+  //  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½
+
+  switch (mode)
+  {
+  case 1:
+    dest[4] -= dest[4] % 5;
+    Utility_Time_AddMinute(dest, 5); //ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½
+    break;
+
+  case 2:
+    dest[4] -= dest[4] % 10;
+    Utility_Time_AddMinute(dest, 10); //ï¿½ï¿½10ï¿½ï¿½ï¿½ï¿½
+    break;
+
+  case 3:
+    dest[4] -= dest[4] % 20;
+    Utility_Time_AddMinute(dest, 20); //ï¿½ï¿½20ï¿½ï¿½ï¿½ï¿½
+    break;
+
+  case 4:
+    dest[4] -= dest[4] % 30;
+    Utility_Time_AddMinute(dest, 30); //ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½
+    break;
+
+  case 5:
+    dest[4] = 0;                   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0 ï¿½ï¿½ï¿½ï¿½
+    Utility_Time_AddHour(dest, 1); //ï¿½ï¿½1Ð¡Ê±
+    break;
+
+  case 6:
+    dest[4] = 0;                   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0
+    dest[3] -= dest[3] % 2;        //
+    Utility_Time_AddHour(dest, 2); //ï¿½ï¿½2Ð¡Ê±
+    break;
+
+  case 7:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 3;
+    Utility_Time_AddHour(dest, 3); //ï¿½ï¿½3Ð¡Ê±
+
+    break;
+  case 8:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 6;
+    Utility_Time_AddHour(dest, 6); //ï¿½ï¿½6Ð¡Ê±
+    break;
+
+  case 9:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 12;
+    Utility_Time_AddHour(dest, 12); //ï¿½ï¿½12Ð¡Ê±
+    break;
+
+  case 10:
+    dest[4] = 0;
+    dest[3] = 8;
+    Utility_Time_AddDay(dest, 1); //ï¿½ï¿½1ï¿½ï¿½
+    break;
+
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½Ú¼ï¿½Ä£Ê½ï¿½ï¿½ï¿½ÖµÇ°ï¿½ï¿½ï¿½ï¿½,
+    //  ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½.
+    //  ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ç±ä¶¯ï¿½ï¿½, ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È½Ï¸ï¿½ï¿½ï¿½,ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½1Îªï¿½ï¿½Ê¼.
+
+    //
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½È»ï¿½ï¿½Òªï¿½Þ¸ï¿½!!!!
+    //
+  case 11:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 2;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    Utility_Time_AddDay(dest, 2); //ï¿½ï¿½2ï¿½ï¿½
+
+    dest[2] -= (dest[2] - 1) % 2;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    break;
+  case 12:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 3;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    Utility_Time_AddDay(dest, 3); //ï¿½ï¿½3ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 3;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    break;
+  case 13:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 5;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    Utility_Time_AddDay(dest, 5); //ï¿½ï¿½5ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 5;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    break;
+  case 14:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 10;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    Utility_Time_AddDay(dest, 10); //ï¿½ï¿½10ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 10;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    break;
+  case 15:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 15;
+    //++dest[2];
+    Utility_Time_AddDay(dest, 15); //ï¿½ï¿½15ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 15;
+    //++dest[2];
+
+    break;
+  case 16:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] = 1;
+    Utility_Time_AddMonth(dest, 1); //ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
+    break;
+  default:
+    //Òªï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+    //ï¿½ï¿½ï¿½Ç¾ï¿½Ä¬ï¿½ï¿½Îª5ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+    Utility_Time_AddMinute(dest, 5);
+  }
+}
+
+void Utility_CalculateNextSaveTimeBytes(char *dest) //ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+{                                                   //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½
+  for (int i = 0; i < 5; ++i)
+  {
+    dest[i] = g_rtc_nowTime[i];
+  }
+  //ï¿½ï¿½È¡SaveMode
+  char temp[2];
+  int mode = 0;
+  if (Store_ReadSaveTimeMode(temp) < 0)
+  { //Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    mode = 1;
+  }
+  else
+    mode = (temp[0] - '0') * 10 + temp[1] - '0';
+  //  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½
+  //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±
+  //  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½
+  //  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½
+
+  // ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½00 ,Ð¡Ê±ï¿½ï¿½ 8ï¿½ï¿½?   ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½.
+
+  switch (mode)
+  {
+  case 1:
+    dest[4] -= dest[4] % 5;
+    Utility_Time_AddMinute(dest, 5); //ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½
+
+    break;
+  case 2:
+    dest[4] -= dest[4] % 10;
+    Utility_Time_AddMinute(dest, 10); //ï¿½ï¿½10ï¿½ï¿½ï¿½ï¿½
+
+    break;
+  case 3:
+    dest[4] -= dest[4] % 20;
+    Utility_Time_AddMinute(dest, 20); //ï¿½ï¿½20ï¿½ï¿½ï¿½ï¿½
+    break;
+  case 4:
+    dest[4] -= dest[4] % 30;
+    Utility_Time_AddMinute(dest, 30); //ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½
+
+    break;
+  case 5:
+    dest[4] = 0;                   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0 ï¿½ï¿½ï¿½ï¿½
+    Utility_Time_AddHour(dest, 1); //ï¿½ï¿½1Ð¡Ê±
+
+    break;
+  case 6:
+    dest[4] = 0;                   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0
+    dest[3] -= dest[3] % 2;        //
+    Utility_Time_AddHour(dest, 2); //ï¿½ï¿½2Ð¡Ê±
+
+    break;
+  case 7:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 3;
+    Utility_Time_AddHour(dest, 3); //ï¿½ï¿½3Ð¡Ê±
+
+    break;
+  case 8:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 6;
+    Utility_Time_AddHour(dest, 6); //ï¿½ï¿½6Ð¡Ê±
+
+    break;
+  case 9:
+    dest[4] = 0;
+    dest[3] -= dest[3] % 12;
+    Utility_Time_AddHour(dest, 12); //ï¿½ï¿½12Ð¡Ê±
+
+    break;
+
+  case 10:
+    dest[4] = 0;
+    dest[3] = 8;
+    Utility_Time_AddDay(dest, 1); //ï¿½ï¿½1ï¿½ï¿½
+    break;
+
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½Ú¼ï¿½Ä£Ê½ï¿½ï¿½ï¿½ÖµÇ°ï¿½ï¿½ï¿½ï¿½,
+    //  ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½.
+    //  ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ç±ä¶¯ï¿½ï¿½, ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È½Ï¸ï¿½ï¿½ï¿½,ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½1Îªï¿½ï¿½Ê¼.
+
+  case 11:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 2;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    Utility_Time_AddDay(dest, 2); //ï¿½ï¿½2ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 2;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    break;
+  case 12:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 3;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    Utility_Time_AddDay(dest, 3); //ï¿½ï¿½3ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 3;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    break;
+  case 13:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 5;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    Utility_Time_AddDay(dest, 5); //ï¿½ï¿½5ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 5;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    break;
+  case 14:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 10;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+    Utility_Time_AddDay(dest, 10); //ï¿½ï¿½10ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 10;
+    //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+
+    break;
+  case 15:
+
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] -= (dest[2] - 1) % 15;
+    //++dest[2];
+    Utility_Time_AddDay(dest, 15); //ï¿½ï¿½15ï¿½ï¿½
+    dest[2] -= (dest[2] - 1) % 15;
+    //++dest[2];
+
+    break;
+  case 16:
+    dest[4] = 0;
+    dest[3] = 8;
+    dest[2] = 1;
+    Utility_Time_AddMonth(dest, 1); //ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
+    break;
+  default:
+    //Òªï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+    //ï¿½ï¿½ï¿½Ç¾ï¿½Ä¬ï¿½ï¿½Îª5ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+    Utility_Time_AddMinute(dest, 5);
+  }
+}
+void Utility_CalculateNextCheckTimeBytes(char *dest) //ï¿½ï¿½ï¿½Ýµï¿½Ç°Ê±ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î¼ï¿½ï¿½Ê±ï¿½ï¿½
+{                                                    //ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½
+  for (int i = 0; i < 5; ++i)
+  {
+    dest[i] = g_rtc_nowTime[i];
+  }
+  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½.
+  dest[4] -= dest[4] % 5;
+  Utility_Time_AddMinute(dest, 5);
+}
+int Utility_Is_A_CheckTime(char *_time)
+{ //ï¿½ï¿½ï¿½ï¿½Îª5ï¿½Ä±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Ê±ï¿½ï¿½
+  if (_time[4] % 5 == 0)
+    return 1;
+  else
     return 0;
 }
-//¸ù¾ÝÔ¼¶¨,_bufferÀïÒÑ¾­ÌîÐ´ºÃÍ·²¿
+
+int Utility_Is_A_SaveTime(char *_time)
+{ //
+  char _temp[2];
+  int _mode = 0;
+  if (Store_ReadSaveTimeMode(_temp) < 0)
+  {
+    return 0;
+  }
+  else
+    _mode = (_temp[0] - '0') * 10 + _temp[1] - '0';
+  //  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½
+  //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±
+  //  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½
+  //  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½
+  switch (_mode)
+  {
+  case 1:
+    if (_time[4] % 5 == 0)
+      return 1;
+    break;
+  case 2:
+    if (_time[4] % 10 == 0)
+      return 1;
+    break;
+  case 3:
+    if (_time[4] % 20 == 0)
+      return 1;
+    break;
+  case 4:
+    if (_time[4] % 30 == 0)
+      return 1;
+    break;
+  case 5:
+    if (_time[4] == 0)
+      return 1;
+    break;
+  case 6:
+    if (_time[3] % 2 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 7:
+    if (_time[3] % 3 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 8:
+    if (_time[3] % 6 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 9:
+    if ((_time[3] % 12 == 0 || _time[3] == 0) && _time[4] == 0)
+      return 1;
+    break;
+  case 10:
+    if (_time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 11:
+    if ((_time[2] - 1) % 2 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 12:
+    if ((_time[2] - 1) % 3 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 13:
+    if ((_time[2] - 1) % 5 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 14:
+    if ((_time[2] - 1) % 10 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 15:
+    if ((_time[2] - 1) % 15 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 16:
+    if (_time[2] == 1 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+
+  default:
+    break;
+  }
+  return 0;
+}
+
+int Utility_Is_A_ReportTime(char *_time)
+{
+  char _temp[2];
+  int _mode = 0;
+  if (Store_ReadReportTimeMode(_temp) < 0)
+  { //Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    _mode = 0;
+  }
+  else
+    _mode = (_temp[0] - '0') * 10 + _temp[1] - '0';
+  //  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½
+  //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±
+  //  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½
+  //  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½
+  switch (_mode)
+  {
+  case 1:
+    if (_time[4] % 5 == 0)
+      return 1;
+    break;
+  case 2:
+    if (_time[4] % 10 == 0)
+      return 1;
+    break;
+  case 3:
+    if (_time[4] % 20 == 0)
+      return 1;
+    break;
+  case 4:
+    if (_time[4] % 30 == 0)
+      return 1;
+    break;
+  case 5:
+    if (_time[4] == 0)
+      return 1;
+    break;
+  case 6:
+    if (_time[3] % 2 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 7:
+    if (_time[3] % 3 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 8:
+    if (_time[3] % 6 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 9:
+    if ((_time[3] % 12 == 0 || _time[3] == 0) && _time[4] == 0)
+      return 1;
+    break;
+  case 10:
+    if (_time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 11:
+    if ((_time[2] - 1) % 2 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 12:
+    if ((_time[2] - 1) % 3 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 13:
+    if ((_time[2] - 1) % 5 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 14:
+    if ((_time[2] - 1) % 10 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 15:
+    if ((_time[2] - 1) % 15 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 16:
+    if (_time[2] == 1 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  default:
+    break;
+  }
+  return 0;
+}
+
+int Utility_Is_A_CameraTime(char *_time)
+{
+  char _temp[2];
+  int _mode = 0;
+  if (Store_ReadCameraTimeMode(_temp) < 0)
+  { //Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    _mode = 0;
+  }
+  else
+    _mode = (_temp[0] - '0') * 10 + _temp[1] - '0';
+  //  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½
+  //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±
+  //  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½
+  //  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½
+  switch (_mode)
+  {
+  case 1:
+    if (_time[4] % 5 == 0)
+      return 1;
+    break;
+  case 2:
+    if (_time[4] % 10 == 0)
+      return 1;
+    break;
+  case 3:
+    if (_time[4] % 20 == 0)
+      return 1;
+    break;
+  case 4:
+    if (_time[4] % 30 == 0)
+      return 1;
+    break;
+  case 5:
+    if (_time[4] == 0)
+      return 1;
+    break;
+  case 6:
+    if (_time[3] % 2 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 7:
+    if (_time[3] % 3 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 8:
+    if (_time[3] % 6 == 0 && _time[4] == 0)
+      return 1;
+    break;
+  case 9:
+    if ((_time[3] % 12 == 0 || _time[3] == 0) && _time[4] == 0)
+      return 1;
+    break;
+  case 10:
+    if (_time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 11:
+    if ((_time[2] - 1) % 2 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 12:
+    if ((_time[2] - 1) % 3 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 13:
+    if ((_time[2] - 1) % 5 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 14:
+    if ((_time[2] - 1) % 10 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 15:
+    if ((_time[2] - 1) % 15 == 0 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  case 16:
+    if (_time[2] == 1 && _time[3] == 8 && _time[4] == 0)
+      return 1;
+    break;
+  default:
+    break;
+  }
+  return 0;
+}
+//ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½,_bufferï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Í·ï¿½ï¿½
 //0123456789012345678901234567890
 //$00011100011<TM*OK*0909060630#
-//$00011100011<DL*OK# 
+//$00011100011<DL*OK#
 
 //$00011100011<RQ*TM#
-int Utility_PackRuestTimeMsg(char * _buffer)
-{ 
-    _buffer[13]='R';_buffer[14]='Q';_buffer[15]='*';_buffer[16]='T';_buffer[17]='M';
-    return 18;
-}
-int Utility_PackOKMsg(const char *  _type,   char * _buffer)
+int Utility_PackRuestTimeMsg(char *_buffer)
 {
-    _buffer[13]=_type[0];_buffer[14]=_type[1];_buffer[15]='*';
-    _buffer[16] ='O';_buffer[17]='K';
-    if(_type[0]=='T' && _type[1]=='M')
-    {
-        _buffer[18]='*';
-        RTC_ReadTimeStr6_B(&(_buffer[19]));
-        _buffer[31]='#';
-        return 32;
-    }
-    if(_type[0]=='D'&&_type[1]=='L')
-    {
-        
-    }
-    _buffer[18]='#';
-    return 19;
+  _buffer[13] = 'R';
+  _buffer[14] = 'Q';
+  _buffer[15] = '*';
+  _buffer[16] = 'T';
+  _buffer[17] = 'M';
+  return 18;
 }
-//0123456789012345678901234567890 
+int Utility_PackOKMsg(const char *_type, char *_buffer)
+{
+  _buffer[13] = _type[0];
+  _buffer[14] = _type[1];
+  _buffer[15] = '*';
+  _buffer[16] = 'O';
+  _buffer[17] = 'K';
+  if (_type[0] == 'T' && _type[1] == 'M')
+  {
+    _buffer[18] = '*';
+    RTC_ReadTimeStr6_B(&(_buffer[19]));
+    _buffer[31] = '#';
+    return 32;
+  }
+  if (_type[0] == 'D' && _type[1] == 'L')
+  {
+  }
+  _buffer[18] = '#';
+  return 19;
+}
+//0123456789012345678901234567890
 //$00011100011<DL*Fail#
-int Utility_PackFailMsg(const char * _type,  char * _buffer)
+int Utility_PackFailMsg(const char *_type, char *_buffer)
 {
-    _buffer[13]=_type[0];_buffer[14]=_type[1];_buffer[15]='*';
-    _buffer[16]='F';_buffer[17]='a';_buffer[18]='i';_buffer[19]='l';
-    _buffer[20]='#';
-    return 21;
+  _buffer[13] = _type[0];
+  _buffer[14] = _type[1];
+  _buffer[15] = '*';
+  _buffer[16] = 'F';
+  _buffer[17] = 'a';
+  _buffer[18] = 'i';
+  _buffer[19] = 'l';
+  _buffer[20] = '#';
+  return 21;
 }
-int Utility_PackRejectMsg(const char * _type, char * _buffer)
+int Utility_PackRejectMsg(const char *_type, char *_buffer)
 {
-    _buffer[13]=_type[0];_buffer[14]=_type[1];_buffer[15]='*';
-    _buffer[16]='R';_buffer[17]='e';_buffer[18]='j';_buffer[19]='e';
-    _buffer[20]='c';_buffer[21]='c';_buffer[22]='t';_buffer[23]='#'; 
-    return 24;
+  _buffer[13] = _type[0];
+  _buffer[14] = _type[1];
+  _buffer[15] = '*';
+  _buffer[16] = 'R';
+  _buffer[17] = 'e';
+  _buffer[18] = 'j';
+  _buffer[19] = 'e';
+  _buffer[20] = 'c';
+  _buffer[21] = 'c';
+  _buffer[22] = 't';
+  _buffer[23] = '#';
+  return 24;
 }
-int Utility_PackErrorMsg(const char * _type,  char * _buffer)
+int Utility_PackErrorMsg(const char *_type, char *_buffer)
 {
-    _buffer[13]=_type[0];_buffer[14]=_type[1];_buffer[15]='*';
-    _buffer[16]='E';_buffer[17]='r';_buffer[18]='r';_buffer[19]='o';
-    _buffer[20]='r';_buffer[21]='#'; 
-    return 22; 
+  _buffer[13] = _type[0];
+  _buffer[14] = _type[1];
+  _buffer[15] = '*';
+  _buffer[16] = 'E';
+  _buffer[17] = 'r';
+  _buffer[18] = 'r';
+  _buffer[19] = 'o';
+  _buffer[20] = 'r';
+  _buffer[21] = '#';
+  return 22;
 }
-    
-int Utility_PackBadMsg(const char * _type,   char * _buffer)
+
+int Utility_PackBadMsg(const char *_type, char *_buffer)
 {
-    _buffer[13]=_type[0];_buffer[14]=_type[1];_buffer[15]='*';
-    _buffer[16]='B';_buffer[17]='a';_buffer[18]='d';_buffer[19]='#';
-    return 20;
+  _buffer[13] = _type[0];
+  _buffer[14] = _type[1];
+  _buffer[15] = '*';
+  _buffer[16] = 'B';
+  _buffer[17] = 'a';
+  _buffer[18] = 'd';
+  _buffer[19] = '#';
+  return 20;
 }
 /*2438 P41  5438 P96*/
 void Clear_ExternWatchdog()
 {
-    if (s_reset_pin == 0)
-    {
-        P9OUT &= ~BIT6;
-        s_reset_pin =1;
-       // Led3_On();
-    }
-    else 
-    {
-        P9OUT |= BIT6;
-        s_reset_pin =0;
-       // Led3_Off();
-    }
+  if (s_reset_pin == 0)
+  {
+    P11OUT &= ~BIT1;      //P9.6=>P11.1
+    s_reset_pin = 1;
+    // Led3_On();
+  }
+  else
+  {
+    P11OUT |= BIT1;       //P9.6=>P11.1
+    s_reset_pin = 0;
+    // Led3_Off();
+  }
+}
+
+//ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ASCIIï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Õ¹ï¿½É¶ï¿½Ó¦ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+int ASCII_to_AsciiStr(char *input_buffer, int input_buffer_len, char *output_buffer)
+{
+  const char ascTable[17] = {"0123456789ABCDEF"};
+  char *tmp_p = output_buffer;
+  int i, pos;
+  pos = 0;
+  for (i = 0; i < input_buffer_len; i++)
+  {
+    tmp_p[pos++] = ascTable[input_buffer[i] >> 4];
+    tmp_p[pos++] = ascTable[input_buffer[i] & 0x0f];
+  }
+  // tmp_p[pos] = '\0';
+  return pos;
+}
+
+//ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½Æ´ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ASCIIï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ÂµÄ³ï¿½ï¿½ï¿½ÎªÔ­ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+int AsciiStr_to_ASCII(char *input_buffer, int input_buffer_len, char *output_buffer)
+{
+  int i = 0, j = 0;
+  char temp_high_4bit, temp_low_4bit;
+  char *temp = output_buffer;
+
+  if ((input_buffer_len % 2) != 0)
+  {
+    Console_WriteStringln("receive data error!");
+    return -1;
+  }
+
+  while (i < input_buffer_len)
+  {
+    temp_high_4bit = Char_to_Hex(input_buffer[i]);
+    temp_low_4bit = Char_to_Hex(input_buffer[i + 1]);
+
+    temp[j] = (temp_high_4bit << 4) + temp_low_4bit;
+
+    i += 2;
+    j++;
+  }
+  temp[j] = '\0';
+  return 0;
+}
+
+//ï¿½ï¿½Ò»ï¿½ï¿½4bitï¿½Ö·ï¿½(Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸)×ªï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½'F'ï¿½Ö·ï¿½×ªï¿½ï¿½0xF
+char Char_to_Hex(char input_chr)
+{
+  char output_chr;
+  if ((input_chr >= '0') && (input_chr <= '9'))
+  {
+    output_chr = input_chr - '0';
+  }
+  else if ((input_chr >= 'a') && (input_chr <= 'f'))
+  {
+    output_chr = input_chr - 'a' + 0x0a;
+  }
+  else if ((input_chr >= 'A') && (input_chr <= 'F'))
+  {
+    output_chr = input_chr - 'A' + 0x0a;
+  }
+  return output_chr;
 }

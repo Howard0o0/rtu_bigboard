@@ -11,7 +11,7 @@
 #define  _ADC_H_
 
 
-extern unsigned int A[16]; 
+extern unsigned int A[8]; 
 
 void ADC_Open();
 void ADC_Sample();

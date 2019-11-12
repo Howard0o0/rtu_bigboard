@@ -40,14 +40,12 @@ const hydrologyElementInfo Element_table[UserElementCount+1] = {
 //	ELEMENT_REGISTER(0x46,ANALOG,4,2),
 //	ELEMENT_REGISTER(0x47,ANALOG,4,1),
 //        ELEMENT_REGISTER(0x58,ANALOG,5,2,ADC),          //TEST
-      
-        
+//        ELEMENT_REGISTER(0x60,PULSE,11,3,ISR_COUNT),
 //        ELEMENT_REGISTER(0x58,ANALOG,5,2,ADC),
 //        ELEMENT_REGISTER(0x49,ANALOG,5,2,ADC),
 //        ELEMENT_REGISTER(0x59,ANALOG,5,2,ADC),
-        ELEMENT_REGISTER(0x60,PULSE,11,3,ISR_COUNT),
-        ELEMENT_REGISTER(0x61,PULSE,11,3,ISR_COUNT),
-	ELEMENT_REGISTER(0x62,PULSE,11,3,ISR_COUNT),
+//        ELEMENT_REGISTER(0x61,PULSE,11,3,ISR_COUNT),
+//	ELEMENT_REGISTER(0x62,PULSE,11,3,ISR_COUNT),
         ELEMENT_REGISTER(0x27,ANALOG,9,3,RS485),
 	ELEMENT_REGISTER(0x60,PULSE,11,3,RS485),
 
@@ -678,11 +676,11 @@ void Hydrology_ReadPulse(long *value,int index)
   *value = *((long*)temp_value);
 }
 
-void Hydrology_ReadSwitch(int *value,int index)
+void Hydrology_ReadSwitch(int *value)
 {
-  long addr = HYDROLOGY_SWITCH1 + index * 4;
-  char temp_value[4]; 
-  Hydrology_ReadStoreInfo(addr,temp_value,HYDROLOGY_SWITCH_LEN);
+  char temp_value[4];
+  
+  Hydrology_ReadStoreInfo(HYDROLOGY_SWITCH1,temp_value,HYDROLOGY_SWITCH_LEN);
   *value = *((int*)temp_value);
 }
 
@@ -695,7 +693,7 @@ void Hydrology_ReadRom(long beginaddr,char *value,int index)
 
 void Hydrology_CalElementInfo(int *count,char funcode)
 {
-  int i = 0,acount = 0,pocunt = 0,scount = 0;
+  int i = 0,acount = 0,pocunt = 0;
   float floatvalue = 0;
   long intvalue1 = 0;
   int intvalue2 = 0;
@@ -726,7 +724,7 @@ void Hydrology_CalElementInfo(int *count,char funcode)
         }
         case SWITCH:
         {
-          Hydrology_ReadSwitch(&intvalue2,scount++);
+          Hydrology_ReadSwitch(&intvalue2);
           mallocElement(Element_table[i].ID,Element_table[i].D,Element_table[i].d,&inputPara[i]);
           converToHexElement((double)intvalue2,Element_table[i].D,Element_table[i].d,inputPara[i].value);
           break;
@@ -962,7 +960,7 @@ int hydrologyCheck(char* input,int inputlen)
 
   if(crcRet == inputCrc)
   {
-    TraceMsg("CRC check success !",1);
+    ;//TraceMsg("CRC check success !",1);
   }
   else
   {
