@@ -1,27 +1,27 @@
 #include "debug.h"
 #include "common.h"
-#include "Console.h"
+#include "console.h"
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void printch(char ch) //ï¿½ï¿½ï¿½ï¿½Ö·ï¿½
+void printch(char ch) //Êä³ö×Ö·û
 {
     Console_WriteBytes(&ch,1);
 }
 
-void printint(int dec) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void printint(int dec) //Êä³öÕûÊý
 {
     TraceInt4(dec,1);
 }
 
-void printstr(char* ptr) //ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+void printstr(char* ptr) //Êä³ö×Ö·û´®
 {
    TraceMsg(ptr,1);
 }
 
-void printfloat(float flt) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½5Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void printfloat(float flt) //Êä³ö¸¡µãÊý£¬Ð¡ÊýµãµÚ5Î»ËÄÉáÎåÈë
 {
     int interpart = (int)flt;
     int fltpart = (int)(100000*(flt - interpart));

@@ -106,14 +106,11 @@ void TimerA0_Init(void) //bluetooth
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void TIMER0A0_ISR(void)
 {
-    // printf("intAstart!!!!!!!!!!!!!!!!!!!!!!\r\n");
-    BLERet ret;
     PT_IODev  ptDevBle =  getIODev();
     if(ptDevBle->isinit())
     {
       if(ptDevBle->isspp()==0)
       {
-        // printf("intAend!!!!!!!!!!!!!!!!!!!!!!\r\n");
         if((ptDevBle->isCanUse()==0) )
         {
           ptDevBle->adv();
@@ -124,7 +121,6 @@ __interrupt void TIMER0A0_ISR(void)
         }
       }
     }
-    
 }
 
 

@@ -364,8 +364,8 @@ BLERet BLE_INIT()       //��ʼ������
     UART1_Open(1);
     printf("uart open\r\n",9,1);
 
-    BLE_buffer_Clear();
-    ATTEST();
+    // BLE_buffer_Clear();
+    // ATTEST();
     
     printf("wait for 10s ...\r\n");
     System_Delayms(1000);

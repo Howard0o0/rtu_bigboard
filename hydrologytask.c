@@ -7,7 +7,7 @@
 #include "common.h"
 #include "math.h"
 #include "store.h"
-#include "sampler.h"
+#include "Sampler.h"
 #include "adc.h"
 #include "packet.h"
 //#include "convertsampledata.h"
@@ -95,7 +95,7 @@ float ConvertAnalog(int v,int range)
 
 void ADC_Element(char *value,int index)
 {
-//int range[5] = {1,20,100,5000,4000};     //Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§
+//int range[5] = {1,20,100,5000,4000};     //Ä£ÄâÁ¿·¶Î§
   int range[16] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
   float floatvalue = 0;
   
@@ -214,7 +214,7 @@ int HydrologyInstantWaterLevel(char* _saveTime)
 //      endtime[5] = 0;
 //    }RTC_IsPassed(endtime) < 0 || 
       
-//ly Îªï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½Ô¹Ø±Õ¼ï¿½é£¬ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ö¸ï¿½ï¿½Ð¶ï¿½
+//ly ÎªÁË·½±ãµ÷ÊÔ¹Ø±Õ¼ì²é£¬ÕýÊ½ÔËÐÐÊ±Ðè»Ö¸´ÅÐ¶Ï
    if(endtime[4]%waterlevelstoreinterval != 0 && !IsDebug)
         return -1;
     
@@ -275,7 +275,7 @@ int HydrologyTask()
           return -1;
     }
     
-    HydrologyOneMinute();  //È¡Òªï¿½ï¿½
+    HydrologyOneMinute();  //È¡ÒªËØ
     
 //    if(time_10min == 10)
 //    {

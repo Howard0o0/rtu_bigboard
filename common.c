@@ -1,14 +1,14 @@
 //////////////////////////////////////////////////////
-//     ï¿½Ä¼ï¿½ï¿½ï¿½: common.c
-//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0
-//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½ 11ï¿½ï¿½30ï¿½ï¿½
-//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:   
-//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
-//       ï¿½ï¿½×¢: ï¿½ï¿½
+//     ÎÄ¼þÃû: common.c
+//   ÎÄ¼þ°æ±¾: 1.0.0
+//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ30ÈÕ
+//   ¸üÐÂÄÚÈÝ:   
+//       ×÷Õß: ÁÖÖÇ
+//       ¸½×¢: ÎÞ
 ////////////////////////////////////////////////////////
-//   ï¿½Ä¼ï¿½ï¿½æ±¾: 3.0.0
-//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 19ï¿½ï¿½ 9ï¿½ï¿½4ï¿½ï¿½
-//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½msp4305438Aï¿½ï¿½Ê±ï¿½Ó³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
+//   ÎÄ¼þ°æ±¾: 3.0.0
+//   ´´½¨Ê±¼ä: 19Äê 9ÔÂ4ÈÕ
+//   ¸üÐÂÄÚÈÝ: ¸ü»»msp4305438AµÄÊ±ÖÓ³õÊ¼»¯º¯Êý  
 //////////////////////////////////////////////////////
   
 #include "msp430common.h"
@@ -22,19 +22,19 @@
 
 char switcher,anahigh,analow,pulsehigh,pulsemedium,pulselow,vthigh,vtlow,tthex;
 int trace_open=0;
-static int s_clock=0;   //ï¿½ï¿½ï¿½ï¿½Ö¸Ê¾ï¿½ï¿½Ç°Æµï¿½ï¿½ 
-static unsigned int _int = 0; //ï¿½Ð¶Ï½ï¿½ï¿½ï¿½DownInt() ï¿½Ä²ï¿½ï¿½ï¿½static unsigned int s_reset_pin =0;
+static int s_clock=0;   //ÓÃÀ´Ö¸Ê¾µ±Ç°ÆµÂÊ 
+static unsigned int _int = 0; //ÖÐ¶Ï½ûÓÃDownInt() µÄ²ãÊýstatic unsigned int s_reset_pin =0;
 static unsigned int s_reset_pin =0;
 
 void TraceOpen()
-{//ï¿½ï¿½ï¿½Ô´ï¿½
+{//µ÷ÊÔ´ò¿ª
   if(trace_open){
        Console_Open(); 
        
   }
    else
    {
-       Console_Close();//ï¿½ï¿½ï¿½ï¿½Îªï¿½Ë±ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½Å»ï¿½ï¿½Ë·ÑºÜ¶ï¿½ï¿½
+       Console_Close();//´¿´âÎªÁË±£ÏÕ,´®¿Ú¿ª×Å»áÀË·ÑºÜ¶àµç
    }
 }
 
@@ -58,7 +58,7 @@ void TraceHexMsgFuncLine(char* _str,int len,char const*_funcname, int _linename)
 }
 
 void TraceMsgFuncLine(char * _str,int _ln,char const* _funcname,int _linename)
-{//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+{//·¢ËÍÒ»¸ö×Ö·û´®
   trace_open=1;
  if(trace_open)
  {
@@ -76,7 +76,7 @@ void TraceMsgFuncLine(char * _str,int _ln,char const* _funcname,int _linename)
 } 
 
 void TraceStrFuncLine(char * _str,int _len,int _ln,char const* _funcname,int _linename)
-{//ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+{//·¢ËÍÖ¸¶¨³¤¶ÈµÄ×Ö·û´®
  if(trace_open)
  {
     if(_ln)
@@ -92,7 +92,7 @@ void TraceStrFuncLine(char * _str,int _len,int _ln,char const* _funcname,int _li
  }
 }
 void TracePulseValue(char * _bytes3,int _ln)
-{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+{//Êä³öÂö³åÖµ
  if(trace_open)
  {
     char _temp[7];
@@ -105,7 +105,7 @@ void TracePulseValue(char * _bytes3,int _ln)
 }
 
 void TraceInt4FuncLine(int _val, int _ln,char const* _funcname,int _linename)
-{//ï¿½ï¿½ï¿½Ò»ï¿½ï¿½int 4Î»
+{//Êä³öÒ»¸öint 4Î»
   if(trace_open)
  {
     char _temp[4];
@@ -154,7 +154,7 @@ int Utility_atoi(char *str, int len)
 } 
 
 void System_Delayms( unsigned int nValue)
-{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼Ä´ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È¹ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½nValue
+{//º¯Êý²ÎÊýÊÇ¼Ä´æÆ÷,²Ù×÷ËÙ¶È¹ý¿ì,ËùÒÔÎÒÃÇ²»ÓÃnValue
     unsigned long nCount = 1150;
     unsigned long i;
     unsigned long j;
@@ -170,7 +170,7 @@ void System_Delayms( unsigned int nValue)
 }
 
 void System_Delayus( unsigned int nValue)
-{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼Ä´ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È¹ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½nValue
+{//º¯Êý²ÎÊýÊÇ¼Ä´æÆ÷,²Ù×÷ËÙ¶È¹ý¿ì,ËùÒÔÎÒÃÇ²»ÓÃnValue
     unsigned long nCount = 1;
     unsigned long i;
     unsigned long j;
@@ -186,9 +186,9 @@ void System_Delayus( unsigned int nValue)
 }
 
 
-//  ï¿½ï¿½ï¿½Ð¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§,
-//  ï¿½ï¿½ï¿½Ð¶ï¿½,ï¿½ï¿½Òªï¿½ï¿½Ç°ï¿½ï¿½Ø±ï¿½ï¿½Ë¶ï¿½ï¿½Ù´ï¿½ï¿½Ð¶ï¿½
-//  ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Üµï¿½ ï¿½Ô³ï¿½Ê¹ï¿½ï¿½.
+//  ¹ØÖÐ¶Ï Á¢¼´ÆðÐ§,
+//  ¿ªÖÐ¶Ï,ÔòÒª¿´Ç°Ãæ¹Ø±ÕÁË¶àÉÙ´ÎÖÐ¶Ï
+//  Á½ÕßÒªÑÏÃÜµÄ ¶Ô³ÆÊ¹ÓÃ.
 //
 void DownInt()
 {
@@ -202,33 +202,33 @@ void UpInt()
     if(_int==0)
         _EINT();
 } 
-//2438 ï¿½ï¿½P2ï¿½ï¿½Ó¦ï¿½Ä¶Ë¿Úµï¿½ï¿½Ð¶Ï¹ï¿½ï¿½Ü½ï¿½ï¿½Ã»ï¿½Ê¹ï¿½ï¿½
-//ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ 
+//2438 ½«P2¶ÔÓ¦µÄ¶Ë¿ÚµÄÖÐ¶Ï¹¦ÄÜ½ûÓÃ»òÊ¹ÄÜ
+//Âö³åÖÐ¶ÏÖÐÊ¹ÓÃ 
 //5438 P1
 void DsP2Int(int i)//0~7
-{//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½0 
+{//½«¸ÃÎ»Çå0 
     P1IFG &= ~(BIT0<<i);
     P1IE &= ~(BIT0<<i);
 }
 void EnP2Int(int i)
-{//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½1
-    //Ê¹ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ð¶Ï±ï¿½ï¿½ 
+{//½«¸ÃÎ»ÖÃ1
+    //Ê¹ÄÜÇ°Çå³ýÔ­ÏÈÓÐµÄÖÐ¶Ï±ê¼Ç 
     P1IFG &= ~(BIT0<<i);
     P1IE  |=  (BIT0<<i);
 }
 
-void DsInt()//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void DsInt()//²»½¨Òéµ÷ÓÃ
 {
     _DINT();
 }
-void EnInt()//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void EnInt()//²»½¨Òéµ÷ÓÃ
 {
     _EINT();
 }
 
 void Max3222_Open()
 {
-//    //ï¿½ï¿½ï¿½ï¿½rs232  ï¿½ï¿½Æ½×ªï¿½ï¿½ï¿½ï¿½Â·  outputï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//    //¿ªÆôrs232  µçÆ½×ª»»µçÂ·  outputÔÙÀ­¸ß
 //     P4DIR |= BIT0;
 //     P4OUT |= BIT0; 
        P9DIR |= BIT7;
@@ -237,13 +237,13 @@ void Max3222_Open()
 
 void Max3222_Close()
 {
-    //ï¿½Ø±ï¿½rs232×ªï¿½ï¿½ï¿½ï¿½Â·
+    //¹Ø±Õrs232×ª»»µçÂ·
 
     P9DIR |= BIT7;
     P9OUT &= ~BIT7;
 }
 
-//1ï¿½ï¿½Ê¾wifi,0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+//1±íÊ¾wifi,0±íÊ¾´®¿Ú
 void Select_Debug_Mode(int type)
 {
 
@@ -267,10 +267,10 @@ void System_Reset()
 {
     TraceMsg("reset system",1);
     System_Delayms(1000);
-    //ï¿½ï¿½ï¿½ï¿½ÏµÍ³
+    //ÖØÆôÏµÍ³
     WDTCTL =WDTCNTCL;
 }
-/*2418ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½*/
+/*2418·ÖÆµº¯Êý*/
 /*
 void Clock_SMCLK_DIV(int i)
 {
@@ -278,27 +278,27 @@ void Clock_SMCLK_DIV(int i)
     {
       case 1:
         BCSCTL2 &= ~ DIVS1;
-        BCSCTL2 &= ~ DIVS0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+        BCSCTL2 &= ~ DIVS0; //ACLK ²»·ÖÆµ
         break;
       case 2:
-        BCSCTL2 &= ~ DIVS1;   //ACLK 2ï¿½ï¿½Æµ
+        BCSCTL2 &= ~ DIVS1;   //ACLK 2·ÖÆµ
         BCSCTL2 |=  DIVS0;  
         break;
       case 4:
-        BCSCTL2 |=  DIVS1;   //ACLK 4ï¿½ï¿½Æµ
+        BCSCTL2 |=  DIVS1;   //ACLK 4·ÖÆµ
         BCSCTL2 &= ~ DIVS0;
         break;        
       case 8:
-        BCSCTL2 |= DIVS1 +DIVS0; //ACLK 8ï¿½ï¿½Æµ
+        BCSCTL2 |= DIVS1 +DIVS0; //ACLK 8·ÖÆµ
         break;
       default:
         BCSCTL2 &= ~ DIVS1;
-        BCSCTL2 &= ~ DIVS0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+        BCSCTL2 &= ~ DIVS0; //ACLK ²»·ÖÆµ
     }
-    //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //µÈ´ýÊ±ÖÓÕý³£
     do
     {
-        //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
+        //µÈ´ýÊ±ÖÓÎÈ¶¨
         IFG1 &= ~OFIFG ;
         for(int i=0x20; i >0; i--);
     }while( (IFG1 & OFIFG)==OFIFG ); 
@@ -309,27 +309,27 @@ void Clock_ACLK_DIV(int i)
     {
       case 1:
         BCSCTL1 &= ~ DIVA1;
-        BCSCTL1 &= ~ DIVA0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+        BCSCTL1 &= ~ DIVA0; //ACLK ²»·ÖÆµ
         break;
       case 2:
-        BCSCTL1 &= ~ DIVA1;   //ACLK 2ï¿½ï¿½Æµ
+        BCSCTL1 &= ~ DIVA1;   //ACLK 2·ÖÆµ
         BCSCTL1 |=  DIVA0;  
         break;
       case 4:
-        BCSCTL1 |=  DIVA1;   //ACLK 4ï¿½ï¿½Æµ
+        BCSCTL1 |=  DIVA1;   //ACLK 4·ÖÆµ
         BCSCTL1 &= ~ DIVA0;
         break;        
       case 8:
-        BCSCTL1 |= DIVA1 +DIVA0; //ACLK 8ï¿½ï¿½Æµ
+        BCSCTL1 |= DIVA1 +DIVA0; //ACLK 8·ÖÆµ
         break;
       default:
         BCSCTL1 &= ~ DIVA1;
-        BCSCTL1 &= ~ DIVA0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+        BCSCTL1 &= ~ DIVA0; //ACLK ²»·ÖÆµ
     }
-    //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //µÈ´ýÊ±ÖÓÕý³£
     do
     {
-        //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
+        //µÈ´ýÊ±ÖÓÎÈ¶¨
         SFRIFG1 &= ~OFIFG ;
         for(int i=0x20; i >0; i--);
     }while( (SFRIFG1 & OFIFG)==OFIFG ); 
@@ -340,48 +340,48 @@ void Clock_ACLK_DIV(int i)
 //{
 //    s_clock=8;
 //    unsigned int i;
-//    BCSCTL1= 0x00; //ï¿½ï¿½ï¿½ï¿½XT2
+//    BCSCTL1= 0x00; //¿ªÆôXT2
 //    do
 //    {
-//     //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
+//     //µÈ´ýÊ±ÖÓÎÈ¶¨
 //        IFG1 &= ~OFIFG ;
 //        for(i=0x20; i >0; i--) ;
 //    }while( (IFG1 & OFIFG)==OFIFG );
 //  
 //    BCSCTL2= 0x00;
-//    BCSCTL2 |= SELM1;       // MCLK  Ê¹ï¿½ï¿½XT2   8M
-//    BCSCTL2 |= SELS;        // SMCLK Ê¹ï¿½ï¿½XT2   8M
-//                            // ACLK  Ê¹ï¿½ï¿½XT1   32K
+//    BCSCTL2 |= SELM1;       // MCLK  Ê¹ÓÃXT2   8M
+//    BCSCTL2 |= SELS;        // SMCLK Ê¹ÓÃXT2   8M
+//                            // ACLK  Ê¹ÓÃXT1   32K
 //}
 
-/*2418ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½*/
+/*2418·ÖÆµº¯Êý*/
 void Clock_SMCLK_DIV(int i)
 {
     switch(i)
     {
       case 1:
         UCSCTL5 &= ~ DIVS1;
-        UCSCTL5 &= ~ DIVS0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+        UCSCTL5 &= ~ DIVS0; //ACLK ²»·ÖÆµ
         break;
       case 2:
-        UCSCTL5 &= ~ DIVS1;   //ACLK 2ï¿½ï¿½Æµ
+        UCSCTL5 &= ~ DIVS1;   //ACLK 2·ÖÆµ
         UCSCTL5 |=  DIVS0;  
         break;
       case 4:
-        UCSCTL5 |=  DIVS1;   //ACLK 4ï¿½ï¿½Æµ
+        UCSCTL5 |=  DIVS1;   //ACLK 4·ÖÆµ
         UCSCTL5 &= ~ DIVS0;
         break;        
       case 8:
-        UCSCTL5 |= DIVS1 +DIVS0; //ACLK 8ï¿½ï¿½Æµ
+        UCSCTL5 |= DIVS1 +DIVS0; //ACLK 8·ÖÆµ
         break;
       default:
         UCSCTL5 &= ~ DIVS1;
-        UCSCTL5 &= ~ DIVS0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+        UCSCTL5 &= ~ DIVS0; //ACLK ²»·ÖÆµ
     }
-    //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //µÈ´ýÊ±ÖÓÕý³£
     do
     {
-        //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
+        //µÈ´ýÊ±ÖÓÎÈ¶¨
         SFRIFG1 &= ~OFIFG ;
         for(int i=0x20; i >0; i--);
     }while( (SFRIFG1 & OFIFG)==OFIFG ); 
@@ -392,34 +392,34 @@ void Clock_ACLK_DIV(int i)
     {
       case 1:
         UCSCTL5 &= ~ DIVA1;
-        UCSCTL5 &= ~ DIVA0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+        UCSCTL5 &= ~ DIVA0; //ACLK ²»·ÖÆµ
         break;
       case 2:
-        UCSCTL5 &= ~ DIVA1;   //ACLK 2ï¿½ï¿½Æµ
+        UCSCTL5 &= ~ DIVA1;   //ACLK 2·ÖÆµ
         UCSCTL5 |=  DIVA0;  
         break;
       case 4:
-        UCSCTL5 |=  DIVA1;   //ACLK 4ï¿½ï¿½Æµ
+        UCSCTL5 |=  DIVA1;   //ACLK 4·ÖÆµ
         UCSCTL5 &= ~ DIVA0;
         break;        
       case 8:
-        UCSCTL5 |= DIVA1 +DIVA0; //ACLK 8ï¿½ï¿½Æµ
+        UCSCTL5 |= DIVA1 +DIVA0; //ACLK 8·ÖÆµ
         break;
       default:
         UCSCTL5 &= ~ DIVA1;
-        UCSCTL5 &= ~ DIVA0; //ACLK ï¿½ï¿½ï¿½ï¿½Æµ
+        UCSCTL5 &= ~ DIVA0; //ACLK ²»·ÖÆµ
     }
-    //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //µÈ´ýÊ±ÖÓÕý³£
     do
     {
-        //ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½È¶ï¿½
+        //µÈ´ýÊ±ÖÓÎÈ¶¨
         SFRIFG1 &= ~OFIFG ;
         for(int i=0x20; i >0; i--);
     }while( (SFRIFG1 & OFIFG)==OFIFG ); 
 } 
 /******************************************************************************
-ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚºËµï¿½Ñ¹
-ï¿½ï¿½Ï¸ï¿½ï¿½Power Management Module (PMM).The PMM manages all functions related to the power supply and its supervision for the device. Its primary
+¹¦ÄÜ£ºÉèÖÃÄÚºËµçÑ¹
+ÏêÏ¸£ºPower Management Module (PMM).The PMM manages all functions related to the power supply and its supervision for the device. Its primary
 functions are first to generate a supply voltage for the core logic, and second, provide several
 mechanisms for the supervision and monitoring of both the voltage applied to the device (DVCC) and thevoltage generated for the core (VCORE).
 The PMM uses an integrated low-dropout voltage regulator (LDO) to produce a secondary core voltage(VCORE) from the primary one applied to the device (DVCC).
@@ -446,31 +446,31 @@ void Set_Vcore(unsigned int level)
 
 /* for msp430f5438
  * Assume XT1=32K XT2=8M
- * MCLK,SMCLKÊ±ï¿½ï¿½Ô´Ñ¡ï¿½ï¿½XT2ï¿½ï¿½ï¿½ï¿½(8MHz)ï¿½ï¿½ ACLKÊ±ï¿½ï¿½Ô´Ñ¡ï¿½ï¿½XT1ï¿½ï¿½ï¿½ï¿½(32k)
+ * MCLK,SMCLKÊ±ÖÓÔ´Ñ¡ÔñXT2Õñµ´Æ÷(8MHz)£¬ ACLKÊ±ÖÓÔ´Ñ¡ÔñXT1Õñµ´Æ÷(32k)
  * MCLK,SMCLK = 1MHz, ACLK = 4k
  */
 
 void Clock_Init(){
     unsigned char i;
     
-    WDTCTL=WDTPW+WDTHOLD;                 //ï¿½Ø±Õ¿ï¿½ï¿½Å¹ï¿½ï¿½ï¿½Ê±
+    WDTCTL=WDTPW+WDTHOLD;                 //¹Ø±Õ¿´ÃÅ¹·¶¨Ê±
     
-    P5SEL |= BIT2 + BIT3;                   //P5.2ï¿½ï¿½P5.3Ñ¡ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½XT2ï¿½ï¿½ï¿½ï¿½  
-    P7SEL |= BIT0 + BIT1;                   //P7.0ï¿½ï¿½P7.1Ñ¡ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½XT1ï¿½ï¿½ï¿½ï¿½  
+    P5SEL |= BIT2 + BIT3;                   //P5.2ºÍP5.3Ñ¡ÔñÎª¾§ÕñXT2ÊäÈë  
+    P7SEL |= BIT0 + BIT1;                   //P7.0ºÍP7.1Ñ¡ÔñÎª¾§ÕñXT1ÊäÈë  
     Set_Vcore(PMMCOREV_3);                  // Set frequency up to 25MHz
     UCSCTL6 &= ~(XT1OFF + XT2OFF);          // Set XT1 & XT2 On 
     
-    UCSCTL6 |= XCAP_3;                      // Internal load XT1 cap 12pFï¿½ï¿½MSP430F5438A V4.0ï¿½ï¿½Ð¡ÏµÍ³XT1Î´ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½
+    UCSCTL6 |= XCAP_3;                      // Internal load XT1 cap 12pF£¬MSP430F5438A V4.0×îÐ¡ÏµÍ³XT1Î´½ÓÍâ²¿¾§Õñ
     
-    UCSCTL6 |= XT2BYPASS;                   //Ñ¡ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    UCSCTL6 |= XT2BYPASS;                   //Ñ¡ÔñÍâ²¿¼¤ÀøÕñ¶¯
     UCSCTL6 |= XT1BYPASS;
-    UCSCTL4 |= SELA__XT1CLK + SELS__XT2CLK + SELM__XT2CLK;    //Ñ¡ï¿½ï¿½MCLKï¿½ï¿½SMCLKÎªXT2,
+    UCSCTL4 |= SELA__XT1CLK + SELS__XT2CLK + SELM__XT2CLK;    //Ñ¡ÔñMCLK¡¢SMCLKÎªXT2,
     do                                      // Loop until XT1,XT2 & DCO stabilizes
     {
       UCSCTL7 &= ~(XT2OFFG + XT1LFOFFG + XT1HFOFFG + DCOFFG);
-      SFRIFG1 &= ~OFIFG;                    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§Ð§ï¿½ï¿½Ö¾
-//      for (i = 0xFF; i > 0; i--);           // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½È´ï¿½XT2ï¿½ï¿½ï¿½ï¿½
-    } while (SFRIFG1 & OFIFG);              // ï¿½Ð¶ï¿½XT2ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
+      SFRIFG1 &= ~OFIFG;                    // Çå³ýÕñµ´Æ÷Ê§Ð§±êÖ¾
+//      for (i = 0xFF; i > 0; i--);           // ÑÓÊ±£¬µÈ´ýXT2ÆðÕñ
+    } while (SFRIFG1 & OFIFG);              // ÅÐ¶ÏXT2ÊÇ·ñÆðÕñ
     //Delay_ms(50);
      System_Delayms(50);
     Clock_ACLK_DIV(8);  
@@ -481,7 +481,7 @@ void Clock_Init(){
 /* for msp430f2418 */
 
 //void Clock_Init()
-//{//ï¿½ï¿½Ê¼ï¿½ï¿½Ê±ï¿½ï¿½
+//{//³õÊ¼»¯Ê±ÖÓ
 //#if 0
 //    Clock_Use8MHZ();
 //    Clock_ACLK_DIV(8);
@@ -489,27 +489,27 @@ void Clock_Init(){
 //  
 //#else
 //
-//   /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Êºï¿½2418ï¿½ï¿½2169 CPUÊ±ï¿½Ó³ï¿½Ê¼ï¿½ï¿½ï¿½ÄµÄ´ï¿½ï¿½ï¿½*/
+//   /*ÍøÉÏÕÒÁËÒ»¶ÎÊÊºÏ2418ºÍ2169 CPUÊ±ÖÓ³õÊ¼»¯µÄµÄ´úÂë*/
 //    unsigned long i=0xffff;
-//    _BIC_SR(0xFFFF);                      //ï¿½ï¿½SRï¿½ÐµÄ¸ï¿½Î»ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ö±ï¿½Óºï¿½ï¿½ï¿½ï¿½GIEï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¹Ø¶Ï¡ï¿½
+//    _BIC_SR(0xFFFF);                      //½«SRÖÐµÄ¸÷Î»ÇåÁã£¬ÄÚÁªº¯Êý¡£Í¨¹ý¿´ËüµÄ»ã±à´úÂë¿ÉÒÔÖªµÀ¡£Ò»¸öÖ±½Óºó¹ûÊÇGIE±»¸´Î»£¬ËùÓÐµÄ¿ÉÆÁ±ÎÖÐ¶Ï¹Ø¶Ï¡£
 //
-//    WDTCTL=WDTPW+WDTHOLD;                 //ï¿½Ø±Õ¿ï¿½ï¿½Å¹ï¿½ï¿½ï¿½Ê±
+//    WDTCTL=WDTPW+WDTHOLD;                 //¹Ø±Õ¿´ÃÅ¹·¶¨Ê±
 //
-//    BCSCTL1&=~XT2OFF;                     //ï¿½ï¿½XT2  
+//    BCSCTL1&=~XT2OFF;                     //´ò¿ªXT2  
 //
 //    BCSCTL2= 0x00;
-//    BCSCTL2 |= SELM1;       // MCLK  Ê¹ï¿½ï¿½XT2   8M
-//    BCSCTL2 |= SELS;        // SMCLK Ê¹ï¿½ï¿½XT2   8M
-//                    // ACLK  Ê¹ï¿½ï¿½XT1   32K
+//    BCSCTL2 |= SELM1;       // MCLK  Ê¹ÓÃXT2   8M
+//    BCSCTL2 |= SELS;        // SMCLK Ê¹ÓÃXT2   8M
+//                    // ACLK  Ê¹ÓÃXT1   32K
 //
 //
-//    // BCSCTL2 |= (SELM_2+DIVM_2+SELS);        //MCLKï¿½ï¿½SMCLKÑ¡ï¿½ï¿½xt2ï¿½ï¿½5MHzï¿½ï¿½ï¿½ï¿½ï¿½ï¿½MCLK=1.25MHzï¿½ï¿½SMCLK=5MHz
-//   // BCSCTL3 |=  (XT2S_2+LFXT1S_2+XCAP_1);                  //6pFï¿½ï¿½ï¿½ï¿½ 
+//    // BCSCTL2 |= (SELM_2+DIVM_2+SELS);        //MCLK¡¢SMCLKÑ¡Ôñxt2£¨5MHz£¬ËùÒÔMCLK=1.25MHz£¬SMCLK=5MHz
+//   // BCSCTL3 |=  (XT2S_2+LFXT1S_2+XCAP_1);                  //6pFµçÈÝ 
 //    IFG1 &= ~OFIFG;
 //
-//    IFG1&=~(WDTIFG+OFIFG+NMIIFG+PORIFG+RSTIFG);  //ï¿½Ð¶Ï±ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
-//    FCTL3=FWKEY;                          //ACCVIFGï¿½ï¿½ï¿½ï¿½
-//    //IE1|=OFIE+NMIIE+ACCVIE;               //ï¿½Ð¶Ï³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//    IFG1&=~(WDTIFG+OFIFG+NMIIFG+PORIFG+RSTIFG);  //ÖÐ¶Ï±êÖ¾ÇåÁã
+//    FCTL3=FWKEY;                          //ACCVIFGÇåÁã
+//    //IE1|=OFIE+NMIIE+ACCVIE;               //ÖÐ¶Ï³õÊ¼»¯ÉèÖÃ
 //
 //    while(i)
 //    {
@@ -655,11 +655,11 @@ int  Utility_CheckBinary(const char * _str,int _start,int _end)
     return 0;
 } 
 
-//ï¿½ï¿½ï¿½check ipï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ä¿Ç°Ð£ï¿½é·¶Î§ï¿½ï¿½[0-9].[0-9].[0-9].[0-9]
+//Õâ¸öcheck ip²¢²»ÍêÉÆ£¬Ä¿Ç°Ð£Ñé·¶Î§ÊÇ[0-9].[0-9].[0-9].[0-9]
 int Utility_CheckIp(const char* _str,int _start,int _end)
 {
-    int section = 0;  //Ã¿Ò»ï¿½Úµï¿½Ê®ï¿½ï¿½ï¿½ï¿½Öµ 
-    int dot = 0;       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ 
+    int section = 0;  //Ã¿Ò»½ÚµÄÊ®½øÖÆÖµ 
+    int dot = 0;       //¼¸¸öµã·Ö¸ô·û 
 
     for(int i= _start; i <= _end; ++i)
     { 
@@ -703,7 +703,7 @@ IPErrorHandle:
 }
 
 int  Utility_BytesCompare3(const char * _bytes1,const char * _bytes2)
-{// ï¿½Ð¶ï¿½3ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ÝµÄ´ï¿½Ð¡,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ 
+{// ÅÐ¶Ï3×Ö½ÚÊý¾ÝµÄ´óÐ¡,Âö³åÖÐ¶ÏÖÐÊ¹ÓÃ 
     if(_bytes1[0] > _bytes2[0]) 
         return  1;
     if(_bytes1[0] < _bytes2[0]) 
@@ -734,14 +734,14 @@ int  Utility_Strlen(char * str)
     return temp;
 } 
 void Utility_Strncpy(char *dest,char *src, int Len)
-{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½ï¿½
+{//²»Ö÷¶¯Ìí¼Ó½áÊø·û
     for(int i=0;i<Len;++i)
     {
         dest[i]=src[i];
     }
 }
 int  Utility_Strncmp(const char * src,const char *dest ,int len)
-{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½ï¿½
+{//²»Ö÷¶¯Ìí¼Ó½áÊø·û
     for(int i=0;i<len;++i)
     {
         if(src[i]!=dest[i])
@@ -769,16 +769,16 @@ int  Utility_CharToHex(char _src , char * _dest)
 
 
 //
-//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½7Î»DECï¿½Ö´ï¿½,6Î»HEXï¿½Ö´ï¿½ ï¿½ï¿½3ï¿½ï¿½ï¿½Ö½ï¿½Ö®ï¿½ï¿½Ä»ï¿½ï¿½ï¿½,
-//  ï¿½ï¿½Ëºï¿½ï¿½ï¿½Ò²Ã»ï¿½ï¿½ï¿½ï¿½Æ³ï¿½Í¨ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½.
+//  ÎÒÃÇÕâ¸öÓ¦ÓÃÖ»»áÓÐ7Î»DEC×Ö´®,6Î»HEX×Ö´® ºÍ3¸ö×Ö½ÚÖ®¼äµÄ»¥»»,
+//  Òò´Ëº¯ÊýÒ²Ã»ÓÐÉè¼Æ³ÉÍ¨ÓÃÕýÈ·µÄ.
 //
 int  Utility_Bytes3ToDecStr7(char * _src ,char * _dest)
-{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª×ªï¿½ï¿½ï¿½ï¿½longï¿½ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½.
+{//Ê×ÏÈÐèÒª×ª»»³ÉlongÕâ¸öÊÇ±ØÐëµÄ.
     unsigned long _tempLong=0;
     _tempLong += (((unsigned long)_src[0])<<16);
     _tempLong += (((unsigned long)_src[1])<<8);
     _tempLong += _src[2];
-    //ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½longï¿½ï¿½.ï¿½ï¿½Ê¼×ªï¿½ï¿½ 
+    //ÒÑ¾­²úÉúlongÁË.¿ªÊ¼×ª»» 
     _dest[0] = (char)(_tempLong /(1000000L))+'0';
     _tempLong %=1000000L;
     _dest[1] = (char) (_tempLong /(100000L))+'0';
@@ -786,10 +786,10 @@ int  Utility_Bytes3ToDecStr7(char * _src ,char * _dest)
     _dest[2] = (char) (_tempLong /(10000L))+'0';
     _tempLong %= 10000L;
     
-    //ï¿½ï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½Òªlongï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½int, 
-    //ï¿½ï¿½Îªlongï¿½ï¿½CPUï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+    //ºóÐø¾Í²»ÐèÒªlongÄÇÃ´´óÁË. ¾Í×ª»»³Éint, 
+    //ÒòÎªlong·ÇCPUÀàÐÍ,²Ù×÷»ºÂý 
     Utility_UintToStr4((unsigned int)_tempLong,&_dest[3]); 
-    return 0;//ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    return 0;//·µ»Ø×Ö·û´®³¤¶È
 }
 
 
@@ -802,11 +802,11 @@ int Utility_DecStr7ToBytes3(char * _src, char * _dest)
         _tempLong+= _src[i]-'0';
         _tempLong*=10;
     }
-    _tempLong += _src[6]-'0';//ï¿½ï¿½Î»ï¿½ï¿½
-    //ï¿½ï¿½ï¿½ï¿½longï¿½ï¿½
-    _dest[0] = (char)(_tempLong>>16);//È¡ï¿½ï¿½2ï¿½ï¿½ï¿½Ö½ï¿½
-    _dest[1] = (char)(_tempLong>>8);//È¡ï¿½ï¿½3ï¿½ï¿½ï¿½Ö½ï¿½
-    _dest[2] = (char)(_tempLong&0xFF);//È¡ï¿½ï¿½1ï¿½ï¿½ï¿½Ö½ï¿½
+    _tempLong += _src[6]-'0';//¸öÎ»Êý
+    //²úÉúlongÁË
+    _dest[0] = (char)(_tempLong>>16);//È¡µÚ2¸ö×Ö½Ú
+    _dest[1] = (char)(_tempLong>>8);//È¡µÚ3¸ö×Ö½Ú
+    _dest[2] = (char)(_tempLong&0xFF);//È¡µÚ1¸ö×Ö½Ú
     return 0;
 }
 int  Utility_UintToStr4(unsigned int _src, char *_dest)
@@ -899,7 +899,7 @@ void IntTo0xInt(unsigned int num,int count){
 		  pulselow+=f; 	  
 	   }
 }
-//ï¿½ï¿½ASCII×ªï¿½ï¿½Îª16ï¿½ï¿½ï¿½ï¿½
+//°ÑASCII×ª»»Îª16½øÖÆ
 char ConvertHexChar(char ch)
 {
   if((ch>='0')&&(ch <='9'))
@@ -911,13 +911,13 @@ char ConvertHexChar(char ch)
   else 
     return (-1);
 }
-//ï¿½ï¿½ï¿½ï¿½Î»ASCIIï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ÎªÒ»Î»16ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//°ÑÁ½Î»ASCIIÊý×é×ª»»ÎªÒ»Î»16½øÖÆÊý×é
 char ConvertAscIItoHex(char* ascii,char* hex,int asciilen)
 {
     int i,j;
 //    if((asciilen % 2) == 0)
 //    {
-//        TraceMsg("The size of AscII array is odd, it must be even. The size of hex array must be even tooï¿½ï¿½",1);
+//        TraceMsg("The size of AscII array is odd, it must be even. The size of hex array must be even too£¡",1);
 //        return -1;
 //    }
     for(i = 0,j = 0; i < asciilen;i+=2,j++)
@@ -925,101 +925,106 @@ char ConvertAscIItoHex(char* ascii,char* hex,int asciilen)
     return 0;
 }
 
-// ×¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
-static void _addDay(char *dest)// ï¿½ï¿½ï¿½Ù´ï¿½ï¿½ï¿½ï¿½Ð¡
-{
-    if(dest[1]==2)//ï¿½Ç·ï¿½ï¿½ï¿½2ï¿½ï¿½, 28,29
-    {
-        if(dest[0]%4==0)//ï¿½ï¿½ï¿½ï¿½
+// ×¨ÃÅÕë¶ÔÌìÊýµÄÅÐ¶Ï
+static void _addDay(char *dest)// ¼õÉÙ´úÂë´óÐ¡
+{//ÌìÊýÅÐ¶Ï¸´ÔÓ
+  //1 ÊÇ·ñÈòÄê 
+  //2 ÔÂ·ÝÊý 
+  //ÈòÄê¶¨Òå:  4Äê1Èò;100Äê²»Èò;400ÄêÒªÈò.  
+    if(dest[1]==2)//ÊÇ·ñÊÇ2ÔÂ, 28,29
+    {//20¿ªÍ·µÄÈòÄê
+    //±¾ÏµÍ³¿Ï¶¨²»»áÊ¹ÓÃµ½2100Äê
+    //ËùÒÔ¾ÍÖ»ÅÐ¶ÏÄÜ·ñ±»4³ý  
+        if(dest[0]%4==0)//ÈòÄê
         {
-            if(dest[2]<30)//Ã»ï¿½ï¿½ï¿½ï¿½29ï¿½ï¿½
+            if(dest[2]<30)//Ã»³¬¹ý29Ìì
                 return;
-            dest[2]-=29; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½29
-            ++dest[1];  //ï¿½Â·ï¿½ +1
+            dest[2]-=29; //¼õÈ¥Òç³öµÄ29
+            ++dest[1];  //ÔÂ·Ý +1
         }
-        else//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        else//²»ÊÇÈòÄê
         {
-            if(dest[2] < 29)//Ã»ï¿½ï¿½ï¿½ï¿½28ï¿½ï¿½
+            if(dest[2] < 29)//Ã»³¬¹ý28Ìì
                 return ;
-            dest[2]-=28; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½28
-            ++dest[1];  //ï¿½Â·ï¿½ +1
+            dest[2]-=28; //¼õÈ¥Òç³öµÄ28
+            ++dest[1];  //ÔÂ·Ý +1
         }
     }
-    // ï¿½Ç·ï¿½ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ÊÇ·ñÊÇ30ÌìµÄÔÂ
     if(dest[1]==4||dest[1]==6||dest[1]==9||dest[1]==11)
     {
-        if(dest[2]<31) //Ã»ï¿½ï¿½ï¿½ï¿½30ï¿½ï¿½
+        if(dest[2]<31) //Ã»³¬¹ý30Ìì
             return;
-        dest[2]-=30; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½30ï¿½ï¿½
-        ++dest[1]; //ï¿½Â·ï¿½+1
+        dest[2]-=30; //¼õÈ¥Òç³öµÄ30Ìì
+        ++dest[1]; //ÔÂ·Ý+1
     } 
-    // ï¿½Ç·ï¿½ï¿½ï¿½31ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ÊÇ·ñÊÇ31ÌìµÄÔÂ
     if(dest[1]==1||dest[1]==3||dest[1]==5||dest[1]==7
        ||dest[1]==8||dest[1]==10||dest[1]==12)
     {
-        if(dest[2]<32) //Ã»ï¿½ï¿½ï¿½ï¿½31ï¿½ï¿½
+        if(dest[2]<32) //Ã»³¬¹ý31Ìì
             return;
-        dest[2]-=31;//ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½31ï¿½ï¿½
-        ++dest[1]; //ï¿½Â·ï¿½ +1
+        dest[2]-=31;//¼õÈ¥Òç³öµÄ31Ìì
+        ++dest[1]; //ÔÂ·Ý +1
     }
-    if(dest[1]<13)//Ã»ï¿½ï¿½ï¿½ï¿½12ï¿½ï¿½
+    if(dest[1]<13)//Ã»³¬¹ý12ÔÂ
         return ;
-    dest[1]-=12; //ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½12ï¿½ï¿½ï¿½ï¿½
-    ++dest[0];  //ï¿½ï¿½ï¿½ +1 
-    return;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : )
+    dest[1]-=12; //¼õÈ¥Òç³öµÄ12¸öÔÂ
+    ++dest[0];  //Äê·Ý +1 
+    return;//¸ãÍêÁË  : )
     
 } 
 
-void Utility_Time_AddSecond(char *dest, int second)// secondï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½60ï¿½ï¿½
+void Utility_Time_AddSecond(char *dest, int second)// second²»¿ÉÒÔ´óÓÚ60Ãë
 {
   if(second>60)
     return ;
-  dest[5]+=second;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  dest[5]+=second;//¼ÓÉÏÃëÊý
   if(dest[5]<60)
-    return ; //ï¿½ï¿½ï¿½ï¿½ï¿½ 
-  dest[5]-=60;//ï¿½ï¿½ï¿½Ó¼ï¿½1
+    return ; //Íê³ÉÁË 
+  dest[5]-=60;//·ÖÖÓ¼Ó1
   ++dest[3];
   if(dest[4]<60)
-    return ; //ï¿½ï¿½ï¿½ï¿½ï¿½ 
-  dest[4]-=60;//Ð¡Ê±ï¿½ï¿½1
+    return ; //Íê³ÉÁË 
+  dest[4]-=60;//Ð¡Ê±¼Ó1
   ++dest[3];   
   if(dest[3]<24)
-    return ;//ï¿½ï¿½ï¿½ï¿½ï¿½
-  dest[3]-=24;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1;
+    return ;//Íê³ÉÁË
+  dest[3]-=24;//ÌìÊý¼Ó1;
   ++dest[2];
   _addDay(dest);
 }  
-//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ char[5] ï¿½ï¿½Öµ 
-void Utility_Time_AddMinute(char *dest, int minute)// minuteï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½60ï¿½ï¿½ï¿½ï¿½
+//  ÄêÔÂÈÕÊ±·Ö char[5] ÊýÖµ 
+void Utility_Time_AddMinute(char *dest, int minute)// minute²»¿ÉÒÔ´óÓÚ60·ÖÖÓ
 {
   if(minute>60)
     return ;
-  dest[4]+=minute;//ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½
+  dest[4]+=minute;//¼ÓÉÏ·ÖÖÓÊý
   if(dest[4]<60)
-    return ; //ï¿½ï¿½ï¿½ï¿½ï¿½ 
-  dest[4]-=60;//Ð¡Ê±ï¿½ï¿½1
+    return ; //Íê³ÉÁË 
+  dest[4]-=60;//Ð¡Ê±¼Ó1
   ++dest[3]; 
   if(dest[3]<24)
-    return ;//ï¿½ï¿½ï¿½ï¿½ï¿½
-  dest[3]-=24;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1;
+    return ;//Íê³ÉÁË
+  dest[3]-=24;//ÌìÊý¼Ó1;
   ++dest[2];
   _addDay(dest);
 }  
-void Utility_Time_AddHour(char *dest, int hour)//hourï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½24
+void Utility_Time_AddHour(char *dest, int hour)//hour²»¿ÉÒÔ´óÓÚ24
 {
   if(hour>24)
     return;
   dest[3]+=hour; 
   if(dest[3]<24)
-    return ;//ï¿½ï¿½ï¿½ï¿½ï¿½
+    return ;//Íê³ÉÁË
   
-  dest[3]-=24;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1;
+  dest[3]-=24;//ÌìÊý¼Ó1;
   ++dest[2];
   _addDay(dest); 
 }
 void Utility_Time_AddDay(char *dest,int Day)
 {
-  if(Day>28)//Îªï¿½Ë±ï¿½Ö¤1ï¿½ï¿½31ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â³ï¿½ï¿½Ö´ï¿½ï¿½ï¿½
+  if(Day>28)//ÎªÁË±£Ö¤1ÔÂ31ÈÕ¼ÓÌìÊý,²»»áÌøÔÂ³öÏÖ´íÎó
     return;
   dest[2]+=Day;
   _addDay(dest);
@@ -1034,110 +1039,110 @@ void Utility_Time_AddMonth(char *dest,int Month)
     dest[1]-=12;
     ++dest[0];
 }
-void Utility_CalculateNextReportTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
-{//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½
+void Utility_CalculateNextReportTimeBytes(char *dest)//¸ù¾Ýµ±Ç°ÉèÖÃ,¼ÆËã³öÏÂÒ»´Î±¨¸æÊ±¼ä
+{//±¨¸æÊ±¼ä 5·ÖÖÓ
     for(int i=0;i<5;++i)
     {
         dest[i]=g_rtc_nowTime[i];
     }
-    //ï¿½ï¿½È¡ReportMode
+    //¶ÁÈ¡ReportMode
     char temp[2];
     int mode=0;
     if(Store_ReadReportTimeMode(temp)<0)
-    {//Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
         mode=1;
     }
     else
         mode=(temp[0]-'0')*10 + temp[1] - '0';
-//  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½  
+//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
 //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½  
-//  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½ 
+//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
+//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ 
     
     switch(mode)
     {
       case 1: 
         dest[4] -= dest[4]%5;
-        Utility_Time_AddMinute(dest,5); //ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½   
+        Utility_Time_AddMinute(dest,5); //¼Ó5·ÖÖÓ   
         break;
         
       case 2:
         dest[4] -= dest[4]%10; 
-        Utility_Time_AddMinute(dest,10);//ï¿½ï¿½10ï¿½ï¿½ï¿½ï¿½ 
+        Utility_Time_AddMinute(dest,10);//¼Ó10·ÖÖÓ 
         break; 
         
       case 3:
         dest[4] -= dest[4]%20;
-        Utility_Time_AddMinute(dest,20);//ï¿½ï¿½20ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMinute(dest,20);//¼Ó20·ÖÖÓ
         break;
         
       case 4:
         dest[4] -= dest[4]%30;
-        Utility_Time_AddMinute(dest,30);//ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMinute(dest,30);//¼Ó30·ÖÖÓ
         break; 
         
       case 5:
-        dest[4]=0; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0 ï¿½ï¿½ï¿½ï¿½ 
-        Utility_Time_AddHour(dest,1);//ï¿½ï¿½1Ð¡Ê± 
+        dest[4]=0; //·ÖÖÓÇå0 ¼´¿É 
+        Utility_Time_AddHour(dest,1);//¼Ó1Ð¡Ê± 
         break;
         
       case 6:
-        dest[4]=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0
+        dest[4]=0;//·ÖÖÓÇå0
         dest[3] -= dest[3]%2;//
-        Utility_Time_AddHour(dest,2);//ï¿½ï¿½2Ð¡Ê± 
+        Utility_Time_AddHour(dest,2);//¼Ó2Ð¡Ê± 
         break; 
         
       case 7:
         dest[4] =0;
         dest[3] -= dest[3]%3;
-        Utility_Time_AddHour(dest,3);//ï¿½ï¿½3Ð¡Ê±
+        Utility_Time_AddHour(dest,3);//¼Ó3Ð¡Ê±
         
         break;
       case 8:
         dest[4]=0;
         dest[3] -= dest[3]%6;
-        Utility_Time_AddHour(dest,6);//ï¿½ï¿½6Ð¡Ê±
+        Utility_Time_AddHour(dest,6);//¼Ó6Ð¡Ê±
         break; 
         
       case 9:
         dest[4]=0;
         dest[3] -= dest[3]%12;
-        Utility_Time_AddHour(dest,12);//ï¿½ï¿½12Ð¡Ê±
+        Utility_Time_AddHour(dest,12);//¼Ó12Ð¡Ê±
         break;
         
       case 10:
         dest[4]=0;
         dest[3]=8;
-        Utility_Time_AddDay(dest,1);//ï¿½ï¿½1ï¿½ï¿½  
+        Utility_Time_AddDay(dest,1);//¼Ó1Ìì  
         break;
         
-//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½Ú¼ï¿½Ä£Ê½ï¿½ï¿½ï¿½ÖµÇ°ï¿½ï¿½ï¿½ï¿½,
-//  ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½.
-//  ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ç±ä¶¯ï¿½ï¿½, ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.        
-//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È½Ï¸ï¿½ï¿½ï¿½,ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½1Îªï¿½ï¿½Ê¼.
+//  ¶ÔÓÚÌìÊý,ÎÒÃÇ²»½öÒªÔÚ¼ÓÄ£Ê½¼ä¸ôÖµÇ°ÇóÕû,
+//  ¼ÓÁËÖ®ºó,ÈÔÐèÒªÇóÕû.
+//  ÒòÎªÌìÊýÊÇ±ä¶¯µÄ, ²»ÊÇ¼ä¸ôÖµµÄÕûÊý±¶.        
+//  ÌìÊýµÄÇóÕû ±È½Ï¸´ÔÓ,ÒòÎªÊÇÒÔ1ÎªÆðÊ¼.
         
         //
-        //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½È»ï¿½ï¿½Òªï¿½Þ¸ï¿½!!!!
+        //  »¹ÊÇÓÐÎÊÌâ. ÈÔÈ»ÐèÒªÐÞ¸Ä!!!!
         //
     case 11:
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         
-        Utility_Time_AddDay(dest,2);//ï¿½ï¿½2ï¿½ï¿½
+        Utility_Time_AddDay(dest,2);//¼Ó2Ìì
         
         dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         break;
       case 12: 
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
-        Utility_Time_AddDay(dest,3);//ï¿½ï¿½3ï¿½ï¿½
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
+        Utility_Time_AddDay(dest,3);//¼Ó3Ìì
         dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         
         break;
       case 13:
@@ -1145,21 +1150,21 @@ void Utility_CalculateNextReportTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼ 
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼ 
         
-        Utility_Time_AddDay(dest,5);//ï¿½ï¿½5ï¿½ï¿½
+        Utility_Time_AddDay(dest,5);//¼Ó5Ìì
         dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         break;
       case 14:
         
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
-        Utility_Time_AddDay(dest,10);//ï¿½ï¿½10ï¿½ï¿½
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
+        Utility_Time_AddDay(dest,10);//¼Ó10Ìì
         dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         
         break;
       case 15:
@@ -1168,7 +1173,7 @@ void Utility_CalculateNextReportTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½
         dest[3]=8;
         dest[2]-=(dest[2]-1)%15;
         //++dest[2];
-        Utility_Time_AddDay(dest,15);//ï¿½ï¿½15ï¿½ï¿½
+        Utility_Time_AddDay(dest,15);//¼Ó15Ìì
         dest[2]-=(dest[2]-1)%15;
         //++dest[2];
         
@@ -1177,119 +1182,119 @@ void Utility_CalculateNextReportTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½
         dest[4]=0;
         dest[3]=8;
         dest[2]=1;
-        Utility_Time_AddMonth(dest,1);//ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMonth(dest,1);//¼Ó1¸öÔÂ
         break;
       default:
-        //Òªï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
-        //ï¿½ï¿½ï¿½Ç¾ï¿½Ä¬ï¿½ï¿½Îª5ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+        //ÒªÊÇÄ£Ê½ÓÐÎÊÌâ.
+        //ÎÒÃÇ¾ÍÄ¬ÈÏÎª5·ÖÖÓ±£´æÒ»´Î
         Utility_Time_AddMinute(dest,5);
     }
 }
 
-void Utility_CalculateNextCameraGoTimes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
-{//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½
+void Utility_CalculateNextCameraGoTimes(char *dest)//¸ù¾Ýµ±Ç°ÉèÖÃ,¼ÆËã³öÏÂÒ»´ÎÉãÏñÊ±¼ä
+{//±¨¸æÊ±¼ä 5·ÖÖÓ
     for(int i=0;i<5;++i)
     {
         dest[i]=g_rtc_nowTime[i];
     }
-    //ï¿½ï¿½È¡ReportMode
+    //¶ÁÈ¡ReportMode
     char temp[2];
     int mode=0;
     if(Store_ReadCameraTimeMode(temp)<0)
-    {//Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
         mode=1;
     }
     else
         mode=(temp[0]-'0')*10 + temp[1] - '0';
-//  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½  
+//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
 //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½  
-//  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½ 
+//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
+//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ 
     
     switch(mode)
     {
       case 1: 
         dest[4] -= dest[4]%5;
-        Utility_Time_AddMinute(dest,5); //ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½   
+        Utility_Time_AddMinute(dest,5); //¼Ó5·ÖÖÓ   
         break;
         
       case 2:
         dest[4] -= dest[4]%10; 
-        Utility_Time_AddMinute(dest,10);//ï¿½ï¿½10ï¿½ï¿½ï¿½ï¿½ 
+        Utility_Time_AddMinute(dest,10);//¼Ó10·ÖÖÓ 
         break; 
         
       case 3:
         dest[4] -= dest[4]%20;
-        Utility_Time_AddMinute(dest,20);//ï¿½ï¿½20ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMinute(dest,20);//¼Ó20·ÖÖÓ
         break;
         
       case 4:
         dest[4] -= dest[4]%30;
-        Utility_Time_AddMinute(dest,30);//ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMinute(dest,30);//¼Ó30·ÖÖÓ
         break; 
         
       case 5:
-        dest[4]=0; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0 ï¿½ï¿½ï¿½ï¿½ 
-        Utility_Time_AddHour(dest,1);//ï¿½ï¿½1Ð¡Ê± 
+        dest[4]=0; //·ÖÖÓÇå0 ¼´¿É 
+        Utility_Time_AddHour(dest,1);//¼Ó1Ð¡Ê± 
         break;
         
       case 6:
-        dest[4]=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0
+        dest[4]=0;//·ÖÖÓÇå0
         dest[3] -= dest[3]%2;//
-        Utility_Time_AddHour(dest,2);//ï¿½ï¿½2Ð¡Ê± 
+        Utility_Time_AddHour(dest,2);//¼Ó2Ð¡Ê± 
         break; 
         
       case 7:
         dest[4] =0;
         dest[3] -= dest[3]%3;
-        Utility_Time_AddHour(dest,3);//ï¿½ï¿½3Ð¡Ê±
+        Utility_Time_AddHour(dest,3);//¼Ó3Ð¡Ê±
         
         break;
       case 8:
         dest[4]=0;
         dest[3] -= dest[3]%6;
-        Utility_Time_AddHour(dest,6);//ï¿½ï¿½6Ð¡Ê±
+        Utility_Time_AddHour(dest,6);//¼Ó6Ð¡Ê±
         break; 
         
       case 9:
         dest[4]=0;
         dest[3] -= dest[3]%12;
-        Utility_Time_AddHour(dest,12);//ï¿½ï¿½12Ð¡Ê±
+        Utility_Time_AddHour(dest,12);//¼Ó12Ð¡Ê±
         break;
         
       case 10:
         dest[4]=0;
         dest[3]=8;
-        Utility_Time_AddDay(dest,1);//ï¿½ï¿½1ï¿½ï¿½  
+        Utility_Time_AddDay(dest,1);//¼Ó1Ìì  
         break;
         
-//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½Ú¼ï¿½Ä£Ê½ï¿½ï¿½ï¿½ÖµÇ°ï¿½ï¿½ï¿½ï¿½,
-//  ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½.
-//  ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ç±ä¶¯ï¿½ï¿½, ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.        
-//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È½Ï¸ï¿½ï¿½ï¿½,ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½1Îªï¿½ï¿½Ê¼.
+//  ¶ÔÓÚÌìÊý,ÎÒÃÇ²»½öÒªÔÚ¼ÓÄ£Ê½¼ä¸ôÖµÇ°ÇóÕû,
+//  ¼ÓÁËÖ®ºó,ÈÔÐèÒªÇóÕû.
+//  ÒòÎªÌìÊýÊÇ±ä¶¯µÄ, ²»ÊÇ¼ä¸ôÖµµÄÕûÊý±¶.        
+//  ÌìÊýµÄÇóÕû ±È½Ï¸´ÔÓ,ÒòÎªÊÇÒÔ1ÎªÆðÊ¼.
         
         //
-        //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½È»ï¿½ï¿½Òªï¿½Þ¸ï¿½!!!!
+        //  »¹ÊÇÓÐÎÊÌâ. ÈÔÈ»ÐèÒªÐÞ¸Ä!!!!
         //
     case 11:
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         
-        Utility_Time_AddDay(dest,2);//ï¿½ï¿½2ï¿½ï¿½
+        Utility_Time_AddDay(dest,2);//¼Ó2Ìì
         
         dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         break;
       case 12: 
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
-        Utility_Time_AddDay(dest,3);//ï¿½ï¿½3ï¿½ï¿½
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
+        Utility_Time_AddDay(dest,3);//¼Ó3Ìì
         dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         
         break;
       case 13:
@@ -1297,21 +1302,21 @@ void Utility_CalculateNextCameraGoTimes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼ 
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼ 
         
-        Utility_Time_AddDay(dest,5);//ï¿½ï¿½5ï¿½ï¿½
+        Utility_Time_AddDay(dest,5);//¼Ó5Ìì
         dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         break;
       case 14:
         
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
-        Utility_Time_AddDay(dest,10);//ï¿½ï¿½10ï¿½ï¿½
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
+        Utility_Time_AddDay(dest,10);//¼Ó10Ìì
         dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         
         break;
       case 15:
@@ -1320,7 +1325,7 @@ void Utility_CalculateNextCameraGoTimes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿
         dest[3]=8;
         dest[2]-=(dest[2]-1)%15;
         //++dest[2];
-        Utility_Time_AddDay(dest,15);//ï¿½ï¿½15ï¿½ï¿½
+        Utility_Time_AddDay(dest,15);//¼Ó15Ìì
         dest[2]-=(dest[2]-1)%15;
         //++dest[2];
         
@@ -1329,90 +1334,90 @@ void Utility_CalculateNextCameraGoTimes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿
         dest[4]=0;
         dest[3]=8;
         dest[2]=1;
-        Utility_Time_AddMonth(dest,1);//ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMonth(dest,1);//¼Ó1¸öÔÂ
         break;
       default:
-        //Òªï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
-        //ï¿½ï¿½ï¿½Ç¾ï¿½Ä¬ï¿½ï¿½Îª5ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+        //ÒªÊÇÄ£Ê½ÓÐÎÊÌâ.
+        //ÎÒÃÇ¾ÍÄ¬ÈÏÎª5·ÖÖÓ±£´æÒ»´Î
         Utility_Time_AddMinute(dest,5);
     }
 }
 
 
-void Utility_CalculateNextSaveTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
-{//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½
+void Utility_CalculateNextSaveTimeBytes(char *dest)//¸ù¾Ýµ±Ç°ÉèÖÃ,¼ÆËã³öÏÂÒ»´Î±£´æÊ±¼ä
+{//±£´æÊ±¼ä 5·ÖÖÓ
     for(int i=0;i<5;++i)
     {
         dest[i]=g_rtc_nowTime[i];
     }
-    //ï¿½ï¿½È¡SaveMode
+    //¶ÁÈ¡SaveMode
     char temp[2];
     int mode=0;
     if(Store_ReadSaveTimeMode(temp)<0)
-    {//Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
         mode=1;
     }
     else
         mode=(temp[0]-'0')*10+ temp[1] - '0'; 
-//  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½  
+//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
 //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½  
-//  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½  
+//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
+//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ  
      
-    // ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½00 ,Ð¡Ê±ï¿½ï¿½ 8ï¿½ï¿½?   ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½.
+    // ·ÖÖÓµÄÕûµã ¾ÍÊÇ00 ,Ð¡Ê±ÊÇ 8µã?   ÌìÊý ¾ÍÊÇ1ÈÕ.
     
     switch(mode)
     {
       case 1: 
         dest[4] -= dest[4]%5;
-        Utility_Time_AddMinute(dest,5); //ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½  
+        Utility_Time_AddMinute(dest,5); //¼Ó5·ÖÖÓ  
         
         break;
       case 2:
         dest[4] -= dest[4]%10; 
-        Utility_Time_AddMinute(dest,10);//ï¿½ï¿½10ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMinute(dest,10);//¼Ó10·ÖÖÓ
         
         break; 
       case 3:
         dest[4] -= dest[4]%20;
-        Utility_Time_AddMinute(dest,20);//ï¿½ï¿½20ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMinute(dest,20);//¼Ó20·ÖÖÓ
         break;
       case 4:
         dest[4] -= dest[4]%30;
-        Utility_Time_AddMinute(dest,30);//ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMinute(dest,30);//¼Ó30·ÖÖÓ
 
         
         break; 
       case 5:  
-        dest[4]=0; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0 ï¿½ï¿½ï¿½ï¿½ 
-        Utility_Time_AddHour(dest,1);//ï¿½ï¿½1Ð¡Ê±
+        dest[4]=0; //·ÖÖÓÇå0 ¼´¿É 
+        Utility_Time_AddHour(dest,1);//¼Ó1Ð¡Ê±
         
         break;
       case 6:
-        dest[4]=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0
+        dest[4]=0;//·ÖÖÓÇå0
         dest[3] -= dest[3]%2;  //
-        Utility_Time_AddHour(dest,2);//ï¿½ï¿½2Ð¡Ê±
+        Utility_Time_AddHour(dest,2);//¼Ó2Ð¡Ê±
         
         
         break; 
       case 7:
         dest[4] =0;
         dest[3] -= dest[3]%3;
-        Utility_Time_AddHour(dest,3);//ï¿½ï¿½3Ð¡Ê±
+        Utility_Time_AddHour(dest,3);//¼Ó3Ð¡Ê±
         
         
         break;
       case 8:
         dest[4]=0;
         dest[3] -= dest[3]%6;
-        Utility_Time_AddHour(dest,6);//ï¿½ï¿½6Ð¡Ê±
+        Utility_Time_AddHour(dest,6);//¼Ó6Ð¡Ê±
         
         
         break; 
       case 9:
         dest[4]=0;
         dest[3] -= dest[3]%12;
-        Utility_Time_AddHour(dest,12);//ï¿½ï¿½12Ð¡Ê±
+        Utility_Time_AddHour(dest,12);//¼Ó12Ð¡Ê±
         
         
         break;
@@ -1420,31 +1425,31 @@ void Utility_CalculateNextSaveTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿
       case 10:
         dest[4]=0;
         dest[3]=8;
-        Utility_Time_AddDay(dest,1);//ï¿½ï¿½1ï¿½ï¿½  
+        Utility_Time_AddDay(dest,1);//¼Ó1Ìì  
         break;
         
-//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½Ú¼ï¿½Ä£Ê½ï¿½ï¿½ï¿½ÖµÇ°ï¿½ï¿½ï¿½ï¿½,
-//  ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½.
-//  ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ç±ä¶¯ï¿½ï¿½, ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.        
-//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È½Ï¸ï¿½ï¿½ï¿½,ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½1Îªï¿½ï¿½Ê¼.
+//  ¶ÔÓÚÌìÊý,ÎÒÃÇ²»½öÒªÔÚ¼ÓÄ£Ê½¼ä¸ôÖµÇ°ÇóÕû,
+//  ¼ÓÁËÖ®ºó,ÈÔÐèÒªÇóÕû.
+//  ÒòÎªÌìÊýÊÇ±ä¶¯µÄ, ²»ÊÇ¼ä¸ôÖµµÄÕûÊý±¶.        
+//  ÌìÊýµÄÇóÕû ±È½Ï¸´ÔÓ,ÒòÎªÊÇÒÔ1ÎªÆðÊ¼.
     
     case 11:
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
-        Utility_Time_AddDay(dest,2);//ï¿½ï¿½2ï¿½ï¿½    
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
+        Utility_Time_AddDay(dest,2);//¼Ó2Ìì    
         dest[2]-=(dest[2]-1)%2;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         break;
       case 12: 
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
-        Utility_Time_AddDay(dest,3);//ï¿½ï¿½3ï¿½ï¿½
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
+        Utility_Time_AddDay(dest,3);//¼Ó3Ìì
         dest[2]-=(dest[2]-1)%3;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         
         break;
       case 13:
@@ -1452,21 +1457,21 @@ void Utility_CalculateNextSaveTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼ 
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼ 
         
-        Utility_Time_AddDay(dest,5);//ï¿½ï¿½5ï¿½ï¿½
+        Utility_Time_AddDay(dest,5);//¼Ó5Ìì
         dest[2]-=(dest[2]-1)%5;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         break;
       case 14:
         
         dest[4]=0;
         dest[3]=8;
         dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
-        Utility_Time_AddDay(dest,10);//ï¿½ï¿½10ï¿½ï¿½
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
+        Utility_Time_AddDay(dest,10);//¼Ó10Ìì
         dest[2]-=(dest[2]-1)%10;
-        //++dest[2];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼
+        //++dest[2];//ÌìÊý´Ó1¿ªÊ¼
         
         break;
       case 15:
@@ -1475,7 +1480,7 @@ void Utility_CalculateNextSaveTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿
         dest[3]=8;
         dest[2]-=(dest[2]-1)%15;
         //++dest[2];
-        Utility_Time_AddDay(dest,15);//ï¿½ï¿½15ï¿½ï¿½
+        Utility_Time_AddDay(dest,15);//¼Ó15Ìì
         dest[2]-=(dest[2]-1)%15;
         //++dest[2];
         
@@ -1484,26 +1489,26 @@ void Utility_CalculateNextSaveTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ï¿
         dest[4]=0;
         dest[3]=8;
         dest[2]=1;
-        Utility_Time_AddMonth(dest,1);//ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
+        Utility_Time_AddMonth(dest,1);//¼Ó1¸öÔÂ
         break;
       default:
-        //Òªï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
-        //ï¿½ï¿½ï¿½Ç¾ï¿½Ä¬ï¿½ï¿½Îª5ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+        //ÒªÊÇÄ£Ê½ÓÐÎÊÌâ.
+        //ÎÒÃÇ¾ÍÄ¬ÈÏÎª5·ÖÖÓ±£´æÒ»´Î
         Utility_Time_AddMinute(dest,5);
     }
 }
-void Utility_CalculateNextCheckTimeBytes(char *dest)//ï¿½ï¿½ï¿½Ýµï¿½Ç°Ê±ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î¼ï¿½ï¿½Ê±ï¿½ï¿½
-{//ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½
+void Utility_CalculateNextCheckTimeBytes(char *dest)//¸ù¾Ýµ±Ç°Ê±¼ä,¼ÆËãÏÂÒ»´Î¼ì²éÊ±¼ä
+{//¼ì²éÊ±¼ä 5·ÖÖÓ
     for(int i=0;i<5;++i)
     {
         dest[i]=g_rtc_nowTime[i];
     }
-    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½.
+    //±ØÐëÕûµãÕûµã¼Ó5·ÖÖÓ.
     dest[4] -= dest[4]%5;
     Utility_Time_AddMinute(dest,5);
 }
 int  Utility_Is_A_CheckTime(char *  _time)
-{//ï¿½ï¿½ï¿½ï¿½Îª5ï¿½Ä±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½Ê±ï¿½ï¿½
+{//·ÖÖÓÎª5µÄ±¶Êý ¾ÍÊÇ¼ì²éÊ±¼ä
     if(_time[4]%5==0) 
         return 1;
     else
@@ -1520,10 +1525,10 @@ int  Utility_Is_A_SaveTime(char *  _time)
     }
     else
         _mode= (_temp[0]-'0')*10+ _temp[1] - '0'; 
-//  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½  
+//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
 //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½  
-//  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½  
+//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
+//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ  
     switch(_mode)
     {
       case 1:  
@@ -1602,15 +1607,15 @@ int  Utility_Is_A_ReportTime(char *  _time)
     char _temp[2];
     int _mode=0;
     if(Store_ReadReportTimeMode(_temp)<0)
-    {//Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
         _mode = 0;
     }
     else
         _mode= (_temp[0]-'0')*10+ _temp[1] - '0'; 
-//  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½  
+//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
 //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½  
-//  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½  
+//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
+//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ  
     switch(_mode)
     {
       case 1:  
@@ -1689,15 +1694,15 @@ int  Utility_Is_A_CameraTime(char *  _time)
     char _temp[2];
     int _mode=0;
     if(Store_ReadCameraTimeMode(_temp)<0)
-    {//Ã»ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½Íµï¿½5ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½.
+    {//Ã»¶Á³öÄ£Ê½ ¾Íµ±5·ÖÖÓÒ»´æºÃÁË.
         _mode = 0;
     }
     else
         _mode= (_temp[0]-'0')*10+ _temp[1] - '0'; 
-//  01:  5ï¿½ï¿½ï¿½ï¿½   02:  10ï¿½ï¿½ï¿½ï¿½  03: 20ï¿½ï¿½ï¿½ï¿½   04:  30ï¿½ï¿½ï¿½ï¿½  
+//  01:  5·ÖÖÓ   02:  10·ÖÖÓ  03: 20·ÖÖÓ   04:  30·ÖÖÓ  
 //  05:  1Ð¡Ê±   06:   2Ð¡Ê±  07:  3Ð¡Ê±   08:  6Ð¡Ê±  
-//  09:  12Ð¡Ê±  10:    1ï¿½ï¿½   11:    2ï¿½ï¿½   12:   3ï¿½ï¿½  
-//  13:    5ï¿½ï¿½   14:    10ï¿½ï¿½  15:  15ï¿½ï¿½    16:  1ï¿½ï¿½ï¿½ï¿½  
+//  09:  12Ð¡Ê±  10:    1Ìì   11:    2Ìì   12:   3Ìì  
+//  13:    5Ìì   14:    10Ìì  15:  15Ìì    16:  1¸öÔÂ  
     switch(_mode)
     {
       case 1:  
@@ -1769,7 +1774,7 @@ int  Utility_Is_A_CameraTime(char *  _time)
     }
     return 0;
 }
-//ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½,_bufferï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Í·ï¿½ï¿½
+//¸ù¾ÝÔ¼¶¨,_bufferÀïÒÑ¾­ÌîÐ´ºÃÍ·²¿
 //0123456789012345678901234567890
 //$00011100011<TM*OK*0909060630#
 //$00011100011<DL*OK# 

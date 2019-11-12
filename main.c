@@ -5,9 +5,10 @@
 #include "store.h"
 #include "rtc.h"
 #include "led.h" 
-#include "Console.h"
-#include "sampler.h"
-#include "GSM.h"
+#include "console.h"
+#include "Sampler.h"
+#include "DTU.h"
+// #include "GSM.h"
 #include "uart0.h"
 #include "uart1.h"
 #include "uart3.h"
@@ -16,53 +17,152 @@
 //#include "hydrology.h"
 #include <string.h>
 #include "reportbinding.h"
-#include "GTM900C.h"
+// #include "GTM900C.h"
 #include "uart_config.h"
 #include "hydrologytask.h"
 #include "hydrologycommand.h"
 #include "rom.h"
+//#include "BC95.h"
+#include "blueTooth.h"
 #include "ioDev.h"
 
-
 int IsDebug = 0;
+
 
 int main(void)
 {
     
-    char value[4] = {0,0,0,0};
-    char test[1] = {0x12};
+    
+    
     Restart_Init();  
 
     Select_Debug_Mode(0);
     
     TraceOpen();
 
+    /* ble test */
+     BleDriverInstall();
+     printf("\r\nBLE driver installed \r\n");
+    
+
+    //  PT_IODev  ptDevBle =  getIODev();
+    //  if(ptDevBle == NULL)
+    //  {
+    //      printf("BLE not registerd !\r\n");
+    //      return 0;
+    //  }
+
+    //  printf("BLE is waiting for matched in 30s ...\r\n");
+    //  ptDevBle->init();
+    
+
+    //  while (1)
+    //  {
+       
+    //      if(ptDevBle->isCanUse())
+    //      {
+    //          if( ptDevBle->open() != 0)
+    //          {
+    //              printf("ble open failed! \r\n");
+    //              ptDevBle->restart();
+    //              ptDevBle->init();
+    //              continue;
+    //          }
+    //         //  char acBleRcvBuf[200] = {0};
+    //         //  int iLen = 0;
+    //         ptDevBle->sendMsg(".",sizeof("."));
+    //         System_Delayms(3000);
+    //         ptDevBle->sendMsg("..",sizeof(".."));
+    //         System_Delayms(3000);
+    //         ptDevBle->sendMsg("...",sizeof("..."));
+    //         System_Delayms(3000);
+    //         //  ptDevBle->sendMsg("hello ... ",sizeof("hello ... "));
+    //         //  printf("waing msg from phone \r\n");
+    //         //  ptDevBle->getMsg(acBleRcvBuf,&iLen);
+    //         //  if(iLen > 0)
+    //         //  {
+    //         //      printf("rcv from phone : %s \r\n",acBleRcvBuf);
+    //         //  }
+    //          ptDevBle->close();
+    //      }
+         
+    //      System_Delayms(9000);
+    //  }
+
+    
+
+    // char result[100];
+    // int num;
+    // char end[2]={0x0D,0x0A};
+    P10DIR |= BIT1;         //MCU-P101=1
+    P10OUT |= BIT1;
+    P9DIR |= BIT6;           //P9.6=1
+    P9OUT |= BIT6;
+    UART1_Open(1);
+    // BLE_INIT();
+    // BLE_Open();
+    // while(1)
+    //     if(ptDevBle->isCanUse())
+    //         printf("connect\r\n");
+    while(1)
+    {
+        ATTEST();
+    }
+        
+    
+
+    
+
+    /* End of BLE test */
+
+
     TraceMsg("Device Open !",1);
-  
+
     Main_Init();
+
+    
+
+    /* BC95 Test */
+    // char flag = BC95_Open();
+    // if (flag == 1)
+    // {
+    //    printf("BC95 open error \r\n");
+    //    BC95_Close();
+    // }
+    // BC95_ConfigProcess();
+    // int iRet = BC95_SetTimeZoneBeijing();
+    // if(iRet == 1)
+    // {
+    //     printf("Beijing Time Zone set OK \r\n");
+    // }
+    // while (1)
+    // {
+    //     char year,month,date,hour,min,second;
+    //     BC95_QueryTime(&year,&month,&date,&hour,&min,&second);
+    //     printf(" %u : %u \r\n",hour,min);
+    //     System_Delayms(1000);
+    // }
+    
+
+    /* BC95 test */
+    /* End of BC95 test */
     
     Sampler_Open();
    
     Hydrology_InitWaitConfig();
    
+ 
     while(1)
     {
-      Hydrology_ReadIO_STATUS(value,0);
-      Hydrology_ReadIO_STATUS(value,1);
-      Hydrology_ReadIO_STATUS(value,2);
-      Hydrology_SetIO_STATUS(test);
 
       HydrologyTask();
    }
 
 }
 
-
-
 void Restart_Init()
 {
-    P1SEL = 0x00;                //�ر�����˿��ж�?
-    P1DIR = 0x00;
+
     Clock_Init();               // CPUʱ�ӳ�ʼ��
         
     _EINT();                    //���ж�
@@ -72,24 +172,23 @@ void Restart_Init()
     Led_Init();                 // ָʾ�� ��ʼ��
 //    Led1_WARN(); 
     
-
+//    P9DIR |= BIT7;              //ly ����232оƬ��������
+//    P9OUT |= BIT7;
+   
     
     TimerA_Init(30720);         // ϵͳ��ʱ����ʼ��
-    TimerB_Init(61440);
+    TimerB_Init(61440); 
     TimerA0_Init();
-    
+
     Store_Init();               // ��ʼ��ROM
     RTC_Open();
     Sampler_Init();             //�˿ڳ�ʼ��,��Ҫ�ȳ�ʼ��Store
     
+    P10DIR |= BIT0;             //ly P100���ߣ�uart3���ڵ��ԣ��͵Ļ�P104��,105����485��
+    P10OUT |= BIT0;
     
-//    P9DIR |= BIT7;              //ly ����232оƬ��������
-//    P9OUT |= BIT7;  
-      P10DIR |= BIT0;             //ly debug /P100���ߣ�uart3���ڵ��ԣ��͵Ļ�P104��,105����485��
-      P10OUT |= BIT0;
-    
-      P10DIR |= BIT1;             //ly 485 /P101���ߣ�uart1 P56��57���͵Ļ�����485��,�ߵĻ���������
-      P10OUT &=~ BIT1;
+    P10DIR |= BIT1;             //ly P101���ߣ�uart1 P104��,105���͵Ļ�����485��,�ߵĻ���������
+    P10OUT |= BIT1;
     
 /*wyq  ����485ȥ�������Ĳ���*/
 //     P3DIR &= ~BIT2;
@@ -161,7 +260,7 @@ int Restart_DTUInit()
     //
     if(trace_open==0) 
     {
-        //���û��?���ԵĻ�,������Ҫ�����?��
+        //���û�򿪵��ԵĻ�,������Ҫ����򿪵�
         //Console_Open(); 
     }
     UART3_ClearBuffer();
@@ -169,7 +268,7 @@ int Restart_DTUInit()
 
     if(UART3_RecvLineLongWait(_data,UART3_MAXBUFFLEN,&_dataLen)==0)
     {
-        
+        //����ȵ���������, �ͽ�������״̬.�ȴ�15����
         //Console_WriteStringln("waiting for 15 seconds .");
         if(Main_ProcCommand(_data,_dataLen,NULL)==3)
         {//������һ��SYN,�ͽ�������״̬
@@ -196,7 +295,7 @@ int Restart_DTUInit()
     }
     //�����ڵ���״̬��ʱ��Ҫ�رյ�
     if(trace_open==0)
-    {//��������ǹرյ�?,���ڵ���Ҫ�ر�
+    {//��������ǹرյ�,���ڵ���Ҫ�ر�
     //Console_Close(); 
     } 
     
@@ -240,7 +339,7 @@ int WorkMode_Init(char* ptype)
         break;
         
       default:
-        //�����������?.������ 
+        //�����������.������ 
         
         TraceMsg("Bad Mode !",1);
         System_Reset();
@@ -249,7 +348,7 @@ int WorkMode_Init(char* ptype)
 
      //�жϵ�ǰ����״̬,   DTU/GSM      
     if(Store_ReadSystemType(&_curType)<0)
-    {//����޷�����? �����ģ�?,�Ͳ��ж��Ƿ� ����������.
+    {//����޷����� �����ģʽ,�Ͳ��ж��Ƿ� ����������.
         _ret =0;
     }
     else
@@ -268,11 +367,10 @@ void Main_Init()
     //���ж�,�Է�֮ǰ�����д������жϱ��ر�
     EnInt();
     TraceOpen();
-    getIODev()->init(); //BLE init
     RTC_Open();       // ��RTC
     TimerB_Clear();
-    WatchDog_Clear();   // �����λ������? 
-    //�����ٴ������������?  ���ӿɿ���.
+    WatchDog_Clear();   // �����λ������ 
+    //�����ٴ������������  ���ӿɿ���.
     Sampler_Init();     
 }
 
