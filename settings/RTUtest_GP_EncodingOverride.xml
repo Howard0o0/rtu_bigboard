@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<userOverrides>
+    <override>
+        <path>G:\RTU V3.0\RTU_地下水_刘树波_V3.3.008.200510\RTUV3.3_GPRS-要素基值可配-修改存储要素区域为片内-卢毅20200505-刘树波改200506\message.c</path>
+        <encoding>GB2312</encoding>
+    </override>
+    <override>
+        <path>G:\RTU V3.0\RTU_通用程序_刘树波_V3.3.007.200506\RTUV3.3_GPRS -修改存储要素区域为片内-刘树波改200506\hydrologytask.c</path>
+        <encoding>UTF-8</encoding>
+    </override>
+</userOverrides>
