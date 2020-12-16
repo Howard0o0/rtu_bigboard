@@ -33,7 +33,17 @@ bool Is_RS485_1 = false, Is_bluetooth = false,
      Is_uart1_RX_INT =
 	     false;  //工作指示灯控制，三种情况(1)当前UART1是否是485，（2）当前UART1是否是蓝牙，（3）是否发生了uart1中断
 		     // LSHB 20200506
-
+void UpdateDebugState() {
+	GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN0);
+	if (GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN0) == 0) {
+		printf("IsDebug : 1\r\n");
+		IsDebug = 1;
+	}
+	else {
+		printf("IsDebug : 0\r\n");
+		IsDebug = 0;
+	}
+}
 int main(void) {
 
 	Restart_Init();
@@ -53,7 +63,7 @@ int main(void) {
 	//        newtime[ 3 ], newtime[ 4 ], newtime[ 5 ]);
 	// _RTC_SetTime(newtime[ 5 ], newtime[ 4 ], newtime[ 3 ], newtime[ 2 ], newtime[ 1 ], 1, newtime[ 0 ],
 	// 	     0);
-	LowpowerTest();
+	// LowpowerTest();
 	/*--------Test-------*/
 
 	/*                                                            //地下水程序中关闭蓝牙  LSHB 200510
@@ -64,7 +74,10 @@ int main(void) {
 	 ptDevBle->init();
 	 ptDevBle->bletaskstart();
 	*/
-
+	while (1) {
+		UpdateDebugState();
+		System_Delayms(1000);
+	}
 	// Sampler_Open();
 
 	Hydrology_InitWaitConfig();
